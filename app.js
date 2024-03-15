@@ -2,6 +2,7 @@ import express, {json}  from 'express'
 import { AnalizeImageRouter } from './routes/analizeimage.route.js'
 import { AgricultorRouter } from './routes/agricultor.route.js'
 import { TrabajadorRouter } from './routes/trabajador.route.js'
+import { InvernaderoRouter } from './routes/invernadero.route.js'
 const app = express()
 app.use(express.json())
 
@@ -11,4 +12,5 @@ const port = 3000
 app.use('/image',AnalizeImageRouter)
 app.use('/agricultor',AgricultorRouter)
 app.use('/trabajador',TrabajadorRouter)
+app.use('/invernadero',InvernaderoRouter)
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
