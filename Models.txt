@@ -1,0 +1,8 @@
+CREATE TABLE `residencia`.`agricultor` (
+  `id_agricultor` INT NOT NULL,
+  `nombre` VARCHAR(45) NULL,
+  `telefono` VARCHAR(45) NULL,
+  `correo_electronico` VARCHAR(45) NULL,
+  PRIMARY KEY (`id_agricultor`));
+
+  
