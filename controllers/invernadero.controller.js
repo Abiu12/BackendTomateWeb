@@ -19,5 +19,10 @@ export class InvernaderoController{
         res.status(201).json({ message : 'Invernadero creado'})
     }
     static async update (){}
-    static async delete (){}    
+    static async delete (){}  
+    static async getInvernaderoByAgricultor(req,res){
+        const {idAgricultor} = req.params
+        const invernaderos = await InvernaderoModel.getInvernaderoByAgricultor({idAgricultor})
+        res.json(invernaderos) 
+    }  
 }

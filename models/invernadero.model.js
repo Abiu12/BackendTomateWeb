@@ -38,4 +38,11 @@ export class InvernaderoModel{
     static async delete(){
 
     }
+    static async getInvernaderoByAgricultor({idAgricultor}){
+        const [invernaderos] = await connection.query(
+            'select * from invernadero where id_agricultor = ?;',
+            [idAgricultor]
+        )
+        return invernaderos
+    } 
 }
