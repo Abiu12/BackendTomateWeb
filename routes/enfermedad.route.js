@@ -6,8 +6,8 @@ export const EnfermedadRouter = Router ()
 //obtener todas las enfermedades
 EnfermedadRouter.get('/', EnfermedadController.getAll)
 //obtener una una enfermedad por id
-EnfermedadRouter.get('/:id',CamaController.getById)
+EnfermedadRouter.get('/:id',EnfermedadController.getById)
 //crear una enfermedad
-EnfermedadRouter.post('/', CamaController.create)
+EnfermedadRouter.post('/', EnfermedadController.create)
 //eliminar una enfermedad
-EnfermedadRouter.delete('/:id',CamaController.delete)
+EnfermedadRouter.delete('/:id',EnfermedadController.delete)

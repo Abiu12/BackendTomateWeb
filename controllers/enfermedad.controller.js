@@ -1,4 +1,4 @@
-import { EnfermedadModel } from "../models/enfermedad.model.js|"
+import { EnfermedadModel } from "../models/enfermedad.model.js"
 export class EnfermedadController{
     static async getAll(req,res){}
     static async getById(req,res){}

@@ -7,6 +7,7 @@ import { TrabajadorInvernaderoRouter } from './routes/trabajadorinvernadero.rout
 import { CamaRouter } from './routes/cama.route.js'
 import { ImagenAnalizadaRouter } from './routes/imagenanalizada.route.js'
 import { EnfermedadRouter } from './routes/enfermedad.route.js'
+import { PlagaRouter } from './routes/plaga.route.js'
 const app = express()
 app.use(express.json())
 
@@ -20,5 +21,6 @@ app.use('/invernadero',InvernaderoRouter)
 app.use('/cama',CamaRouter)
 app.use('/imagenanalizada',ImagenAnalizadaRouter)
 app.use('/enfermedad',EnfermedadRouter)
+app.use('/plaga',PlagaRouter)
 app.use('/trabajador/invernadero',TrabajadorInvernaderoRouter)
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
