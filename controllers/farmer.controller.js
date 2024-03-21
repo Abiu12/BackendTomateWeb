@@ -49,7 +49,28 @@ export class FarmerController {
     }
     static async getWorkersByIdFarmer(req,res){
         const {idFarmer} = req.params
-        const result = await WorkerModel.getWorkersByIdFarmer({idFarmer})
-        res.json(result)
+        const workerGreenhouses = await WorkerModel.getWorkersByIdFarmer({idFarmer})
+        var resultWorkerGreenhouses = []
+        for(const workerGreenhouse of workerGreenhouses ){
+            var idPerson = workerGreenhouse.id_persona
+            //Obtener los datos de la persona
+            var person = await PersonModel.getById({idPerson})
+            //Obtener los datos de los usuarios
+            var user = await UserModel.getByIdPerson({idPerson})
+            const resultWorkerGreenhouse = {
+                idWork: workerGreenhouse.id_trabajador,
+                idPerson:person.id_persona,
+                idFarmer: parseInt(idFarmer),
+                name: person.nombre,
+                surname: person.primer_apellido,
+                secondSurname: person.segundo_apellido,
+                phone: person.telefono,
+                email: person.correo_electronico,
+                nameUser: user.nombre_usuario,
+                password: user.contrasenia
+            }
+            resultWorkerGreenhouses.push(resultWorkerGreenhouse)
+        }
+        res.json(resultWorkerGreenhouses)
     }
 }

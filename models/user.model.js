@@ -33,4 +33,11 @@ export class UserModel{
 
     }
     static async delete({id}){}
+    static async getByIdPerson({idPerson}){
+        const user = await connection.query(
+            'select * from usuario where id_persona=?',
+            [idPerson]
+        )
+        return user[0][0]
+    }
 }

@@ -24,10 +24,10 @@ export class PersonModel{
         )
         return result[0].insertId
     }
-    static async getById({id}){
+    static async getById({idPerson}){
         const [person] = await connection.query(
             'select * from persona where id_persona = ?;', [
-                id
+                idPerson
             ]
         )
         if (person.length === 0 ){
