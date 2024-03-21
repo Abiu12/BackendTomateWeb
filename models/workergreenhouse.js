@@ -8,15 +8,15 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class TrabajadorInvernaderoModel{
+export class WorkerGreenhouseModel{
     static async create({input}){
         const {
-            idTrabajador,
-            idInvernadero,
+            idWorker,
+            idGreenhouse,
         } = input
         const result = await connection.query(
             'INSERT INTO trabajadorinvernadero(id_trabajadorinvernadero,id_trabajador,id_invernadero) values (NULL,?,?)'
-            ,[idTrabajador,idInvernadero]
+            ,[idWorker,idGreenhouse]
         )
         return result[0].insertId
     }

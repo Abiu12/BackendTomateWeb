@@ -8,27 +8,27 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class CamaModel{
+export class BedModel{
     static async getAll(){}
     static async getById(){}
     static async create({input}){
         const {
-            numeroCama,
-            idInvernadero,
-            idCultivo
+            numberBed,
+            typeCrop,
+            idGreenhouse,
         } = input
         const result = await connection.query(
-            'INSERT INTO cama (id_cama,numero_cama,id_invernadero,id_cultivo) values (NULL,?,?,?)',
-            [numeroCama,idInvernadero,idCultivo]
+            'INSERT INTO cama (id_cama,numero_cama,tipo_cultivo,id_invernadero) values (NULL,?,?,?)',
+            [numberBed,typeCrop,idGreenhouse]
         )
         return result[0].insertId
     }
     static async update(){}
     static async delete(){}
-    static async getCamaByInvernadero({idInvernadero}){
-        const [invernaderos] = await connection.query(
-            'select * from cama where id_invernadero = ?',[idInvernadero]
+    static async getBedByGreenhouse({idGreenhouse}){
+        const [greenhouses] = await connection.query(
+            'select * from cama where id_invernadero = ?',[idGreenhouse]
             )
-        return invernaderos
+        return greenhouses
     }
 }

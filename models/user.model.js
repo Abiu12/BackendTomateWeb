@@ -9,7 +9,7 @@ const config = {
 
 const connection = await mysql.createConnection(config)
 
-export class UsuarioModel{
+export class UserModel{
     static async getAll(){
 
     }
@@ -18,14 +18,14 @@ export class UsuarioModel{
     }
     static async create({input}){
         const {
-            nombreUsuario,
-            contrasenia,
-            rol,
-            idPersona
+            nameUser,
+            password,
+            role,
+            idPerson
         } = input
         const result = await connection.query(
             'INSERT INTO usuario(id_usuario,nombre_usuario,contrasenia,rol,id_persona) VALUES (NULL,?,?,?,?)',
-            [nombreUsuario,contrasenia,rol,idPersona]
+            [nameUser,password,role,idPerson]
         )
         return result
     }

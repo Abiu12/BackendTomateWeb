@@ -8,28 +8,28 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class AgricultorModel{
+export class FarmerModel{
     static async getAll(){
-        const [agricultores] = await connection.query(
+        const [farmers] = await connection.query(
             'select * from agricultor;'
         )
-        return agricultores
+        return farmers
     }
     static async getById({id}){
-        const [agricultor] = await connection.query(
+        const [farmer] = await connection.query(
             'select * from agricultor where id_agricultor = ?;', [
                 id
             ]
         )
-        if (agricultor.length === 0 ){
+        if (farmer.length === 0 ){
             return []
         }
-        return agricultor[0]
+        return farmer[0]
     }
-    static async create({idPersona}){
+    static async create({idPerson}){
         const result = await connection.query(
             'INSERT INTO agricultor (id_agricultor,id_persona) VALUES (NULL , ? )',
-            [idPersona]
+            [idPerson]
         )
         return result[0].insertId
     }

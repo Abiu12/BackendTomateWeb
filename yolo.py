@@ -2,11 +2,11 @@ import sys
 from ultralytics import YOLO
 import cv2
 import json
-input_path = 'b.jpg'
-output_path = 'prueba.jpg'
+input_path = 'mildiu2.jpg'
+output_path = 'prueba5.jpg'
 # input_path = sys.argv[1]
 # output_path = sys.argv[2]
-model = YOLO('best.pt')
+model = YOLO('bestplagas.pt')
 img = cv2.imread(f"{input_path}")
 pred = model.predict(img)[0]
 boxes = pred.boxes.cpu().numpy()

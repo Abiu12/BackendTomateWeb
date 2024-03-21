@@ -8,14 +8,19 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class ImagenAnalizadaModel{
+export class DiseaseModel{
     static async getAll(){}
-    static async getById(){}
+    static async getById({idDisease}){
+        const disease = await connection.query(
+            'select * from enfermedad where id_enfermedad = ?',[idDisease]
+        )
+        return disease[0]
+    }
     static async create({input}){
         // const {
-        //     a,
-        //     a,
-            
+        //     numeroCama,
+        //     idInvernadero,
+        //     idCultivo
         // } = input
         // const result = await connection.query(
         //     'INSERT INTO cama (id_cama,numero_cama,id_invernadero,id_cultivo) values (NULL,?,?,?)',
@@ -25,10 +30,5 @@ export class ImagenAnalizadaModel{
     }
     static async update(){}
     static async delete(){}
-    static async getImagenAnalizadaByCama({idCama}){
-        const [imagenanalizada] = await connection.query(
-            'select * from imagenanalizada where id_cama = ?',[idCama]
-            )
-        return imagenanalizada
-    }
+
 }

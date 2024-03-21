@@ -8,9 +8,14 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class PlagaModel{
+export class PlagueModel{
     static async getAll(){}
-    static async getById(){}
+    static async getById({idPlague}){
+        const plague = await connection.query(
+            'select * from plaga where id_plaga = ?',[idPlague]
+        )
+        return plague[0]
+    }
     static async create({input}){
         // const {
         //     numeroCama,
@@ -25,10 +30,5 @@ export class PlagaModel{
     }
     static async update(){}
     static async delete(){}
-    static async getCamaByInvernadero({idInvernadero}){
-        // const [invernaderos] = await connection.query(
-        //     'select * from cama where id_invernadero = ?',[idInvernadero]
-        //     )
-        // return invernaderos
-    }
+
 }

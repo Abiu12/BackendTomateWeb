@@ -8,7 +8,7 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class ImagenAnalizadaEnfermedadModel{
+export class AnalizedImagePlagueModel{
     static async getAll(){}
     static async getById(){}
     static async create({input}){
@@ -25,10 +25,10 @@ export class ImagenAnalizadaEnfermedadModel{
     }
     static async update(){}
     static async delete(){}
-    static async getImagenAnalizadaEnfermedadByImagenAnalizada({idImagenAnalizada}){
-        const [imagenAnalizadaEnfermedad] = await connection.query(
-            'select * from imagenanalizadaenfermedad where id_imagenanalizada = ?',[idImagenAnalizada]
+    static async getAnalizedImagePlagueByIdAnalizedImage({idAnalizedImage}){
+        const [analizedImagePlague] = await connection.query(
+            'select * from imagenanalizadaplaga where id_imagenanalizada = ?',[idAnalizedImage]
             )
-        return imagenAnalizadaEnfermedad
+        return analizedImagePlague
     }
 }

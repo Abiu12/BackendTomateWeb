@@ -1,5 +1,5 @@
 import mysql from 'mysql2/promise'
-import { PersonaModel } from './persona.model.js';
+// import { PersonModel } from './person.model.js';
 const config = {
     host: 'localhost',
     user: 'root',
@@ -9,39 +9,39 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class TrabajadorModel{
+export class WorkerModel{
     static async getAll(){
-        const [trabajadores] = await connection.query(
+        const [workers] = await connection.query(
             'select * from trabajador;'
         )
-        return trabajadores   
+        return workers   
     }
     static async getById({id}){
-        const [trabajador] = await connection.query(
+        const [worker] = await connection.query(
             'select * from trabajador where id_trabajador = ?;', [
                 id
             ]
         )
-        if (trabajador.length === 0 ){
+        if (worker.length === 0 ){
             return []
         }
-        return trabajador[0]
+        return worker[0]
     }
     static async create({input}) {
-        const {idAgricultor,idPersona} = input
+        const {idWorker,idPerson} = input
         const result = await connection.query(
             'INSERT INTO trabajador (id_trabajador,id_agricultor,id_persona) VALUES (NULL ,?, ? )',
-            [idAgricultor,idPersona]
+            [idWorker,idPerson]
         )
         return result[0].insertId
     }
     static async delete(){
-        const {id} = req.params
-        const trabajador = await TrabajadorModel.getById({id})
-        const idPersona = trabajador.id_persona
-        await TrabajadorModel.delete({id:id})    
-        await PersonaModel.delete({id:idPersona})
-        return res.json({message: 'Trabajador eliminado'})
+        // const {id} = req.params
+        // const trabajador = await TrabajadorModel.getById({id})
+        // const idPersona = trabajador.id_persona
+        // await TrabajadorModel.delete({id:id})    
+        // await PersonModel.delete({id:idPersona})
+        // return res.json({message: 'Trabajador eliminado'})
     }
     
 }

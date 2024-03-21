@@ -9,32 +9,31 @@ const config = {
 
 const connection = await mysql2.createConnection(config)
 
-export class PersonaModel{
+export class PersonModel{
     static async create({input}){
         const {
-            nombre,
-            primerApellido,
-            segundoApellido,
-            telefono,
-            correoElectronico
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email
         } = input
         const result = await connection.query(
             'insert into persona (id_persona, nombre, primer_apellido,segundo_apellido,telefono,correo_electronico,estado) values (NULL, ?,?,?,?,?,?)',
-            [nombre,primerApellido,segundoApellido,telefono,correoElectronico,'activo']
+            [name,surname,secondSurname,phone,email,'activo']
         )
         return result[0].insertId
     }
     static async getById({id}){
-        console.log(id)
-        const [persona] = await connection.query(
+        const [person] = await connection.query(
             'select * from persona where id_persona = ?;', [
                 id
             ]
         )
-        if (persona.length === 0 ){
+        if (person.length === 0 ){
             return []
         }
-        return persona[0]
+        return person[0]
     }
     static async delete ({id}){
         const result = await connection.query(

@@ -8,27 +8,27 @@ const config = {
 }
 const connection = await mysql.createConnection(config);
 
-export class InvernaderoModel{
+export class GreenhouseModel{
     static async getAll(){
-        const [invernaderos] = await connection.query(
+        const [greenhouses] = await connection.query(
             'select * from invernadero;'
         )
-        return invernaderos
+        return greenhouses
     }
     static async getById(){
 
     }
     static async create({input}){
         const {
-            idAgricultor,
-            nombre,
-            tipoInvernadero,
-            humedad,
-            tamanio
+            idFarmer,
+            name,
+            typeGreenhouse,
+            humidity,
+            size
         } = input
         const result = await connection.query(
             'INSERT INTO invernadero (id_invernadero,id_agricultor,nombre,tipo_invernadero,humedad,tamanio) values (NULL,?,?,?,?,?)',
-            [idAgricultor,nombre,tipoInvernadero,humedad,tamanio]
+            [idFarmer,name,typeGreenhouse,humidity,size]
         )
         return result[0].insertId
     }
@@ -38,11 +38,11 @@ export class InvernaderoModel{
     static async delete(){
 
     }
-    static async getInvernaderoByAgricultor({idAgricultor}){
-        const [invernaderos] = await connection.query(
+    static async getGreenhouseByIdFarmer({idFarmer}){
+        const [greenhouses] = await connection.query(
             'select * from invernadero where id_agricultor = ?;',
-            [idAgricultor]
+            [idFarmer]
         )
-        return invernaderos
+        return greenhouses
     } 
 }
