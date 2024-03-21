@@ -17,16 +17,18 @@ export class DiseaseModel{
         return disease[0]
     }
     static async create({input}){
-        // const {
-        //     numeroCama,
-        //     idInvernadero,
-        //     idCultivo
-        // } = input
-        // const result = await connection.query(
-        //     'INSERT INTO cama (id_cama,numero_cama,id_invernadero,id_cultivo) values (NULL,?,?,?)',
-        //     [numeroCama,idInvernadero,idCultivo]
-        // )
-        // return result[0].insertId
+        const {
+            name,
+            nameScientific,
+            recommendations,
+            actions
+        } = input
+       
+        const result = await connection.query(
+            'INSERT INTO enfermedad (id_enfermedad,nombre,nombre_cientifico,recomendaciones,acciones) values (NULL,?,?,?,?)',
+            [name,nameScientific,recommendations,actions]
+        )
+        return result[0].insertId
     }
     static async update(){}
     static async delete(){}

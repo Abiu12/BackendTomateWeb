@@ -4,11 +4,13 @@ export class DiseaseController{
     static async getById(req,res){}
     static async create(req,res){
         const {
-            numberBed,
-            idGreenhouse,
-            
+            name,
+            nameScientific,
+            recommendations,
+            actions
         } = req.body
-        res.json({message:'Cama creada'})
+        const result = await DiseaseModel.create({input:{name,nameScientific,recommendations,actions}})
+        res.json({message: "Enfermedad registrada"})
     }
     static async update(req,res){}
     static async delete(req,res){}
