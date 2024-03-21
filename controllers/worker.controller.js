@@ -2,6 +2,7 @@ import { WorkerModel } from "../models/worker.model.js";
 import { PersonModel } from "../models/person.model.js"
 import { UserModel } from "../models/user.model.js"
 import { WorkerGreenhouseModel } from "../models/workergreenhouse.js";
+import { GreenhouseModel } from "../models/greenhouse.model.js";
 export class WorkerController {
     static async getAll(req,res){
         const idWorkers = await WorkerModel.getAll()
@@ -46,11 +47,23 @@ export class WorkerController {
         // return res.json({message: 'Trabajador eliminado'})
     }
     static async assignGreenhouse(req,res){
+        const {
+            idWorker
+        } = req.params
         const{
-            idWorker,
-            idGreenHouse
+            idGreenhouse
         } = req.body
-        await WorkerGreenhouseModel.create({input:{idWorker,idGreenHouse}})
+        await WorkerGreenhouseModel.create({input:{idWorker,idGreenhouse}})
         res.json({message: "Invernadero asociado a trabajador"})
+    }
+    static async getGreenhousesByIdWorker(req,res){
+        const {idWorker} = req.params
+        const idGreenhouses = await WorkerGreenhouseModel.getGreenhousesByIdWorker({idWorker})
+        var greenhouses = []
+        for(const idGreenhouse of idGreenhouses ){
+            var greenhouse = await GreenhouseModel.getById({idGreenhouse:idGreenhouse.id_invernadero})
+            greenhouses.push(greenhouse[0])
+        }
+        return res.json(greenhouses)
     }
 }

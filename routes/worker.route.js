@@ -5,6 +5,7 @@ export const WorkerRouter = Router()
 
 WorkerRouter.get('/',WorkerController.getAll)
 WorkerRouter.get('/:id',WorkerController.getById)
+WorkerRouter.get('/getgreenhouses/:idWorker',WorkerController.getGreenhousesByIdWorker)
 WorkerRouter.post('/',WorkerController.create)
 WorkerRouter.delete('/:id',WorkerController.delete)
-WorkerRouter.get('/invernadero',WorkerController.getAll)
+WorkerRouter.post('/asigngreenhouse/:idWorker',WorkerController.assignGreenhouse)

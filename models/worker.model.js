@@ -43,5 +43,11 @@ export class WorkerModel{
         // await PersonModel.delete({id:idPersona})
         // return res.json({message: 'Trabajador eliminado'})
     }
-    
+    static async getWorkersByIdFarmer({idFarmer}){
+        const [farmers] = await connection.query(
+            'select * from trabajador where id_agricultor=?',
+            [idFarmer]
+        )
+        return farmers
+    }
 }

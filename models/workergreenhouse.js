@@ -20,4 +20,11 @@ export class WorkerGreenhouseModel{
         )
         return result[0].insertId
     }
+    static async getGreenhousesByIdWorker({idWorker}){
+        const [greenhousesByWorker] = await connection.query(
+            'select * from trabajadorinvernadero where id_trabajador=?',
+            [idWorker]
+        )
+        return greenhousesByWorker
+    }
 }

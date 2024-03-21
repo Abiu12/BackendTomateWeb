@@ -15,8 +15,12 @@ export class GreenhouseModel{
         )
         return greenhouses
     }
-    static async getById(){
-
+    static async getById({idGreenhouse}){
+        const greenhouse = await connection.query(
+            'select * from invernadero where id_invernadero=?',
+            [idGreenhouse]
+        )
+        return greenhouse[0]
     }
     static async create({input}){
         const {

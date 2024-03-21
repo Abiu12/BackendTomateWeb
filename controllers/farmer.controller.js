@@ -1,6 +1,7 @@
 import { FarmerModel } from "../models/farmer.model.js"
 import { PersonModel } from "../models/person.model.js"
 import { UserModel } from "../models/user.model.js"
+import { WorkerModel } from "../models/worker.model.js"
 export class FarmerController {
     static async getAll(req,res){
         const idFarmers = await FarmerModel.getAll()
@@ -45,5 +46,10 @@ export class FarmerController {
         //     return res.status(404).json({ message: 'Agricultor no encontrado'})
         // }
         return res.json({message: 'Agricultor eliminado'})
+    }
+    static async getWorkersByIdFarmer(req,res){
+        const {idFarmer} = req.params
+        const result = await WorkerModel.getWorkersByIdFarmer({idFarmer})
+        res.json(result)
     }
 }
