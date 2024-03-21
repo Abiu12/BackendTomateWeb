@@ -1,6 +1,10 @@
 import { DiseaseModel } from "../models/disease.model.js"
 export class DiseaseController{
-    static async getAll(req,res){}
+    static async getAll(req,res){
+        const result = await DiseaseModel.getAll()
+        if(result) return res.json(result)
+        res.json({message:"No se encontraron enfermedades"})
+    }
     static async getById(req,res){}
     static async create(req,res){
         const {

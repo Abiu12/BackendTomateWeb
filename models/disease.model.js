@@ -9,7 +9,11 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class DiseaseModel{
-    static async getAll(){}
+    static async getAll(){
+        const [diseases] = await connection.query(
+            'select * from enfermedad ')
+        return diseases
+    }
     static async getById({idDisease}){
         const disease = await connection.query(
             'select * from enfermedad where id_enfermedad = ?',[idDisease]
