@@ -39,17 +39,5 @@ export class FarmerModel{
         )
         return result
     }
-    // static async update ({input}){
-    //     const {
-    //         idFarmer,
-    //         name,
-    //         surname,
-    //         secondSurname,
-    //         phone,
-    //         email
-    //     } = input
-    //     const result = await connection.query(
-    //         ''
-    //     )
-    // }
+    
 }

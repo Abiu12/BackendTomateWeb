@@ -13,3 +13,5 @@ GreenhouseRouter.post('/', GreenhouseController.create)
 GreenhouseRouter.delete('/:id',GreenhouseController.delete)
 //Obtener los invernaderos por idAgricultor
 GreenhouseRouter.get('/farmer/:idFarmer', GreenhouseController.getGreenhouseByFarmer)
+//Actualizar un invernadero
+GreenhouseRouter.patch('/:idGreenhouse',GreenhouseController.update)

@@ -39,8 +39,21 @@ export class GreenhouseModel{
         )
         return result[0].insertId
     }
-    static async update(){
-
+    static async update({input}){
+        const{
+            idGreenhouse,
+            idFarmer,
+            name,
+            typeGreenhouse,
+            humidity,
+            size
+        } = input
+        await connection.query(
+            `UPDATE invernadero
+            SET id_agricultor = ?, nombre = ?, tipo_invernadero = ?, humedad = ?, tamanio = ?
+            WHERE id_invernadero = ?;`,
+            [idFarmer,name,typeGreenhouse,humidity,size,idGreenhouse]
+        )
     }
     static async delete(){
 
