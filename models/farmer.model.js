@@ -11,14 +11,14 @@ const connection = await mysql.createConnection(config);
 export class FarmerModel{
     static async getAll(){
         const [farmers] = await connection.query(
-            'select * from agricultor;'
+            'SELECT a.id_agricultor, p.*, u.* FROM agricultor a JOIN persona p ON a.id_persona = p.id_persona JOIN usuario u ON p.id_persona = u.id_persona;'
         )
         return farmers
     }
-    static async getById({id}){
+    static async getById({idFarmer}){
         const [farmer] = await connection.query(
             'select * from agricultor where id_agricultor = ?;', [
-                id
+                idFarmer
             ]
         )
         if (farmer.length === 0 ){
@@ -39,7 +39,17 @@ export class FarmerModel{
         )
         return result
     }
-    static async update (){
-
-    }
+    // static async update ({input}){
+    //     const {
+    //         idFarmer,
+    //         name,
+    //         surname,
+    //         secondSurname,
+    //         phone,
+    //         email
+    //     } = input
+    //     const result = await connection.query(
+    //         ''
+    //     )
+    // }
 }

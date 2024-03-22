@@ -22,7 +22,12 @@ export class WorkerGreenhouseModel{
     }
     static async getGreenhousesByIdWorker({idWorker}){
         const [greenhousesByWorker] = await connection.query(
-            'select * from trabajadorinvernadero where id_trabajador=?',
+            `SELECT ti.id_trabajadorinvernadero,id_trabajador,i.*, CONCAT(p.nombre, ' ', p.primer_apellido, ' ', p.segundo_apellido) AS nombre_agricultor
+            FROM trabajadorinvernadero ti 
+            JOIN invernadero i ON ti.id_invernadero = i.id_invernadero
+            JOIN agricultor a ON i.id_agricultor = a.id_agricultor
+            JOIN persona p ON a.id_persona = p.id_persona where id_trabajador = ?;
+            `,
             [idWorker]
         )
         return greenhousesByWorker

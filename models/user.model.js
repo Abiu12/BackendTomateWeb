@@ -30,7 +30,18 @@ export class UserModel{
         return result
     }
     static async update({input}){
-
+        const {
+            idPerson,
+            nameUser,
+            password,
+        } = input
+        await connection.query(
+            `UPDATE usuario
+            SET nombre_usuario = ?, contrasenia = ?
+            WHERE id_persona = ?;
+            `,
+            [nameUser,password,idPerson]
+        )
     }
     static async delete({id}){}
     static async getByIdPerson({idPerson}){

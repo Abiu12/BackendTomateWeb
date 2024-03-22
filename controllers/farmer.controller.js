@@ -4,14 +4,26 @@ import { UserModel } from "../models/user.model.js"
 import { WorkerModel } from "../models/worker.model.js"
 export class FarmerController {
     static async getAll(req,res){
-        const idFarmers = await FarmerModel.getAll()
-        var resultFarmers = []
-        for (let index = 0; index < idFarmers.length; index++) {
-            var id = idFarmers[index].id_persona
-            var infoFarmers = await PersonModel.getById({id})
-            resultFarmers.push(infoFarmers)
-        }
-        res.json(resultFarmers)    
+        const farmers = await FarmerModel.getAll()
+        // var resultFarmers = []
+        // for(const farmer of farmers){
+        //     const idPerson = farmer.id_persona
+        //     const person = await PersonModel.getById({idPerson})
+        //     const user = await UserModel.getByIdPerson({idPerson})
+        //     const resultFarmer = {
+        //         idFarmer: farmer.id_agricultor,
+        //         idPerson: farmer.id_persona,
+        //         name: person.nombre,
+        //         surname: person.primer_apellido,
+        //         secondName: person.segundo_apellido,
+        //         phone: person.telefono,
+        //         email: person.correo_electronico,
+        //         nameUser: user.nombre_usuario,
+        //         password: user.contrasenia
+        //     }
+        //     resultFarmers.push(resultFarmer)
+        // }
+        res.json(farmers)    
     }
     static async getById(req,res){
         const {id} = req.params
@@ -30,7 +42,6 @@ export class FarmerController {
             nameUser,
             password,
             role} = req.body
-        
         const idPerson = await PersonModel.create({input: {name,surname,secondSurname,phone,email}})
         await FarmerModel.create({idPerson})
         await UserModel.create({input: {nameUser,password,idPerson,role}})
@@ -49,28 +60,47 @@ export class FarmerController {
     }
     static async getWorkersByIdFarmer(req,res){
         const {idFarmer} = req.params
-        const workerGreenhouses = await WorkerModel.getWorkersByIdFarmer({idFarmer})
-        var resultWorkerGreenhouses = []
-        for(const workerGreenhouse of workerGreenhouses ){
-            var idPerson = workerGreenhouse.id_persona
-            //Obtener los datos de la persona
-            var person = await PersonModel.getById({idPerson})
-            //Obtener los datos de los usuarios
-            var user = await UserModel.getByIdPerson({idPerson})
-            const resultWorkerGreenhouse = {
-                idWork: workerGreenhouse.id_trabajador,
-                idPerson:person.id_persona,
-                idFarmer: parseInt(idFarmer),
-                name: person.nombre,
-                surname: person.primer_apellido,
-                secondSurname: person.segundo_apellido,
-                phone: person.telefono,
-                email: person.correo_electronico,
-                nameUser: user.nombre_usuario,
-                password: user.contrasenia
-            }
-            resultWorkerGreenhouses.push(resultWorkerGreenhouse)
-        }
-        res.json(resultWorkerGreenhouses)
+        const workerByFarmer = await WorkerModel.getWorkersByIdFarmer({idFarmer})
+        // var resultWorkerGreenhouses = []
+        // for(const workerGreenhouse of workerGreenhouses ){
+        //     var idPerson = workerGreenhouse.id_persona
+        //     //Obtener los datos de la persona
+        //     var person = await PersonModel.getById({idPerson})
+        //     //Obtener los datos de los usuarios
+        //     var user = await UserModel.getByIdPerson({idPerson})
+        //     const resultWorkerGreenhouse = {
+        //         idWork: workerGreenhouse.id_trabajador,
+        //         idPerson:person.id_persona,
+        //         idFarmer: parseInt(idFarmer),
+        //         name: person.nombre,
+        //         surname: person.primer_apellido,
+        //         secondSurname: person.segundo_apellido,
+        //         phone: person.telefono,
+        //         email: person.correo_electronico,
+        //         nameUser: user.nombre_usuario,
+        //         password: user.contrasenia
+        //     }
+        //     resultWorkerGreenhouses.push(resultWorkerGreenhouse)
+        // }
+        res.json(workerByFarmer)
+    }
+    static async update(req,res){
+        const{ idFarmer } = req.params
+        const{
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email,
+            nameUser,
+            password,
+            role
+        } = req.body 
+        //Necesito el id de la persona
+        const farmer = await FarmerModel.getById({idFarmer})
+        const idPerson = farmer.id_persona
+        await PersonModel.update({input:{idPerson,name,surname,secondSurname,phone,email}}) 
+        await UserModel.update({input:{idPerson,nameUser,password}})   
+        res.json({message: "Se han actualizado los datos del agricultor"})
     }
 }

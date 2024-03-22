@@ -5,14 +5,14 @@ import { WorkerGreenhouseModel } from "../models/workergreenhouse.js";
 import { GreenhouseModel } from "../models/greenhouse.model.js";
 export class WorkerController {
     static async getAll(req,res){
-        const idWorkers = await WorkerModel.getAll()
-        var resultWorkers = []
-        for (let index = 0; index < idWorkers.length; index++) {
-            var id = idWorkers[index].id_persona
-            var infoWorker = await PersonModel.getById({id})
-            resultWorkers.push(infoWorker)
-        }
-        res.json(resultWorkers)    
+        const workers = await WorkerModel.getAll()
+        // var resultWorkers = []
+        // for (let index = 0; index < idWorkers.length; index++) {
+        //     var id = idWorkers[index].id_persona
+        //     var infoWorker = await PersonModel.getById({id})
+        //     resultWorkers.push(infoWorker)
+        // }
+        res.json(workers)    
     }
     static async getById(req,res){
         const {id} = req.params
@@ -23,7 +23,6 @@ export class WorkerController {
     }
     static async create(req, res) {
         const {
-            idFarmer,
             name,
             surname,
             secondSurname,
@@ -32,7 +31,7 @@ export class WorkerController {
             nameUser,
             password,
             role} = req.body
-        
+        const{idFarmer} = req.params
         const idPerson = await PersonModel.create({input: {name,surname,secondSurname,phone,email}})
         await WorkerModel.create({input : {idFarmer,idPerson}})
         await UserModel.create({input: {nameUser,password,idPerson,role}})
@@ -58,12 +57,12 @@ export class WorkerController {
     }
     static async getGreenhousesByIdWorker(req,res){
         const {idWorker} = req.params
-        const idGreenhouses = await WorkerGreenhouseModel.getGreenhousesByIdWorker({idWorker})
-        var greenhouses = []
-        for(const idGreenhouse of idGreenhouses ){
-            var greenhouse = await GreenhouseModel.getById({idGreenhouse:idGreenhouse.id_invernadero})
-            greenhouses.push(greenhouse[0])
-        }
+        const greenhouses = await WorkerGreenhouseModel.getGreenhousesByIdWorker({idWorker})
+        // var greenhouses = []
+        // for(const idGreenhouse of idGreenhouses ){
+        //     var greenhouse = await GreenhouseModel.getById({idGreenhouse:idGreenhouse.id_invernadero})
+        //     greenhouses.push(greenhouse[0])
+        // }
         return res.json(greenhouses)
     }
 }

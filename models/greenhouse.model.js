@@ -11,7 +11,10 @@ const connection = await mysql.createConnection(config);
 export class GreenhouseModel{
     static async getAll(){
         const [greenhouses] = await connection.query(
-            'select * from invernadero;'
+        `SELECT i.*, CONCAT(p.nombre, ' ', p.primer_apellido, ' ', p.segundo_apellido) AS nombre_agricultor
+            FROM invernadero i
+            JOIN agricultor a ON i.id_agricultor = a.id_agricultor
+            JOIN persona p ON a.id_persona = p.id_persona;`
         )
         return greenhouses
     }

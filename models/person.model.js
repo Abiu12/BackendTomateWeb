@@ -41,4 +41,20 @@ export class PersonModel{
         )
         return result
     }
+    static async update ({input}){
+        const{
+            idPerson,
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email
+        } = input
+        await connection.query(
+            `UPDATE persona
+            SET nombre = ?, primer_apellido = ?, segundo_apellido = ?, telefono = ?, correo_electronico = ?
+            WHERE id_persona = ?;`,
+            [name,surname,secondSurname,phone,email,idPerson]
+        )
+    }
 }

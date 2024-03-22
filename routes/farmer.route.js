@@ -11,5 +11,7 @@ FarmerRouter.get('/:id',FarmerController.getById)
 FarmerRouter.post('/', FarmerController.create)
 //eliminar agricultor
 FarmerRouter.delete('/:id',FarmerController.delete)
+//actualizar datos del agricultor
+FarmerRouter.patch('/:idFarmer',FarmerController.update)
 //obtener los trabajadores de un agricultor
 FarmerRouter.get('/getworkers/:idFarmer',FarmerController.getWorkersByIdFarmer)
