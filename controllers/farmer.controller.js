@@ -48,15 +48,10 @@ export class FarmerController {
         res.status(201).json({ message : 'Agricultor creado'})
     }
     static async delete(req,res){
-        const {id} = req.params
-        const farmer = await FarmerModel.getById({id})
-        const idPerson = farmer.id_persona
-        await FarmerModel.delete({id:id})    
-        await PersonModel.delete({id:idPerson})
-        // if(result === false){
-        //     return res.status(404).json({ message: 'Agricultor no encontrado'})
-        // }
-        return res.json({message: 'Agricultor eliminado'})
+        const {idFarmer} = req.params
+        const farmer = await FarmerModel.getById({idFarmer})
+        await PersonModel.delete({idPerson:farmer.id_persona})
+        res.json({message: "El agricultor ha sido eliminado"})
     }
     static async getWorkersByIdFarmer(req,res){
         const {idFarmer} = req.params

@@ -38,12 +38,10 @@ export class WorkerController {
         res.status(201).json({ message : 'Trabajador creado'})
     }
     static async delete(req,res){
-        // const {id} = req.params
-        // const agricultor = await TrabajadorModel.getById({id})
-        // const idPersona = agricultor.id_persona
-        // await TrabajadorModel.delete({id:id})    
-        // await PersonaModel.delete({id:idPersona})
-        // return res.json({message: 'Trabajador eliminado'})
+        const {idWorker} = req.params
+        const worker = WorkerModel.getById({idWorker})
+        await PersonModel.delete({idPerson:worker.id_persona})
+        res.json({message: "El trabajador ha sido eliminado"})
     }
     static async update(req,res){
         const{

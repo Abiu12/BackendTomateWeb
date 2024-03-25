@@ -35,9 +35,13 @@ export class PersonModel{
         }
         return person[0]
     }
-    static async delete ({id}){
+    static async delete ({idPerson}){
         const result = await connection.query(
-            'DELETE FROM persona WHERE id_persona=?',[id]
+            `
+            UPDATE persona
+            SET estado = 'inactivo'
+            WHERE id_persona = ?;
+            ` ,[idPerson]
         )
         return result
     }

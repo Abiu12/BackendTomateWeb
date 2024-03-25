@@ -11,7 +11,11 @@ const connection = await mysql.createConnection(config);
 export class FarmerModel{
     static async getAll(){
         const [farmers] = await connection.query(
-            'SELECT a.id_agricultor, p.*, u.* FROM agricultor a JOIN persona p ON a.id_persona = p.id_persona JOIN usuario u ON p.id_persona = u.id_persona;'
+            `SELECT a.id_agricultor, p.*, u.* 
+            FROM agricultor a 
+            JOIN persona p ON a.id_persona = p.id_persona 
+            JOIN usuario u ON p.id_persona = u.id_persona 
+            WHERE p.estado = 'activo';`
         )
         return farmers
     }
@@ -33,11 +37,11 @@ export class FarmerModel{
         )
         return result[0].insertId
     }
-    static async delete ({id}){
-        const result = await connection.query(
-            'DELETE FROM agricultor WHERE id_agricultor=?',[id]
-        )
-        return result
-    }
+    // static async delete ({idFarmer}){
+    //     const result = await connection.query(
+    //         'DELETE FROM agricultor WHERE id_agricultor=?',[id]
+    //     )
+    //     return result
+    // }
     
 }

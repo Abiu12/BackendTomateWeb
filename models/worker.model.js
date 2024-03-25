@@ -16,7 +16,9 @@ export class WorkerModel {
             SELECT t.id_trabajador,t.id_agricultor, p.*, u.*
             FROM trabajador t
             JOIN persona p ON t.id_persona = p.id_persona
-            JOIN usuario u ON p.id_persona = u.id_persona;
+            JOIN usuario u ON p.id_persona = u.id_persona
+            WHERE p.estado = 'activo'
+            ;
             `
         )
         return workers
@@ -40,14 +42,6 @@ export class WorkerModel {
         )
         return result[0].insertId
     }
-    static async delete() {
-        // const {id} = req.params
-        // const trabajador = await TrabajadorModel.getById({id})
-        // const idPersona = trabajador.id_persona
-        // await TrabajadorModel.delete({id:id})    
-        // await PersonModel.delete({id:idPersona})
-        // return res.json({message: 'Trabajador eliminado'})
-    }
     static async update({input}){
         const {
             idWorker,
@@ -68,7 +62,7 @@ export class WorkerModel {
             FROM trabajador t
             JOIN persona p ON t.id_persona = p.id_persona
             JOIN usuario u ON p.id_persona = u.id_persona
-            WHERE id_agricultor = ?;
+            WHERE id_agricultor = ? and p.estado = 'activo';
             `,
             [idFarmer]
         )
