@@ -11,7 +11,16 @@ export class BedController{
         const result = await BedModel.create({input:{numberBed,typeCrop,idGreenhouse}})
         res.json({message:'Cama creada'})
     }
-    static async update(req,res){}
+    static async update(req,res){
+        const {idBed} =  req.params
+        const {
+            numberBed,
+            typeCrop,
+            idGreenhouse
+        } = req.body
+        await BedModel.update({input:{idBed,numberBed,typeCrop,idGreenhouse}})
+        res.json({message: "Cama actualizada"})
+    }
     static async delete(req,res){}
     static async getBedByGreenhouse(req,res){
         const {idGreenhouse} = req.params

@@ -21,10 +21,10 @@ export class WorkerModel {
         )
         return workers
     }
-    static async getById({ id }) {
+    static async getById({ idWorker }) {
         const [worker] = await connection.query(
             'select * from trabajador where id_trabajador = ?;', [
-            id
+                idWorker
         ]
         )
         if (worker.length === 0) {
@@ -47,6 +47,19 @@ export class WorkerModel {
         // await TrabajadorModel.delete({id:id})    
         // await PersonModel.delete({id:idPersona})
         // return res.json({message: 'Trabajador eliminado'})
+    }
+    static async update({input}){
+        const {
+            idWorker,
+            idFarmer
+        } = input
+        await connection.query(
+            `UPDATE trabajador
+            SET id_agricultor = ?
+            WHERE id_trabajador = ?
+            `,
+            [idFarmer,idWorker]
+        )
     }
     static async getWorkersByIdFarmer({ idFarmer }) {
         const [farmers] = await connection.query(

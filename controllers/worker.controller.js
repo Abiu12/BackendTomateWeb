@@ -2,7 +2,7 @@ import { WorkerModel } from "../models/worker.model.js";
 import { PersonModel } from "../models/person.model.js"
 import { UserModel } from "../models/user.model.js"
 import { WorkerGreenhouseModel } from "../models/workergreenhouse.js";
-import { GreenhouseModel } from "../models/greenhouse.model.js";
+
 export class WorkerController {
     static async getAll(req,res){
         const workers = await WorkerModel.getAll()
@@ -44,6 +44,28 @@ export class WorkerController {
         // await TrabajadorModel.delete({id:id})    
         // await PersonaModel.delete({id:idPersona})
         // return res.json({message: 'Trabajador eliminado'})
+    }
+    static async update(req,res){
+        const{
+            idWorker
+        } = req.params
+        const{
+            idFarmer,
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email,
+            nameUser,
+            password,
+            role
+        } = req.body
+        const worker = await WorkerModel.getById({idWorker})
+        const idPerson = worker.id_persona
+        await WorkerModel.update({input:{idWorker:worker.id_trabajador,idFarmer}})
+        await PersonModel.update({input:{idPerson,name,surname,secondSurname,phone,email}})
+        await UserModel.update({input:{idPerson,nameUser,password,role}})
+        res.json({message: "Se han actualizado los datos del agricultor"})
     }
     static async assignGreenhouse(req,res){
         const {

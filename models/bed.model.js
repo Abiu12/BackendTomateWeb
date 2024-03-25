@@ -23,7 +23,18 @@ export class BedModel{
         )
         return result[0].insertId
     }
-    static async update(){}
+    static async update({input}){
+        const {
+            idBed,numberBed,typeCrop,idGreenhouse
+        } = input
+        await connection.query(
+            `UPDATE cama
+            SET numero_cama = ?,tipo_cultivo = ?, id_invernadero = ?
+            WHERE id_cama = ?;
+            `,
+            [numberBed,typeCrop,idGreenhouse,idBed]
+        )
+    }
     static async delete(){}
     static async getBedByGreenhouse({idGreenhouse}){
         const [greenhouses] = await connection.query(
