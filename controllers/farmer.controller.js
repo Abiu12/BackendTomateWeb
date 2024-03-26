@@ -98,4 +98,25 @@ export class FarmerController {
         await UserModel.update({input:{idPerson,nameUser,password}})   
         res.json({message: "Se han actualizado los datos del agricultor"})
     }
+    static async changePassword(req,res){
+        const {
+            idFarmer
+        } = req.params
+        const {
+            oldPassword,
+            newPassword
+        } = req.body
+        //Tengo que tener al usuario que quiero comparar la contraseña
+        const farmer = await FarmerModel.getById({idFarmer})
+        const user = await UserModel.getByIdPerson({idPerson:farmer.id_persona})
+        if(user){
+            if(user.contrasenia === oldPassword){
+                await UserModel.changePassword({input:{newPassword,idPerson:farmer.id_persona}})
+                return res.json({message: "La contraseña se ha cambiado"})
+            }
+            else{
+                return res.json({message: "La contraseña es incorrecta"})
+            }
+        }
+    }
 }

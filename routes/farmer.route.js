@@ -15,3 +15,5 @@ FarmerRouter.delete('/:idFarmer',FarmerController.delete)
 FarmerRouter.patch('/:idFarmer',FarmerController.update)
 //obtener los trabajadores de un agricultor
 FarmerRouter.get('/getworkers/:idFarmer',FarmerController.getWorkersByIdFarmer)
+//Cambiar contraseña de agricultor
+FarmerRouter.patch('/changepassword/:idFarmer',FarmerController.changePassword)

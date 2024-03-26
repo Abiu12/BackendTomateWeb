@@ -10,3 +10,5 @@ WorkerRouter.post('/:idFarmer',WorkerController.create)
 WorkerRouter.delete('/:idWorker',WorkerController.delete)
 WorkerRouter.patch('/:idWorker',WorkerController.update)
 WorkerRouter.post('/asigngreenhouse/:idWorker',WorkerController.assignGreenhouse)
+//Cambiar contraseña de trabajador
+WorkerRouter.patch('/changepassword/:idWorker',WorkerController.changePassword)

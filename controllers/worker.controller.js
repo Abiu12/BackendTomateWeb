@@ -85,4 +85,25 @@ export class WorkerController {
         // }
         return res.json(greenhouses)
     }
+    static async changePassword(req,res){
+        const {
+            idWorker
+        } = req.params
+        const {
+            oldPassword,
+            newPassword
+        } = req.body
+        //Tengo que tener al usuario que quiero comparar la contraseña
+        const worker = await WorkerModel.getById({idWorker})
+        const user = await UserModel.getByIdPerson({idPerson:worker.id_persona})
+        if(user){
+            if(user.contrasenia === oldPassword){
+                await UserModel.changePassword({input:{newPassword,idPerson:worker.id_persona}})
+                return res.json({message: "La contraseña se ha cambiado"})
+            }
+            else{
+                return res.json({message: "La contraseña es incorrecta"})
+            }
+        }
+    }
 }
