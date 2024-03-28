@@ -6,11 +6,11 @@ export const GreenhouseRouter = Router ()
 //Obtener todos los invernaderos
 GreenhouseRouter.get('/', GreenhouseController.getAll)
 //Obtener un invernadero por id
-GreenhouseRouter.get('/:id',GreenhouseController.getById)
+// GreenhouseRouter.get('/:id',GreenhouseController.getById)
 //Crear un invernadero
 GreenhouseRouter.post('/', GreenhouseController.create)
 //Eliminar un invernadero
-GreenhouseRouter.delete('/:id',GreenhouseController.delete)
+// GreenhouseRouter.delete('/:id',GreenhouseController.delete)
 //Obtener los invernaderos por idAgricultor
 GreenhouseRouter.get('/farmer/:idFarmer', GreenhouseController.getGreenhouseByFarmer)
 //Actualizar un invernadero

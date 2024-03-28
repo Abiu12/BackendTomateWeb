@@ -55,14 +55,12 @@ export class GreenhouseModel{
             [idFarmer,name,typeGreenhouse,humidity,size,idGreenhouse]
         )
     }
-    static async delete(){
-
-    }
     static async getGreenhouseByIdFarmer({idFarmer}){
         const [greenhouses] = await connection.query(
             'select * from invernadero where id_agricultor = ?;',
             [idFarmer]
         )
         return greenhouses
-    } 
+    }
+
 }

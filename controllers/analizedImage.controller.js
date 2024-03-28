@@ -6,15 +6,6 @@ import { DiseaseModel } from "../models/disease.model.js"
 export class AnlizedImageController {
     static async getAll(req, res) { }
     static async getById(req, res) { }
-    static async create(req, res) {
-        // const {
-        //     numeroCama,
-        //     idInvernadero,
-        //     idCultivo
-        // } = req.body
-        // const result = await CamaModel.create({input:{numeroCama,idInvernadero,idCultivo}})
-        // res.json({message:'Cama creada'})
-    }
     static async update(req, res) { }
     static async delete(req, res) { }
     static async getAnalizedImageByBed(req, res) {
@@ -59,5 +50,10 @@ export class AnlizedImageController {
         // Enviar el JSON de respuesta con los resultados
         res.json(results);
     }
-
+    static async getRecomendationsAndActionsByIdAnalizedImage(req,res){
+        const {idAnalizedImage} = req.params
+        //Obtener recomendaciones y acciones para lo detectado en la imagen
+        const recomendationsAndActions = await AnalizedImageModel.getRecomendationsAndActionsByIdAnalizedImage({idAnalizedImage})
+        res.json(recomendationsAndActions) 
+    }
 }

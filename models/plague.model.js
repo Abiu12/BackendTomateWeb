@@ -20,6 +20,13 @@ export class PlagueModel{
         )
         return plague[0]
     }
+    static async getIdByName({namePlague}){
+        const plague = await connection.query(
+            'select id_plaga from plaga where nombre = ?',[namePlague]
+        )
+        return plague[0][0].id_plaga
+    }
+
     static async create({input}){
         const {
             name,
@@ -36,5 +43,20 @@ export class PlagueModel{
     }
     static async update(){}
     static async delete(){}
-
+    static async getRecomendationsAndActionsPlagueByIdAnalizedImage({idAnalizedImage}){
+        const [recomendationsandactionsplague] = await connection.query(
+            `SELECT 
+            ia.*, 
+            p.*
+            FROM 
+                imagenanalizada ia
+            JOIN 
+                imagenanalizadaplaga iap ON ia.id_imagenanalizada = iap.id_imagenanalizada
+            JOIN 
+                plaga p ON iap.id_plaga = p.id_plaga
+            WHERE ia.id_imagenanalizada = ?;
+            `,[idAnalizedImage]
+        )
+        return recomendationsandactionsplague
+    }
 }

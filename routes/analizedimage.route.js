@@ -7,9 +7,11 @@ export const AnalizedImageRouter = Router ()
 AnalizedImageRouter.get('/', AnlizedImageController.getAll)
 //obtener una imagen analizada por id
 AnalizedImageRouter.get('/:id',AnlizedImageController.getById)
-//crear una imagen analizada
-AnalizedImageRouter.post('/', AnlizedImageController.create)
+// //crear una imagen analizada
+// AnalizedImageRouter.post('/', AnlizedImageController.create)
 //eliminar una imagen analizada
 AnalizedImageRouter.delete('/:id',AnlizedImageController.delete)
 //obtener las imagen analizadas de una cama
 AnalizedImageRouter.get('/greenhouse/bed/:idBed',AnlizedImageController.getAnalizedImageByBed)
+//Obtener recomendaciones y acciones de las enfermedades
+AnalizedImageRouter.get('/solutions/:idAnalizedImage',AnlizedImageController.getRecomendationsAndActionsByIdAnalizedImage)

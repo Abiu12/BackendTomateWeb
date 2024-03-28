@@ -12,23 +12,22 @@ export class AnalizedImagePlagueModel{
     static async getAll(){}
     static async getById(){}
     static async create({input}){
-        // const {
-        //     a,
-        //     a,
-            
-        // } = input
-        // const result = await connection.query(
-        //     'INSERT INTO cama (id_cama,numero_cama,id_invernadero,id_cultivo) values (NULL,?,?,?)',
-        //     [numeroCama,idInvernadero,idCultivo]
-        // )
-        // return result[0].insertId
+        const {
+            idAnalizedImage,idPlague
+        } = input
+        await connection.query(
+            `
+            INSERT INTO imagenanalizadaplaga (id_imagenanalizadaplaga,id_imagenanalizada,id_plaga) VALUES
+            (NULL,?,?)
+            `,[idAnalizedImage,idPlague]
+        )
     }
     static async update(){}
     static async delete(){}
-    static async getAnalizedImagePlagueByIdAnalizedImage({idAnalizedImage}){
-        const [analizedImagePlague] = await connection.query(
-            'select * from imagenanalizadaplaga where id_imagenanalizada = ?',[idAnalizedImage]
-            )
-        return analizedImagePlague
-    }
+    // static async getAnalizedImagePlagueByIdAnalizedImage({idAnalizedImage}){
+    //     const [analizedImagePlague] = await connection.query(
+    //         'select * from imagenanalizadaplaga where id_imagenanalizada = ?',[idAnalizedImage]
+    //         )
+    //     return analizedImagePlague
+    // }
 }

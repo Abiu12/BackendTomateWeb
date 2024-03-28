@@ -12,23 +12,22 @@ export class AnalyzedImageDiseaseModel{
     static async getAll(){}
     static async getById(){}
     static async create({input}){
-        // const {
-        //     a,
-        //     a,
-            
-        // } = input
-        // const result = await connection.query(
-        //     'INSERT INTO cama (id_cama,numero_cama,id_invernadero,id_cultivo) values (NULL,?,?,?)',
-        //     [numeroCama,idInvernadero,idCultivo]
-        // )
-        // return result[0].insertId
+        const {
+            idAnalizedImage,idDisease
+        } = input
+        await connection.query(
+            `
+            INSERT INTO imagenanalizadaenfermedad (id_imagenanalizadaenfermedad,id_imagenanalizada,id_enfermedad) VALUES
+            (NULL,?,?)
+            `,[idAnalizedImage,idDisease]
+        )
     }
     static async update(){}
     static async delete(){}
-    static async getAnalizedImageDiseaseByIdAnalizedImage({idAnalizedImage}){
-        const [analizedImageDisease] = await connection.query(
-            'select * from imagenanalizadaenfermedad where id_imagenanalizada = ?',[idAnalizedImage]
-            )
-        return analizedImageDisease
-    }
+    // static async getAnalizedImageDiseaseByIdAnalizedImage({idAnalizedImage}){
+    //     const [analizedImageDisease] = await connection.query(
+    //         'select * from imagenanalizadaenfermedad where id_imagenanalizada = ?',[idAnalizedImage]
+    //         )
+    //     return analizedImageDisease
+    // }
 }

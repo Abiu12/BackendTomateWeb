@@ -37,11 +37,41 @@ export class FarmerModel{
         )
         return result[0].insertId
     }
-    // static async delete ({idFarmer}){
-    //     const result = await connection.query(
-    //         'DELETE FROM agricultor WHERE id_agricultor=?',[id]
-    //     )
-    //     return result
-    // }
+    static async getNotifications({idFarmer}){
+        const [notifications] = await connection.query(
+            `SELECT 
+            ia.*,
+            a.id_agricultor,
+            i.nombre AS nombre_invernadero,
+            c.*,
+            CONCAT_WS(', ', 
+                GROUP_CONCAT(DISTINCT p.nombre), 
+                GROUP_CONCAT(DISTINCT e.nombre)
+            ) AS nombres_detectados
+        FROM 
+            agricultor a
+        JOIN 
+            invernadero i ON a.id_agricultor = i.id_agricultor
+        JOIN 
+            cama c ON i.id_invernadero = c.id_invernadero
+        JOIN 
+            imagenanalizada ia ON c.id_cama = ia.id_cama
+        LEFT JOIN 
+            imagenanalizadaenfermedad iae ON ia.id_imagenanalizada = iae.id_imagenanalizada
+        LEFT JOIN 
+            imagenanalizadaplaga iap ON ia.id_imagenanalizada = iap.id_imagenanalizada
+        LEFT JOIN 
+            plaga p ON iap.id_plaga = p.id_plaga
+        LEFT JOIN 
+            enfermedad e ON iae.id_enfermedad = e.id_enfermedad
+        WHERE 
+            a.id_agricultor = ?
+            AND ia.estado = 'Sin ver'
+        GROUP BY
+            ia.id_imagenanalizada;`,
+            [idFarmer]
+        )
+        return notifications
+    } 
     
 }

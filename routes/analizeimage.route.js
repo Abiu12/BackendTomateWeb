@@ -3,4 +3,4 @@ import { AnalizeImageController } from "../controllers/analizeimage.controller.j
 
 export const AnalizeImageRouter = Router ()
 
-AnalizeImageRouter.get('/:image',AnalizeImageController.detected)
+AnalizeImageRouter.post('/:idBed/:urlImage',AnalizeImageController.detected)

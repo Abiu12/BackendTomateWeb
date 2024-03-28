@@ -36,5 +36,26 @@ export class DiseaseModel{
     }
     static async update(){}
     static async delete(){}
-
+    static async getIdByName({nameDisease}){
+        const disease = await connection.query(
+            'select id_enfermedad from enfermedad where nombre = ?',[nameDisease]
+        )
+        return disease[0][0].id_enfermedad
+    }
+    static async getRecomendationsAndActionsDiseaseByIdAnalizedImage({idAnalizedImage}){
+        const [recomendationsandactionsdisease] = await connection.query(
+            `SELECT 
+            ia.*, 
+            e.*
+            FROM 
+                imagenanalizada ia
+            JOIN 
+                imagenanalizadaenfermedad iae ON ia.id_imagenanalizada = iae.id_imagenanalizada
+            JOIN 
+                enfermedad e ON iae.id_enfermedad = e.id_enfermedad
+            WHERE ia.id_imagenanalizada = ?;
+            `,[idAnalizedImage]
+        )
+        return recomendationsandactionsdisease
+    }
 }

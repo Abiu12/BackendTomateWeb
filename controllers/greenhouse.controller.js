@@ -5,9 +5,6 @@ export class GreenhouseController{
         const resultGreenhouses = await GreenhouseModel.getAll()
         return res.json(resultGreenhouses)
     }
-    static async getById(){
-
-    }
     static async create(req,res){
         const {
             idFarmer,
@@ -30,11 +27,11 @@ export class GreenhouseController{
         } = req.body
         const result = await GreenhouseModel.update({input:{idGreenhouse,idFarmer,name,typeGreenhouse,humidity,size}})
         res.json({message:"Invernadero actualizado"})
-    }
-    static async delete (){}  
+    }  
     static async getGreenhouseByFarmer(req,res){
         const {idFarmer} = req.params
         const greenhouses = await GreenhouseModel.getGreenhouseByIdFarmer({idFarmer})
         res.json(greenhouses) 
-    }  
+    }
+    
 }

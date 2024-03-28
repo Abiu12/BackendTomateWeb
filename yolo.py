@@ -2,8 +2,8 @@ import sys
 from ultralytics import YOLO
 import cv2
 import json
-input_path = 'mildiu2.jpg'
-output_path = 'prueba5.jpg'
+input_path = 'colage.jpg'
+output_path = 'detectadaprueba.jpg'
 # input_path = sys.argv[1]
 # output_path = sys.argv[2]
 model = YOLO('bestplagas.pt')

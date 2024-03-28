@@ -13,7 +13,6 @@ app.use(express.json())
 app.disable('x-powered-by')
 
 const port = 3000
-app.use('/image',AnalizeImageRouter)
 app.use('/farmer',FarmerRouter)
 app.use('/worker',WorkerRouter)
 app.use('/greenhouse',GreenhouseRouter)
@@ -21,4 +20,5 @@ app.use('/bed',BedRouter)
 app.use('/analizedImage',AnalizedImageRouter)
 app.use('/disease',DiseaseRouter)
 app.use('/plague',PlagueRouter)
+app.use('/analyzeimage',AnalizeImageRouter)
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
