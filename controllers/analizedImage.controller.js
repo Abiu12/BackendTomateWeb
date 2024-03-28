@@ -56,4 +56,9 @@ export class AnlizedImageController {
         const recomendationsAndActions = await AnalizedImageModel.getRecomendationsAndActionsByIdAnalizedImage({idAnalizedImage})
         res.json(recomendationsAndActions) 
     }
+    static async updateStatusAnalizedImage(req,res){
+        const{idAnalizedImage} = req.params
+        await AnalizedImageModel.updateStatusAnalizedImage({idAnalizedImage})
+        res.json({message:"Estado actualizado"})
+    }
 }

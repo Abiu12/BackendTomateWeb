@@ -8,7 +8,7 @@ import { AnalyzedImageDiseaseModel } from '../models/analizedimagedisease.model.
 export class AnalizeImageController {
     static async detected(req, res) {
         const { urlImage, idBed } = req.params;
-        const detection = await AnalizeImageController.holaMundo();
+        const detection = await AnalizeImageController.script(urlImage);
         const resultDeteccion = AnalizeImageController.filterDetection(detection)
         //si detecto algo lo registramos
         if (resultDeteccion.names.length > 0) {
@@ -52,11 +52,11 @@ export class AnalizeImageController {
             return detection;
         }
     }
-    static holaMundo() {
+    static script(urlImage) {
         return new Promise((resolve, reject) => {
             let datos = ''
             // Comando para ejecutar el script de Python
-            const pythonProcess = spawn('python', ['yolo.py']);
+            const pythonProcess = spawn('python', ['yolo.py',urlImage]);
             // Capturar la salida del proceso
             pythonProcess.stdout.on('data', (data) => {
                 datos += data.toString(); // Recopilar los datos en una variable

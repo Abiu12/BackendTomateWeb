@@ -62,4 +62,12 @@ export class AnalizedImageModel{
         )
         return recomendationsAndActions
     }
+    static async updateStatusAnalizedImage({idAnalizedImage}){
+        await connection.query(
+            `UPDATE imagenanalizada
+            SET estado = 'Tratada'
+            WHERE id_imagenanalizada = ?
+            `, [idAnalizedImage]
+            ) 
+    }
 }
