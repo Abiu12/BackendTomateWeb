@@ -37,7 +37,8 @@ export class FarmerModel{
         )
         return result[0].insertId
     }
-    static async getNotifications({idFarmer}){
+    static async getNotificationsByStatus({input}){
+        const {idFarmer,status} = input
         const [notifications] = await connection.query(
             `SELECT 
             ia.*,
@@ -66,10 +67,10 @@ export class FarmerModel{
             enfermedad e ON iae.id_enfermedad = e.id_enfermedad
         WHERE 
             a.id_agricultor = ?
-            AND ia.estado = 'Sin ver'
+            AND ia.estado = ?
         GROUP BY
             ia.id_imagenanalizada;`,
-            [idFarmer]
+            [idFarmer,status]
         )
         return notifications
     } 

@@ -18,4 +18,4 @@ FarmerRouter.get('/getworkers/:idFarmer',FarmerController.getWorkersByIdFarmer)
 //Cambiar contraseña de agricultor
 FarmerRouter.patch('/changepassword/:idFarmer',FarmerController.changePassword)
 //Obtener notificaciones de un agricultor
-FarmerRouter.get('/getnotifications/:idFarmer',FarmerController.getNotifications)
+FarmerRouter.get('/getnotifications/:idFarmer/:status',FarmerController.getNotificationsByStatus)

@@ -11,13 +11,13 @@ const connection = await mysql.createConnection(config);
 export class AnalizedImageModel{
     static async create({input}){
         const{
-            date,idBed,status
+            date,idBed,status,image
         } = input
         const result = await connection.query(
             `
-            INSERT INTO imagenanalizada (id_imagenanalizada,fecha,id_cama,estado)
-            VALUES (NULL,?,?,?)
-            `, [date,idBed,status]
+            INSERT INTO imagenanalizada (id_imagenanalizada,fecha,id_cama,estado,imagen)
+            VALUES (NULL,?,?,?,?)
+            `, [date,idBed,status,image]
         )
         return result[0].insertId
     }
@@ -62,12 +62,20 @@ export class AnalizedImageModel{
         )
         return recomendationsAndActions
     }
-    static async updateStatusAnalizedImage({idAnalizedImage}){
+    static async updateStatusAnalizedImage({input}){
+        const{idAnalizedImage,status} = input
         await connection.query(
             `UPDATE imagenanalizada
-            SET estado = 'Tratada'
+            SET estado = ?
             WHERE id_imagenanalizada = ?
-            `, [idAnalizedImage]
+            `, [status,idAnalizedImage]
             ) 
+    }
+    static async getAnalizedImageByStatus({status}){
+        const [analizedImages] = connection.query(
+            `
+            
+            `
+        )
     }
 }

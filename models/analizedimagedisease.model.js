@@ -24,10 +24,10 @@ export class AnalyzedImageDiseaseModel{
     }
     static async update(){}
     static async delete(){}
-    // static async getAnalizedImageDiseaseByIdAnalizedImage({idAnalizedImage}){
-    //     const [analizedImageDisease] = await connection.query(
-    //         'select * from imagenanalizadaenfermedad where id_imagenanalizada = ?',[idAnalizedImage]
-    //         )
-    //     return analizedImageDisease
-    // }
+    static async getAnalizedImageDiseaseByIdAnalizedImage({idAnalizedImage}){
+        const [analizedImageDisease] = await connection.query(
+            'select * from imagenanalizadaenfermedad where id_imagenanalizada = ?',[idAnalizedImage]
+            )
+        return analizedImageDisease
+    }
 }

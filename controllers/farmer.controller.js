@@ -119,9 +119,9 @@ export class FarmerController {
             }
         }
     }
-    static async getNotifications(req, res) {
-        const { idFarmer } = req.params
-        const notifications = await FarmerModel.getNotifications({idFarmer})
+    static async getNotificationsByStatus(req, res) {
+        const { idFarmer,status } = req.params
+        const notifications = await FarmerModel.getNotificationsByStatus({input:{idFarmer,status}})
         res.json(notifications)
     }
 }

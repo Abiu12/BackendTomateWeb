@@ -24,10 +24,10 @@ export class AnalizedImagePlagueModel{
     }
     static async update(){}
     static async delete(){}
-    // static async getAnalizedImagePlagueByIdAnalizedImage({idAnalizedImage}){
-    //     const [analizedImagePlague] = await connection.query(
-    //         'select * from imagenanalizadaplaga where id_imagenanalizada = ?',[idAnalizedImage]
-    //         )
-    //     return analizedImagePlague
-    // }
+    static async getAnalizedImagePlagueByIdAnalizedImage({idAnalizedImage}){
+        const [analizedImagePlague] = await connection.query(
+            'select * from imagenanalizadaplaga where id_imagenanalizada = ?',[idAnalizedImage]
+            )
+        return analizedImagePlague
+    }
 }

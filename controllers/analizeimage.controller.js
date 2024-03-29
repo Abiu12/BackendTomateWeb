@@ -1,21 +1,24 @@
 import { spawn } from 'child_process';
+
 import { AnalizedImageModel } from '../models/analyzedimage.model.js';
 import { PlagueModel } from '../models/plague.model.js';
 import { AnalizedImagePlagueModel } from '../models/analizedimageplague.model.js';
 import { DiseaseModel } from '../models/disease.model.js';
 import { AnalyzedImageDiseaseModel } from '../models/analizedimagedisease.model.js';
+import {readFile} from 'fs/promises'
 
 export class AnalizeImageController {
     static async detected(req, res) {
         const { urlImage, idBed } = req.params;
         const detection = await AnalizeImageController.script(urlImage);
         const resultDeteccion = AnalizeImageController.filterDetection(detection)
+        const image = await readFile(resultDeteccion.output_path);
         //si detecto algo lo registramos
         if (resultDeteccion.names.length > 0) {
             const date = new Date();
             const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
             //Obtenemos id de la imagen creada
-            const idAnalizedImage = await AnalizedImageModel.create({ input: { urlImage, idBed, date: formattedDate, status: "Sin ver" } })
+            const idAnalizedImage = await AnalizedImageModel.create({ input: { urlImage, idBed, date: formattedDate, status: "Sin ver",image } })
             //De lo detectado registramos en las tablas de plagas y enfermedades 
             for(const name of resultDeteccion.names){
                 var id = 0

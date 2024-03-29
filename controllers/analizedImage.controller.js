@@ -42,7 +42,8 @@ export class AnlizedImageController {
                     plagues: namesPlagues,
                     diseases: namesDiseases
                 },
-                date: image.fecha
+                date: image.fecha,
+                image: image.imagen
             };
             // Agregar la información de esta imagen analizada al array de resultados
             results.push(informationImage);
@@ -58,7 +59,9 @@ export class AnlizedImageController {
     }
     static async updateStatusAnalizedImage(req,res){
         const{idAnalizedImage} = req.params
-        await AnalizedImageModel.updateStatusAnalizedImage({idAnalizedImage})
+        const{status} = req.body
+        await AnalizedImageModel.updateStatusAnalizedImage({input:{idAnalizedImage,status}})
         res.json({message:"Estado actualizado"})
     }
+    
 }
