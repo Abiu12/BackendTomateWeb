@@ -11,58 +11,86 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class GreenhouseModel{
-    static async getAll(){
-        const [greenhouses] = await connection.query(
-        `SELECT i.*, CONCAT(p.nombre, ' ', p.primer_apellido, ' ', p.segundo_apellido) AS nombre_agricultor
-            FROM invernadero i
-            JOIN agricultor a ON i.id_agricultor = a.id_agricultor
-            JOIN persona p ON a.id_persona = p.id_persona;`
-        )
-        return greenhouses
+    static async getAll() {
+        try {
+            const [greenhouses] = await connection.query(
+                `SELECT i.*, CONCAT(p.nombre, ' ', p.primer_apellido, ' ', p.segundo_apellido) AS nombre_agricultor
+                FROM invernadero i
+                JOIN agricultor a ON i.id_agricultor = a.id_agricultor
+                JOIN persona p ON a.id_persona = p.id_persona;`
+            );
+            return greenhouses;
+        } catch (error) {
+            throw new Error("Error al obtener todos los invernaderos desde la base de datos");
+        }
     }
-    static async getById({idGreenhouse}){
-        const greenhouse = await connection.query(
-            'select * from invernadero where id_invernadero=?',
-            [idGreenhouse]
-        )
-        return greenhouse[0]
+    
+    static async getById({ idGreenhouse }) {
+        try {
+            const [greenhouse] = await connection.query(
+                'SELECT * FROM invernadero WHERE id_invernadero = ?',
+                [idGreenhouse]
+            );
+            return greenhouse[0];
+        } catch (error) {
+            throw new Error("Error al obtener el invernadero desde la base de datos");
+        }
     }
-    static async create({input}){
-        const {
-            idFarmer,
-            name,
-            typeGreenhouse,
-            humidity,
-            size
-        } = input
-        const result = await connection.query(
-            'INSERT INTO invernadero (id_invernadero,id_agricultor,nombre,tipo_invernadero,humedad,tamanio) values (NULL,?,?,?,?,?)',
-            [idFarmer,name,typeGreenhouse,humidity,size]
-        )
-        return result[0].insertId
+    
+    static async create({ input }) {
+        try {
+            const {
+                idFarmer,
+                name,
+                typeGreenhouse,
+                humidity,
+                size
+            } = input;
+    
+            const result = await connection.query(
+                'INSERT INTO invernadero (id_invernadero, id_agricultor, nombre, tipo_invernadero, humedad, tamanio) VALUES (NULL, ?, ?, ?, ?, ?)',
+                [idFarmer, name, typeGreenhouse, humidity, size]
+            );
+    
+            return result[0].insertId;
+        } catch (error) {
+            throw new Error("Error al crear el invernadero en la base de datos");
+        }
     }
-    static async update({input}){
-        const{
-            idGreenhouse,
-            idFarmer,
-            name,
-            typeGreenhouse,
-            humidity,
-            size
-        } = input
-        await connection.query(
-            `UPDATE invernadero
-            SET id_agricultor = ?, nombre = ?, tipo_invernadero = ?, humedad = ?, tamanio = ?
-            WHERE id_invernadero = ?;`,
-            [idFarmer,name,typeGreenhouse,humidity,size,idGreenhouse]
-        )
+    
+    static async update({ input }) {
+        try {
+            const {
+                idGreenhouse,
+                idFarmer,
+                name,
+                typeGreenhouse,
+                humidity,
+                size
+            } = input;
+    
+            await connection.query(
+                `UPDATE invernadero
+                SET id_agricultor = ?, nombre = ?, tipo_invernadero = ?, humedad = ?, tamanio = ?
+                WHERE id_invernadero = ?;`,
+                [idFarmer, name, typeGreenhouse, humidity, size, idGreenhouse]
+            );
+        } catch (error) {
+            throw new Error("Error al actualizar el invernadero en la base de datos");
+        }
     }
-    static async getGreenhouseByIdFarmer({idFarmer}){
-        const [greenhouses] = await connection.query(
-            'select * from invernadero where id_agricultor = ?;',
-            [idFarmer]
-        )
-        return greenhouses
+    
+    static async getGreenhouseByIdFarmer({ idFarmer }) {
+        try {
+            const [greenhouses] = await connection.query(
+                'SELECT * FROM invernadero WHERE id_agricultor = ?;',
+                [idFarmer]
+            );
+            return greenhouses;
+        } catch (error) {
+            throw new Error("Error al obtener los invernaderos por ID de agricultor desde la base de datos");
+        }
     }
+    
 
 }

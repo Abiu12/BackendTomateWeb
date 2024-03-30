@@ -12,52 +12,68 @@ const connection = await mysql.createConnection(config);
 
 export class UserModel{
     
-    static async create({input}){
-        const {
-            nameUser,
-            password,
-            role,
-            idPerson
-        } = input
-        const result = await connection.query(
-            'INSERT INTO usuario(id_usuario,nombre_usuario,contrasenia,rol,id_persona) VALUES (NULL,?,?,?,?)',
-            [nameUser,password,role,idPerson]
-        )
-        return result
+    static async create({ input }) {
+        try {
+            const {
+                nameUser,
+                password,
+                role,
+                idPerson
+            } = input;
+            const result = await connection.query(
+                'INSERT INTO usuario(id_usuario, nombre_usuario, contrasenia, rol, id_persona) VALUES (NULL, ?, ?, ?, ?)',
+                [nameUser, password, role, idPerson]
+            );
+            return result;
+        } catch (error) {
+            throw new Error("Error al crear el usuario en la base de datos");
+        }
     }
-    static async update({input}){
-        const {
-            idPerson,
-            nameUser,
-            password,
-        } = input
-        await connection.query(
-            `UPDATE usuario
-            SET nombre_usuario = ?, contrasenia = ?
-            WHERE id_persona = ?;
-            `,
-            [nameUser,password,idPerson]
-        )
+    
+    static async update({ input }) {
+        try {
+            const {
+                idPerson,
+                nameUser,
+                password,
+            } = input;
+            await connection.query(
+                `UPDATE usuario
+                SET nombre_usuario = ?, contrasenia = ?
+                WHERE id_persona = ?;
+                `,
+                [nameUser, password, idPerson]
+            );
+        } catch (error) {
+            throw new Error("Error al actualizar el usuario en la base de datos");
+        }
     }
-    static async changePassword({input}){
-        const {newPassword,idPerson} = input
-        await connection.query(
-            `UPDATE usuario
-            SET contrasenia = ?
-            WHERE id_persona = ?
-            `,[newPassword,idPerson]
-        )
-        
+    
+    static async changePassword({ input }) {
+        try {
+            const { newPassword, idPerson } = input;
+            await connection.query(
+                `UPDATE usuario
+                SET contrasenia = ?
+                WHERE id_persona = ?
+                `,
+                [newPassword, idPerson]
+            );
+        } catch (error) {
+            throw new Error("Error al cambiar la contraseña del usuario en la base de datos");
+        }
     }
-
-    static async delete({idPerson}){
-
+    
+    static async getByIdPerson({ idPerson }) {
+        try {
+            const user = await connection.query(
+                'SELECT * FROM usuario WHERE id_persona = ?',
+                [idPerson]
+            );
+            return user[0][0];
+        } catch (error) {
+            throw new Error("Error al obtener el usuario por ID de persona desde la base de datos");
+        }
     }
-    static async getByIdPerson({idPerson}){
-        const user = await connection.query(
-            'select * from usuario where id_persona=?',
-            [idPerson]
-        )
-        return user[0][0]
-    }
+    
 }

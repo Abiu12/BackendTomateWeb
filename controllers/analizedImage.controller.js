@@ -28,7 +28,7 @@ export class AnlizedImageController {
             for (const disease of idDiseases){
                 const idDisease = disease.id_enfermedad
                 const nameDisease = await DiseaseModel.getById({idDisease})
-                namesDiseases.push(nameDisease[0].nombre)
+                namesDiseases.push(nameDisease.nombre)
             }
             
             // Construir la información para esta imagen analizada
