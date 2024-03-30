@@ -1,23 +1,25 @@
 import { DiseaseModel } from "../models/disease.model.js"
 export class DiseaseController{
-    static async getAll(req,res){
-        const result = await DiseaseModel.getAll()
-        if(result) return res.json(result)
-        res.json({message:"No se encontraron enfermedades"})
+    static async getAll(req, res) {
+        try {
+            const result = await DiseaseModel.getAll();
+            if (result.length > 0) {
+                return res.json(result);
+            }
+            res.status(404).json({ message: "No se encontraron enfermedades" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
     }
-    static async getById(req,res){}
-    static async create(req,res){
-        const {
-            name,
-            nameScientific,
-            recommendations,
-            actions
-        } = req.body
-        const result = await DiseaseModel.create({input:{name,nameScientific,recommendations,actions}})
-        res.json({message: "Enfermedad registrada"})
-    }
-    static async update(req,res){}
-    static async delete(req,res){}
     
+    static async create(req, res) {
+        try {
+            const { name, nameScientific, recommendations, actions } = req.body;
+            const result = await DiseaseModel.create({ input: { name, nameScientific, recommendations, actions } });
+            res.json({ message: "Enfermedad registrada" });
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
     
 }
