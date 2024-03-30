@@ -1,13 +1,14 @@
-import mysql2 from 'mysql2/promise'
+import mysql from 'mysql2/promise'
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
 const config = {
-    host : 'localhost',
-    user : 'root',
-    port : 3306,
-    password: 'elchidoabiu10',
-    database: 'residencia'
-}
-
-const connection = await mysql2.createConnection(config)
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    port: process.env.DB_PORT,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
+};
+const connection = await mysql.createConnection(config);
 
 export class PersonModel{
     static async create({input}){

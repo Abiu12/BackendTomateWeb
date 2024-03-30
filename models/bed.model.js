@@ -1,45 +1,52 @@
 import mysql from 'mysql2/promise'
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
 const config = {
-    host: 'localhost',
-    user: 'root',
-    port: 3306,
-    password: 'elchidoabiu10',
-    database: 'residencia'
-}
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    port: process.env.DB_PORT,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
+};
 const connection = await mysql.createConnection(config);
 
 export class BedModel{
-    static async getAll(){}
-    static async getById(){}
-    static async create({input}){
-        const {
-            numberBed,
-            typeCrop,
-            idGreenhouse,
-        } = input
-        const result = await connection.query(
-            'INSERT INTO cama (id_cama,numero_cama,tipo_cultivo,id_invernadero) values (NULL,?,?,?)',
-            [numberBed,typeCrop,idGreenhouse]
-        )
-        return result[0].insertId
+    static async create({ input }) {
+        try {
+            const { numberBed, typeCrop, idGreenhouse } = input;
+            const result = await connection.query(
+                'INSERT INTO cama (id_cama,numero_cama,tipo_cultivo,id_invernadero) values (NULL,?,?,?)',
+                [numberBed, typeCrop, idGreenhouse]
+            );
+            return result[0].insertId;
+        } catch (error) {
+            throw new Error("Error al crear la cama en la base de datos");
+        }
     }
-    static async update({input}){
-        const {
-            idBed,numberBed,typeCrop,idGreenhouse
-        } = input
-        await connection.query(
-            `UPDATE cama
-            SET numero_cama = ?,tipo_cultivo = ?, id_invernadero = ?
-            WHERE id_cama = ?;
-            `,
-            [numberBed,typeCrop,idGreenhouse,idBed]
-        )
+    static async update({ input }) {
+        try {
+            const { idBed, numberBed, typeCrop, idGreenhouse } = input;
+            await connection.query(
+                `UPDATE cama
+                SET numero_cama = ?, tipo_cultivo = ?, id_invernadero = ?
+                WHERE id_cama = ?;
+                `,
+                [numberBed, typeCrop, idGreenhouse, idBed]
+            );
+        } catch (error) {
+            throw new Error("Error al actualizar la cama en la base de datos");
+        }
     }
-    static async delete(){}
-    static async getBedByGreenhouse({idGreenhouse}){
-        const [greenhouses] = await connection.query(
-            'select * from cama where id_invernadero = ?',[idGreenhouse]
-            )
-        return greenhouses
+    static async getBedByGreenhouse({ idGreenhouse }) {
+        try {
+            const [beds] = await connection.query(
+                'SELECT * FROM cama WHERE id_invernadero = ?',
+                [idGreenhouse]
+            );
+            return beds;
+        } catch (error) {
+            throw new Error("Error al obtener las camas asociadas al invernadero desde la base de datos");
+        }
     }
+    
 }

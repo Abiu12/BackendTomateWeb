@@ -4,10 +4,6 @@ import { AnalyzedImageDiseaseModel } from "../models/analizedimagedisease.model.
 import { PlagueModel } from "../models/plague.model.js"
 import { DiseaseModel } from "../models/disease.model.js"
 export class AnlizedImageController {
-    static async getAll(req, res) { }
-    static async getById(req, res) { }
-    static async update(req, res) { }
-    static async delete(req, res) { }
     static async getAnalizedImageByBed(req, res) {
         const { idBed } = req.params
         //Obtener todas las imagenes analizadas asociadas a la cama

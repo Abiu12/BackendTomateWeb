@@ -1,61 +1,95 @@
 import mysql from 'mysql2/promise'
+import { config as dotenvConfig } from 'dotenv';
+dotenvConfig();
 const config = {
-    host: 'localhost',
-    user: 'root',
-    port: 3306,
-    password: 'elchidoabiu10',
-    database: 'residencia'
-}
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    port: process.env.DB_PORT,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE
+};
 const connection = await mysql.createConnection(config);
 
 export class DiseaseModel{
-    static async getAll(){
-        const [diseases] = await connection.query(
-            'select * from enfermedad ')
-        return diseases
+    static async getAll() {
+        try {
+            const [diseases] = await connection.query(
+                'SELECT * FROM enfermedad'
+            );
+            return diseases;
+        } catch (error) {
+            throw new Error("Error al obtener todas las enfermedades desde la base de datos");
+        }
     }
-    static async getById({idDisease}){
-        const disease = await connection.query(
-            'select * from enfermedad where id_enfermedad = ?',[idDisease]
-        )
-        return disease[0]
+    
+    static async getById({ idDisease }) {
+        try {
+            const [disease] = await connection.query(
+                'SELECT * FROM enfermedad WHERE id_enfermedad = ?',
+                [idDisease]
+            );
+            return disease[0];
+        } catch (error) {
+            throw new Error("Error al obtener la enfermedad desde la base de datos");
+        }
     }
-    static async create({input}){
-        const {
-            name,
-            nameScientific,
-            recommendations,
-            actions
-        } = input
-       
-        const result = await connection.query(
-            'INSERT INTO enfermedad (id_enfermedad,nombre,nombre_cientifico,recomendaciones,acciones) values (NULL,?,?,?,?)',
-            [name,nameScientific,recommendations,actions]
-        )
-        return result[0].insertId
+    
+    static async create({ input }) {
+        try {
+            const {
+                name,
+                nameScientific,
+                recommendations,
+                actions
+            } = input;
+    
+            const result = await connection.query(
+                'INSERT INTO enfermedad (id_enfermedad, nombre, nombre_cientifico, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?)',
+                [name, nameScientific, recommendations, actions]
+            );
+            
+            return result[0].insertId;
+        } catch (error) {
+            throw new Error("Error al crear la enfermedad en la base de datos");
+        }
     }
-    static async update(){}
-    static async delete(){}
-    static async getIdByName({nameDisease}){
-        const disease = await connection.query(
-            'select id_enfermedad from enfermedad where nombre = ?',[nameDisease]
-        )
-        return disease[0][0].id_enfermedad
+    
+    static async getIdByName({ nameDisease }) {
+        try {
+            const disease = await connection.query(
+                'SELECT id_enfermedad FROM enfermedad WHERE nombre = ?',
+                [nameDisease]
+            );
+            if (disease[0].length > 0) {
+                return disease[0][0].id_enfermedad;
+            } else {
+                throw new Error("La enfermedad no fue encontrada en la base de datos");
+            }
+        } catch (error) {
+            throw new Error("Error al obtener el ID de la enfermedad desde la base de datos");
+        }
     }
-    static async getRecomendationsAndActionsDiseaseByIdAnalizedImage({idAnalizedImage}){
-        const [recomendationsandactionsdisease] = await connection.query(
-            `SELECT 
-            ia.*, 
-            e.*
-            FROM 
-                imagenanalizada ia
-            JOIN 
-                imagenanalizadaenfermedad iae ON ia.id_imagenanalizada = iae.id_imagenanalizada
-            JOIN 
-                enfermedad e ON iae.id_enfermedad = e.id_enfermedad
-            WHERE ia.id_imagenanalizada = ?;
-            `,[idAnalizedImage]
-        )
-        return recomendationsandactionsdisease
+    
+    static async getRecomendationsAndActionsDiseaseByIdAnalizedImage({ idAnalizedImage }) {
+        try {
+            const [recomendationsandactionsdisease] = await connection.query(
+                `SELECT 
+                    ia.*, 
+                    e.*
+                FROM 
+                    imagenanalizada ia
+                JOIN 
+                    imagenanalizadaenfermedad iae ON ia.id_imagenanalizada = iae.id_imagenanalizada
+                JOIN 
+                    enfermedad e ON iae.id_enfermedad = e.id_enfermedad
+                WHERE ia.id_imagenanalizada = ?;
+                `,
+                [idAnalizedImage]
+            );
+            return recomendationsandactionsdisease;
+        } catch (error) {
+            throw new Error("Error al obtener las recomendaciones y acciones de la enfermedad asociada a la imagen analizada desde la base de datos");
+        }
     }
+    
 }
