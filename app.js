@@ -7,6 +7,7 @@ import { BedRouter } from './routes/bed.route.js'
 import { AnalizedImageRouter } from './routes/analizedimage.route.js'
 import { DiseaseRouter } from './routes/disease.route.js'
 import { PlagueRouter } from './routes/plague.route.js'
+import { ReportRouter } from './routes/report.route.js'
 const app = express()
 app.use(express.json())
 
@@ -21,4 +22,5 @@ app.use('/analizedImage',AnalizedImageRouter)
 app.use('/disease',DiseaseRouter)
 app.use('/plague',PlagueRouter)
 app.use('/analyzeimage',AnalizeImageRouter)
+app.use('/report',ReportRouter)
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
