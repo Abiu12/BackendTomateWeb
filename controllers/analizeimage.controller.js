@@ -5,36 +5,40 @@ import { PlagueModel } from '../models/plague.model.js';
 import { AnalizedImagePlagueModel } from '../models/analizedimageplague.model.js';
 import { DiseaseModel } from '../models/disease.model.js';
 import { AnalyzedImageDiseaseModel } from '../models/analizedimagedisease.model.js';
-import {readFile} from 'fs/promises'
+import { readFile,unlink } from 'fs/promises'
 
 export class AnalizeImageController {
     static async detected(req, res) {
-        const { urlImage, idBed } = req.params;
+        const imageFile = req.file;
+        const { idBed } = req.params;
+        const urlImage = imageFile.path;
+        // const urlImage = "C:/Users/calle/OneDrive/Escritorio/Abiu/Residencia/App web/BackendTomateWeb/uploads/1a883c56474cb176994b4a926e1e76f3"
         const detection = await AnalizeImageController.script(urlImage);
         const resultDeteccion = AnalizeImageController.filterDetection(detection)
-        const image = await readFile(resultDeteccion.output_path);
+        // Después de usar la imagen, elimínala del sistema de archivos
+        await unlink(urlImage);
         //si detecto algo lo registramos
         if (resultDeteccion.names.length > 0) {
             const date = new Date();
             const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
             //Obtenemos id de la imagen creada
-            const idAnalizedImage = await AnalizedImageModel.create({ input: { urlImage, idBed, date: formattedDate, status: "Sin ver",image } })
+            const idAnalizedImage = await AnalizedImageModel.create({ input: { urlImage, idBed, date: formattedDate, status: "Sin ver" } })
             //De lo detectado registramos en las tablas de plagas y enfermedades 
-            for(const name of resultDeteccion.names){
+            for (const name of resultDeteccion.names) {
                 var id = 0
-                if(name == "Araña roja" || name == "Mosca blanca" ){
-                    id = await PlagueModel.getIdByName({namePlague:name})
-                    await AnalizedImagePlagueModel.create({input:{idAnalizedImage,idPlague:id}})
+                if (name == "Araña roja" || name == "Mosca blanca") {
+                    id = await PlagueModel.getIdByName({ namePlague: name })
+                    await AnalizedImagePlagueModel.create({ input: { idAnalizedImage, idPlague: id } })
                 }
-                if(name == "Alternariosis" || name == "Botritis" || name == "Mildiu del tomate" || name == "Oídio"){
-                    id = await DiseaseModel.getIdByName({nameDisease:name})
-                    await AnalyzedImageDiseaseModel.create({input:{idAnalizedImage,idDisease:id}})
+                if (name == "Alternariosis" || name == "Botritis" || name == "Mildiu del tomate" || name == "Oídio") {
+                    id = await DiseaseModel.getIdByName({ nameDisease: name })
+                    await AnalyzedImageDiseaseModel.create({ input: { idAnalizedImage, idDisease: id } })
                 }
             }
             //Generar la notificación.
-            return res.json({message:"Proceso realizado correctamente, espere su notificación"})
+            return res.json({ message: "Imagen analizada correctamente, espere su notificación" })
         }
-        return res.json({message:"No se ha detectado nada en la imagen"})
+        return res.json({ message: "No se ha detectado nada en la imagen" })
     }
     static filterDetection(detection) {
         // Verificar si detection tiene la propiedad 'names' y es un arreglo
@@ -59,7 +63,7 @@ export class AnalizeImageController {
         return new Promise((resolve, reject) => {
             let datos = ''
             // Comando para ejecutar el script de Python
-            const pythonProcess = spawn('python', ['yolo.py',urlImage]);
+            const pythonProcess = spawn('python', ['yolo.py', urlImage]);
             // Capturar la salida del proceso
             pythonProcess.stdout.on('data', (data) => {
                 datos += data.toString(); // Recopilar los datos en una variable

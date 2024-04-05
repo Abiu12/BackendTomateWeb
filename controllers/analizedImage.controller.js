@@ -23,7 +23,7 @@ export class AnlizedImageController {
             for (const plague of idPlagues){
                 const idPlague = plague.id_plaga
                 const namePlaga = await PlagueModel.getById({idPlague})
-                namesPlagues.push(namePlaga[0].nombre)
+                namesPlagues.push(namePlaga.nombre)
             }
             for (const disease of idDiseases){
                 const idDisease = disease.id_enfermedad

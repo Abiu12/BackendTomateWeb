@@ -14,12 +14,12 @@ const connection = await mysql.createConnection(config);
 export class AnalizedImageModel{
     static async create({ input }) {
         try {
-            const { date, idBed, status, image } = input;
+            const { date, idBed, status } = input;
             const result = await connection.query(
                 `
-                INSERT INTO imagenanalizada (id_imagenanalizada, fecha, id_cama, estado, imagen)
-                VALUES (NULL,?,?,?,?)
-                `, [date, idBed, status, image]
+                INSERT INTO imagenanalizada (id_imagenanalizada, fecha, id_cama, estado)
+                VALUES (NULL,?,?,?)
+                `, [date, idBed, status]
             );
             return result[0].insertId;
         } catch (error) {
