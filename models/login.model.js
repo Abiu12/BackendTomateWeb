@@ -2,8 +2,9 @@ import mysql from 'mysql2/promise'
 import { config as dotenvConfig } from 'dotenv';
 
 
-import { createRequire } from 'node:module'
-const require = createRequire(import.meta.url)
+// import { createRequire } from 'node:module'
+// const require = createRequire(import.meta.url)
+import { require } from '../utils/require.js';
 const jwt = require('jsonwebtoken');
 
 dotenvConfig();
@@ -36,5 +37,13 @@ export class LoginModel {
         else{
             return []
         }
+    }
+    static async checkEmailExistence({input}){
+        const { email } = input
+        const response = await connection.query(
+            `SELECT * FROM persona WHERE correo_electronico = ?`,
+            [email]
+        )
+        return response
     }
 }
