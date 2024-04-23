@@ -30,7 +30,7 @@ export class LoginController {
               pass: process.env.MY_PASSWORD,
             },
           });
-      
+          
           const mailConfig = {
             from: process.env.MY_EMAIL,
             to: recipient_email,
@@ -71,6 +71,6 @@ export class LoginController {
             return resolve({ message: 'Email sent successfully' });
           });
         });
-        return res.send(response.message)
+        return res.json({message:response.message})
     }
 }
