@@ -32,5 +32,6 @@ app.use('/plague',PlagueRouter)
 app.use('/analyzeimage',upload.single('image'),AnalizeImageRouter)
 app.use('/report',ReportRouter)
 app.use('/login',LoginRouter)
+// app.use('/check_email_existence',)
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

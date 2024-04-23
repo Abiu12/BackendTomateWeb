@@ -26,12 +26,15 @@ export class LoginModel {
             'SELECT rol FROM usuario WHERE nombre_usuario = ? AND contrasenia = ?',
             [username, password]
         );
-        if (response.length > 0) {
+        if (response[0].length > 0) {
             const rolUsuario = response[0][0].rol;
             const token = jwt.sign({ username, rolUsuario }, "Stack", {
                 expiresIn: '50m'
             });
             return {response,token}
+        }
+        else{
+            return []
         }
     }
 }
