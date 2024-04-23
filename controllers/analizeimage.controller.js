@@ -5,9 +5,25 @@ import { PlagueModel } from '../models/plague.model.js';
 import { AnalizedImagePlagueModel } from '../models/analizedimageplague.model.js';
 import { DiseaseModel } from '../models/disease.model.js';
 import { AnalyzedImageDiseaseModel } from '../models/analizedimagedisease.model.js';
-import { readFile,unlink } from 'fs/promises'
+import { readFile, unlink } from 'fs/promises'
+
+// Firebase
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+
+import firebaseConfig from '../config/firebase.config.js';
+
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+const fs = require('fs')
+
+
 
 export class AnalizeImageController {
+    static async prueba() {
+
+    }
+
     static async detected(req, res) {
         const imageFile = req.file;
         const { idBed } = req.params;
@@ -19,10 +35,37 @@ export class AnalizeImageController {
         await unlink(urlImage);
         //si detecto algo lo registramos
         if (resultDeteccion.names.length > 0) {
+            const message = {
+                to: 'ExponentPushToken[BSTfylOk0JnQQUKaNZ3hlO]',
+                sound: 'default',
+                title: '¡Las plagas atacan tus tomates🥺!',
+                body: 'Picale acá para ver que se encontró en tu imagen',
+                data: { someData: 'Por fin' },
+            };
+            await fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Accept-encoding': 'gzip, deflate',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(message),
+            });
+
+            const storage = getStorage(firebaseConfig.appFirebase);
+            const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
+            const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
+            // Sube el blob al Storage
+            await uploadBytes(imageRef, imagenBuffer);
+            // Obtiene la URL de descarga de la imagen subida
+            const downloadURL = await getDownloadURL(imageRef);
+            console.log('URL de descarga:', downloadURL);
+
+
             const date = new Date();
             const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
             //Obtenemos id de la imagen creada
-            const idAnalizedImage = await AnalizedImageModel.create({ input: { urlImage, idBed, date: formattedDate, status: "Sin ver" } })
+            const idAnalizedImage = await AnalizedImageModel.create({ input: { path: downloadURL, idBed, date: formattedDate, status: "Sin ver" } })
             //De lo detectado registramos en las tablas de plagas y enfermedades 
             for (const name of resultDeteccion.names) {
                 var id = 0

@@ -1,6 +1,7 @@
 import express  from 'express'
 import cors from 'cors'
 import multer from 'multer'
+
 import { AnalizeImageRouter } from './routes/analizeimage.route.js'
 import { FarmerRouter } from './routes/farmer.route.js'
 import { WorkerRouter } from './routes/worker.route.js'
@@ -10,6 +11,7 @@ import { AnalizedImageRouter } from './routes/analizedimage.route.js'
 import { DiseaseRouter } from './routes/disease.route.js'
 import { PlagueRouter } from './routes/plague.route.js'
 import { ReportRouter } from './routes/report.route.js'
+import { LoginRouter } from './routes/login.router.js'
 const app = express()
 app.use(cors());
 app.use(express.json())
@@ -29,4 +31,6 @@ app.use('/disease',DiseaseRouter)
 app.use('/plague',PlagueRouter)
 app.use('/analyzeimage',upload.single('image'),AnalizeImageRouter)
 app.use('/report',ReportRouter)
+app.use('/login',LoginRouter)
+
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

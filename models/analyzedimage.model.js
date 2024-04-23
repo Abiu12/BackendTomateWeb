@@ -11,15 +11,15 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 
-export class AnalizedImageModel{
+export class AnalizedImageModel {
     static async create({ input }) {
         try {
-            const { date, idBed, status } = input;
+            const { path, date, idBed, status } = input;
             const result = await connection.query(
                 `
-                INSERT INTO imagenanalizada (id_imagenanalizada, fecha, id_cama, estado)
-                VALUES (NULL,?,?,?)
-                `, [date, idBed, status]
+                INSERT INTO imagenanalizada (id_imagenanalizada, fecha, id_cama, estado,imagen)
+                VALUES (NULL,?,?,?,?)
+                `, [date, idBed, status, path]
             );
             return result[0].insertId;
         } catch (error) {
@@ -37,7 +37,7 @@ export class AnalizedImageModel{
             throw new Error("Error al obtener las imágenes analizadas asociadas a la cama desde la base de datos");
         }
     }
-    
+
     static async getRecomendationsAndActionsByIdAnalizedImage({ idAnalizedImage }) {
         try {
             const [recomendationsAndActions] = await connection.query(
@@ -45,6 +45,7 @@ export class AnalizedImageModel{
                     ia.id_imagenanalizada,
                     'enfermedad' AS tipo,
                     e.nombre,
+                    e.nombre_cientifico,
                     e.recomendaciones,
                     e.acciones
                 FROM 
@@ -60,6 +61,7 @@ export class AnalizedImageModel{
                     ia.id_imagenanalizada,
                     'plaga' AS tipo,
                     p.nombre,
+                    p.nombre_cientifico,
                     p.recomendaciones,
                     p.acciones
                 FROM 
@@ -75,10 +77,10 @@ export class AnalizedImageModel{
             );
             return recomendationsAndActions;
         } catch (error) {
-            throw new Error("Error al obtener las recomendaciones y acciones asociadas a la imagen analizada desde la base de datos");
+            throw new Error("Error al obtener las recomendaciones y acciones asociadas a la imagen analizada desde la base de datos" + error);
         }
     }
-    
+
     static async updateStatusAnalizedImage({ input }) {
         try {
             const { idAnalizedImage, status } = input;

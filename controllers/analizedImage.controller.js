@@ -39,7 +39,8 @@ export class AnlizedImageController {
                     diseases: namesDiseases
                 },
                 date: image.fecha,
-                image: image.imagen
+                image: image.imagen,
+                status: image.estado
             };
             // Agregar la información de esta imagen analizada al array de resultados
             results.push(informationImage);

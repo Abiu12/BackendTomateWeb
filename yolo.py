@@ -97,16 +97,17 @@ import numpy as np
 from ultralytics import YOLO
 import json
 import time
+import os
 
 try:
     # Ruta de la imagen subida a través de Multer
     input_path = sys.argv[1]  # Ajusta la ruta según donde Multer guarde la imagen
-
+    # input_path = 'rotated_315_Botritis_52.jpg'
     # Decodificar la imagen utilizando OpenCV
     img = cv2.imread(input_path)
 
     # Crear instancia del modelo YOLO
-    model = YOLO('bestplagas.pt')
+    model = YOLO('best.pt')
 
     # Realizar predicción sobre la imagen
     pred = model.predict(img)[0]
@@ -123,10 +124,16 @@ try:
 
     # Guardar la imagen resultante
     cv2.imwrite(output_path, output_image)
+    # # Obtiene la ruta completa del directorio actual
+    current_directory = os.getcwd()
+    # # Concatena la ruta del directorio actual con el nombre del archivo de salida
+    full_output_path = os.path.join(current_directory, output_path)
+
 
     # Resultados
     resultados = {
-        "output_path": output_path,
+        "full_path": full_output_path,
+        "name_image":output_path,
         "names": names
     }
 

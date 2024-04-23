@@ -10,7 +10,7 @@ const config = {
 };
 const connection = await mysql.createConnection(config);
 
-export class PersonModel{
+export class PersonModel {
     static async create({ input }) {
         try {
             const {
@@ -20,18 +20,19 @@ export class PersonModel{
                 phone,
                 email
             } = input;
-    
+
             const result = await connection.query(
                 'INSERT INTO persona (id_persona, nombre, primer_apellido, segundo_apellido, telefono, correo_electronico, estado) VALUES (NULL, ?, ?, ?, ?, ?, ?)',
                 [name, surname, secondSurname, phone, email, 'activo']
             );
-    
-            return result[0].insertId;
+            
+
+                return result[0].insertId;
         } catch (error) {
             throw new Error("Error al crear la persona en la base de datos");
         }
     }
-    
+
     static async getById({ idPerson }) {
         try {
             const [person] = await connection.query(
@@ -46,7 +47,7 @@ export class PersonModel{
             throw new Error("Error al obtener la persona desde la base de datos");
         }
     }
-    
+
     static async delete({ idPerson }) {
         try {
             const result = await connection.query(
@@ -62,7 +63,7 @@ export class PersonModel{
             throw new Error("Error al eliminar la persona desde la base de datos");
         }
     }
-    
+
     static async update({ input }) {
         try {
             const {
@@ -73,7 +74,7 @@ export class PersonModel{
                 phone,
                 email
             } = input;
-    
+
             await connection.query(
                 `UPDATE persona
                 SET nombre = ?, primer_apellido = ?, segundo_apellido = ?, telefono = ?, correo_electronico = ?
@@ -84,5 +85,5 @@ export class PersonModel{
             throw new Error("Error al actualizar la persona en la base de datos");
         }
     }
-    
+
 }
