@@ -21,7 +21,6 @@ export class DiseaseModel {
             throw new Error("Error al obtener todas las enfermedades desde la base de datos");
         }
     }
-
     static async getById({ idDisease }) {
         try {
             const [disease] = await connection.query(
@@ -33,7 +32,6 @@ export class DiseaseModel {
             throw new Error("Error al obtener la enfermedad desde la base de datos");
         }
     }
-
     static async create({ input }) {
         try {
             const {
@@ -54,7 +52,6 @@ export class DiseaseModel {
             throw new Error("Error al crear la enfermedad en la base de datos");
         }
     }
-
     static async getIdByName({ nameDisease }) {
         try {
             const disease = await connection.query(
@@ -70,7 +67,6 @@ export class DiseaseModel {
             throw new Error("Error al obtener el ID de la enfermedad desde la base de datos");
         }
     }
-
     static async getRecomendationsAndActionsDiseaseByIdAnalizedImage({ idAnalizedImage }) {
         try {
             const [recomendationsandactionsdisease] = await connection.query(
@@ -93,17 +89,35 @@ export class DiseaseModel {
         }
     }
     static async update({ input }) {
-        const {
-            idDisease, name, nameScientific, recommendations, description, actions
-        } = input
-        const result = await connection.query(
-            `UPDATE enfermedad
+        try {
+            const {
+                idDisease, name, nameScientific, recommendations, description, actions
+            } = input
+            const result = await connection.query(
+                `UPDATE enfermedad
             SET nombre = ?, nombre_cientifico = ?, recomendaciones = ?, acciones = ?, descripcion = ?
             WHERE id_enfermedad = ?
             `,
-            [name,nameScientific,recommendations,description,actions,idDisease]
-        )
-        return result
+                [name, nameScientific, recommendations, description, actions, idDisease]
+            )
+            return result
+        } catch (error) {
+            throw new Error("Error al actualizar la enfermedad en la base de datos");
+        }
+    }
+    static async delete({ idDisease }) {
+        try {
+            const result = await connection.query(
+                `DELETE 
+            FROM enfermedad
+            WHERE id_enfermedad = ?
+            `,
+                [idDisease]
+            )
+            return result
+        } catch (error) {
+            throw new Error("Hubo un error al eliminar la enfermedad en la base de datos");
+        }
     }
 
 }

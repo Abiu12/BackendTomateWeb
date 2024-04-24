@@ -10,7 +10,7 @@ const config = {
 };
 const connection = await mysql.createConnection(config);
 
-export class PlagueModel{
+export class PlagueModel {
     static async getAll() {
         try {
             const [plagues] = await connection.query(
@@ -21,7 +21,6 @@ export class PlagueModel{
             throw new Error("Error al obtener todas las plagas desde la base de datos");
         }
     }
-    
     static async getById({ idPlague }) {
         try {
             const [plague] = await connection.query(
@@ -33,7 +32,6 @@ export class PlagueModel{
             throw new Error("Error al obtener la plaga desde la base de datos");
         }
     }
-    
     static async getIdByName({ namePlague }) {
         try {
             const plague = await connection.query(
@@ -45,8 +43,6 @@ export class PlagueModel{
             throw new Error("Error al obtener el ID de la plaga desde la base de datos");
         }
     }
-    
-
     static async create({ input }) {
         try {
             const {
@@ -55,18 +51,17 @@ export class PlagueModel{
                 recommendations,
                 actions
             } = input;
-    
+
             const result = await connection.query(
                 'INSERT INTO plaga (id_plaga, nombre, nombre_cientifico, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?)',
                 [name, nameScientific, recommendations, actions]
             );
-    
+
             return result[0].insertId;
         } catch (error) {
             throw new Error("Error al crear la plaga en la base de datos");
         }
     }
-    
     static async getRecomendationsAndActionsPlagueByIdAnalizedImage({ idAnalizedImage }) {
         try {
             const [recomendationsandactionsplague] = await connection.query(
@@ -88,5 +83,35 @@ export class PlagueModel{
             throw new Error("Error al obtener las recomendaciones y acciones de la plaga por ID de imagen analizada desde la base de datos");
         }
     }
-    
+    static async update({ input }) {
+        try {
+            const {
+                idPlague, name, nameScientific, recommendations, description, actions
+            } = input
+            const result = await connection.query(
+                `UPDATE plaga
+            SET nombre = ?, nombre_cientifico = ?, recomendaciones = ?, acciones = ?, descripcion = ?
+            WHERE id_plaga = ?
+            `,
+                [name, nameScientific, recommendations, description, actions, idPlague]
+            )
+            return result
+        } catch (error) {
+            throw new Error("Error al actualizar la plaga en la base de datos");
+        }
+    }
+    static async delete({ idPlague }) {
+        try {
+            const result = await connection.query(
+                `DELETE 
+            FROM plaga
+            WHERE id_plaga = ?
+            `,
+                [idPlague]
+            )
+            return result
+        } catch (error) {
+            throw new Error("Hubo un error al eliminar la plaga en la base de datos");
+        }
+    }
 }

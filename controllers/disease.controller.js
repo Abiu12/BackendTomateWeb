@@ -30,6 +30,15 @@ export class DiseaseController {
             res.status(500).json({ error: error.message });
         }
     }
-    static async delete(req,res){
+    static async delete(req, res) {
+        try {
+            const { idDisease } = req.params
+            const response = await DiseaseModel.delete({ idDisease })
+            if (response) return res.json({ message: "La enfermedad ha sido eliminada" })
+            return res.json({ message: "Hubo un problema al eliminar la enfermedad" })
+        } catch (error){
+            res.status(500).json({error: error.message})
+        }
     }
+    
 }

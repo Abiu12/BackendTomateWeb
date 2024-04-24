@@ -11,7 +11,6 @@ export class PlagueController{
             res.status(500).json({ error: error.message });
         }
     }
-    
     static async create(req, res){
         try {
             const {
@@ -24,6 +23,26 @@ export class PlagueController{
             res.json({ message: "Plaga registrada" });
         } catch (error) {
             res.status(500).json({ error: error.message });
+        }
+    }
+    static async update(req, res) {
+        try {
+            const { name, nameScientific, recommendations, description, actions } = req.body
+            const { idPlague } = req.params
+            const result = await PlagueModel.update({ input: { name, nameScientific, recommendations, description, actions, idPlague } });
+            if (result) return res.json({ message: "Plaga actualizada correctamente" })
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+    static async delete(req, res) {
+        try {
+            const { idPlague } = req.params
+            const response = await PlagueModel.delete({ idPlague })
+            if (response) return res.json({ message: "La plaga ha sido eliminada" })
+            return res.json({ message: "Hubo un problema al eliminar la plaga" })
+        } catch (error){
+            res.status(500).json({error: error.message})
         }
     }
     
