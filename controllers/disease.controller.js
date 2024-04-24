@@ -1,5 +1,5 @@
 import { DiseaseModel } from "../models/disease.model.js"
-export class DiseaseController{
+export class DiseaseController {
     static async getAll(req, res) {
         try {
             const result = await DiseaseModel.getAll();
@@ -11,15 +11,25 @@ export class DiseaseController{
             res.status(500).json({ error: error.message });
         }
     }
-    
     static async create(req, res) {
         try {
-            const { name, nameScientific, recommendations,description, actions } = req.body;
+            const { name, nameScientific, recommendations, description, actions } = req.body;
             const result = await DiseaseModel.create({ input: { name, nameScientific, description, recommendations, actions } });
             res.json({ message: "Enfermedad registrada" });
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
     }
-    
+    static async update(req, res) {
+        try {
+            const { name, nameScientific, recommendations, description, actions } = req.body
+            const { idDisease } = req.params
+            const result = await DiseaseModel.update({ input: { name, nameScientific, recommendations, description, actions, idDisease } });
+            if (result) return res.json({ message: "Enfermedad actualizada correctamente" })
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
+    static async delete(req,res){
+    }
 }

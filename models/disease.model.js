@@ -10,7 +10,7 @@ const config = {
 };
 const connection = await mysql.createConnection(config);
 
-export class DiseaseModel{
+export class DiseaseModel {
     static async getAll() {
         try {
             const [diseases] = await connection.query(
@@ -21,7 +21,7 @@ export class DiseaseModel{
             throw new Error("Error al obtener todas las enfermedades desde la base de datos");
         }
     }
-    
+
     static async getById({ idDisease }) {
         try {
             const [disease] = await connection.query(
@@ -33,7 +33,7 @@ export class DiseaseModel{
             throw new Error("Error al obtener la enfermedad desde la base de datos");
         }
     }
-    
+
     static async create({ input }) {
         try {
             const {
@@ -43,18 +43,18 @@ export class DiseaseModel{
                 recommendations,
                 actions
             } = input;
-    
+
             const result = await connection.query(
                 'INSERT INTO enfermedad (id_enfermedad, nombre, nombre_cientifico, descripcion, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?, ?)',
                 [name, nameScientific, description, recommendations, actions]
             );
-            
+
             return result[0].insertId;
         } catch (error) {
             throw new Error("Error al crear la enfermedad en la base de datos");
         }
     }
-    
+
     static async getIdByName({ nameDisease }) {
         try {
             const disease = await connection.query(
@@ -70,7 +70,7 @@ export class DiseaseModel{
             throw new Error("Error al obtener el ID de la enfermedad desde la base de datos");
         }
     }
-    
+
     static async getRecomendationsAndActionsDiseaseByIdAnalizedImage({ idAnalizedImage }) {
         try {
             const [recomendationsandactionsdisease] = await connection.query(
@@ -92,5 +92,18 @@ export class DiseaseModel{
             throw new Error("Error al obtener las recomendaciones y acciones de la enfermedad asociada a la imagen analizada desde la base de datos");
         }
     }
-    
+    static async update({ input }) {
+        const {
+            idDisease, name, nameScientific, recommendations, description, actions
+        } = input
+        const result = await connection.query(
+            `UPDATE enfermedad
+            SET nombre = ?, nombre_cientifico = ?, recomendaciones = ?, acciones = ?, descripcion = ?
+            WHERE id_enfermedad = ?
+            `,
+            [name,nameScientific,recommendations,description,actions,idDisease]
+        )
+        return result
+    }
+
 }
