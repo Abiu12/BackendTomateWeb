@@ -14,7 +14,7 @@ export class DiseaseController{
     
     static async create(req, res) {
         try {
-            const { name, nameScientific, recommendations, actions } = req.body;
+            const { name, nameScientific, recommendations,description, actions } = req.body;
             const result = await DiseaseModel.create({ input: { name, nameScientific, description, recommendations, actions } });
             res.json({ message: "Enfermedad registrada" });
         } catch (error) {
