@@ -48,6 +48,22 @@ export class PersonModel {
         }
     }
 
+    
+    static async getByEmail({ email }) {
+        try {
+            const [person] = await connection.query(
+                'SELECT * FROM persona WHERE correo_electronico = ?;',
+                [email]
+            );
+            if (person.length === 0) {
+                return [];
+            }
+            return person[0];
+        } catch (error) {
+            throw new Error("Error al obtener la persona desde la base de datos");
+        }
+    }
+
     static async delete({ idPerson }) {
         try {
             const result = await connection.query(

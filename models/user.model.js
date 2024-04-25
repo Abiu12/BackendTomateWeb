@@ -59,6 +59,7 @@ export class UserModel{
                 `,
                 [newPassword, idPerson]
             );
+            return true
         } catch (error) {
             throw new Error("Error al cambiar la contraseña del usuario en la base de datos");
         }

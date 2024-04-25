@@ -29,7 +29,12 @@ export class FarmerModel {
     static async getById({ idFarmer }) {
         try {
             const [farmer] = await connection.query(
-                'SELECT * FROM agricultor WHERE id_agricultor = ?;',
+                `SELECT a.id_agricultor, p.*,u.*
+                FROM agricultor a
+                JOIN persona p ON a.id_persona = p.id_persona
+                JOIN usuario u ON p.id_persona = u.id_persona
+                WHERE id_agricultor = ?
+                `,
                 [idFarmer]
             );
             if (farmer.length === 0) {

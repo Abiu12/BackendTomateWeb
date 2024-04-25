@@ -15,8 +15,7 @@ export class FarmerController {
     static async getById(req, res) {
         try {
             const { id } = req.params;
-            const idPerson = await FarmerModel.getById({ idFarmer :id });
-            const farmer = await PersonModel.getById({ idPerson: idPerson.id_persona });
+            const farmer = await FarmerModel.getById({ idFarmer :id });
             if (farmer) return res.json(farmer);
             return res.status(404).json({ message: "Agricultor no encontrado" });
         } catch (error) {
