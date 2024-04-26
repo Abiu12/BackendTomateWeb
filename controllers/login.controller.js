@@ -94,6 +94,16 @@ export class LoginController {
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
+  }
+  static async getDataByUsername(req, res) {
+    try {
+      const { username, password, role } = req.body
+      const response = await LoginModel.getDataByUsername({ input: { username, password, role } })
+      if (response) return res.json(response[0])
+      return res.json({ message: "No existen datos de este usuario" })
+    } catch (error) {
+      return res.send(500).json({ error: error.message })
+    }
 
   }
 }

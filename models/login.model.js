@@ -32,18 +32,66 @@ export class LoginModel {
             const token = jwt.sign({ username, rolUsuario }, "Stack", {
                 expiresIn: '50m'
             });
-            return {response,token}
+            return { response, token }
         }
-        else{
+        else {
             return []
         }
     }
-    static async checkEmailExistence({input}){
+    static async checkEmailExistence({ input }) {
         const { email } = input
         const response = await connection.query(
             `SELECT * FROM persona WHERE correo_electronico = ?`,
             [email]
         )
         return response
+    }
+    static async getDataByUsername({ input }) {
+        try {
+            const { username, password, role } = input
+            let result;
+            if (role === "farmer") {
+                result = await connection.query(
+                    `
+                SELECT persona.*, agricultor.*,usuario.*
+                FROM usuario
+                JOIN persona ON usuario.id_persona = persona.id_persona
+                JOIN agricultor ON persona.id_persona = agricultor.id_persona
+                WHERE usuario.nombre_usuario = ? AND usuario.contrasenia = ?;
+                `,
+                    [username, password]
+                )
+            }
+            else if (role === "worker") {
+                result = await connection.query(
+                    `
+                SELECT persona.*, trabajador.*,usuario.*
+                FROM usuario
+                JOIN persona ON usuario.id_persona = persona.id_persona
+                JOIN trabajador ON persona.id_persona = trabajador.id_persona
+                WHERE usuario.nombre_usuario = ? AND usuario.contrasenia = ?;
+                `,
+                    [username, password]
+                )
+            }
+            else if (role === "admin") {
+                result = await connection.query(
+                    `
+                SELECT persona.*,usuario.*
+                FROM usuario
+                JOIN persona ON usuario.id_persona = persona.id_persona
+                WHERE usuario.nombre_usuario = ? AND usuario.contrasenia = ?;
+                `,
+                    [username, password]
+                )
+            }
+            if (result == undefined || result[0].length === 0) {
+                return null
+            }
+            return result
+        } catch (error) {
+            throw new Error("Error al obtener los datos de la base de datos");
+        }
+
     }
 }

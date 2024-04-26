@@ -20,10 +20,6 @@ const fs = require('fs')
 
 
 export class AnalizeImageController {
-    static async prueba() {
-
-    }
-
     static async detected(req, res) {
         const imageFile = req.file;
         const { idBed } = req.params;
@@ -60,7 +56,6 @@ export class AnalizeImageController {
             // Obtiene la URL de descarga de la imagen subida
             const downloadURL = await getDownloadURL(imageRef);
             console.log('URL de descarga:', downloadURL);
-
 
             const date = new Date();
             const formattedDate = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
@@ -129,6 +124,5 @@ export class AnalizeImageController {
             });
         })
     }
-
 }
 
