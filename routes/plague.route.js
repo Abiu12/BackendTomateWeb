@@ -1,12 +1,14 @@
 import { Router } from "express";
 import { PlagueController } from "../controllers/plague.controller.js";
-export const PlagueRouter = Router ()
+export const PlagueRouter = Router();
 
 //obtener todas las plagas
-PlagueRouter.get('/', PlagueController.getAll)
+PlagueRouter.get("/", PlagueController.getAll);
 //crear  una plaga
-PlagueRouter.post('/', PlagueController.create)
-//actualizar 
-PlagueRouter.patch('/:idPlague',PlagueController.update)
+PlagueRouter.post("/", PlagueController.create);
+//actualizar
+PlagueRouter.patch("/:idPlague", PlagueController.update);
 //eliminar una plaga
-PlagueRouter.delete('/:idPlague',PlagueController.delete)
+PlagueRouter.delete("/:idPlague", PlagueController.delete);
+//Verificar si una plaga existe
+PlagueRouter.get("/checkExist/:namePlague", PlagueController.checkExist);
