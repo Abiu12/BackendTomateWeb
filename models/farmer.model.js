@@ -1,68 +1,70 @@
-import mysql from 'mysql2/promise'
-import { config as dotenvConfig } from 'dotenv';
+import mysql from "mysql2/promise";
+import { config as dotenvConfig } from "dotenv";
 dotenvConfig();
 const config = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    port: process.env.DB_PORT,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  port: process.env.DB_PORT,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
 };
 const connection = await mysql.createConnection(config);
 
 export class FarmerModel {
-    static async getAll() {
-        try {
-            const [farmers] = await connection.query(
-                `SELECT a.id_agricultor, p.*, u.* 
+  static async getAll() {
+    try {
+      const [farmers] = await connection.query(
+        `SELECT a.id_agricultor, p.*, u.* 
                 FROM agricultor a 
                 JOIN persona p ON a.id_persona = p.id_persona 
                 JOIN usuario u ON p.id_persona = u.id_persona 
-                WHERE p.estado = 'activo';`
-            );
-            return farmers;
-        } catch (error) {
-            throw new Error("Error al obtener todos los agricultores desde la base de datos");
-        }
+                WHERE p.estado = 'activo' and u.rol= "farmer";`
+      );
+      return farmers;
+    } catch (error) {
+      throw new Error(
+        "Error al obtener todos los agricultores desde la base de datos"
+      );
     }
+  }
 
-    static async getById({ idFarmer }) {
-        try {
-            const [farmer] = await connection.query(
-                `SELECT a.id_agricultor, p.*,u.*
+  static async getById({ idFarmer }) {
+    try {
+      const [farmer] = await connection.query(
+        `SELECT a.id_agricultor, p.*,u.*
                 FROM agricultor a
                 JOIN persona p ON a.id_persona = p.id_persona
                 JOIN usuario u ON p.id_persona = u.id_persona
                 WHERE id_agricultor = ?
                 `,
-                [idFarmer]
-            );
-            if (farmer.length === 0) {
-                return [];
-            }
-            return farmer[0];
-        } catch (error) {
-            throw new Error("Error al obtener el agricultor desde la base de datos");
-        }
+        [idFarmer]
+      );
+      if (farmer.length === 0) {
+        return [];
+      }
+      return farmer[0];
+    } catch (error) {
+      throw new Error("Error al obtener el agricultor desde la base de datos");
     }
+  }
 
-    static async create({ idPerson }) {
-        try {
-            const result = await connection.query(
-                'INSERT INTO agricultor (id_agricultor, id_persona) VALUES (NULL, ?)',
-                [idPerson]
-            );
-            return result[0].insertId;
-        } catch (error) {
-            throw new Error("Error al crear el agricultor en la base de datos");
-        }
+  static async create({ idPerson }) {
+    try {
+      const result = await connection.query(
+        "INSERT INTO agricultor (id_agricultor, id_persona) VALUES (NULL, ?)",
+        [idPerson]
+      );
+      return result[0].insertId;
+    } catch (error) {
+      throw new Error("Error al crear el agricultor en la base de datos");
     }
+  }
 
-    static async getNotificationsByStatus({ input }) {
-        try {
-            const { idFarmer, status } = input;
-            const [notifications] = await connection.query(
-                `SELECT 
+  static async getNotificationsByStatus({ input }) {
+    try {
+      const { idFarmer, status } = input;
+      const [notifications] = await connection.query(
+        `SELECT 
                 ia.*,
                 a.id_agricultor,
                 i.nombre AS nombre_invernadero,
@@ -95,13 +97,13 @@ export class FarmerModel {
             ORDER BY
                 STR_TO_DATE(ia.fecha, '%d-%m-%Y') DESC;  -- Convertir fecha a formato reconocido y ordenar descendentemente
             `,
-                [idFarmer, status]
-            );
-            return notifications;
-        } catch (error) {
-            throw new Error("Error al obtener las notificaciones por estado desde la base de datos");
-        }
+        [idFarmer, status]
+      );
+      return notifications;
+    } catch (error) {
+      throw new Error(
+        "Error al obtener las notificaciones por estado desde la base de datos"
+      );
     }
-
-
+  }
 }
