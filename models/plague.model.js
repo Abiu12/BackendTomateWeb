@@ -47,11 +47,11 @@ export class PlagueModel {
   }
   static async create({ input }) {
     try {
-      const { name, nameScientific, recommendations, actions } = input;
+      const { name, nameScientific, description, recommendations, actions } = input;
 
       const result = await connection.query(
-        "INSERT INTO plaga (id_plaga, nombre, nombre_cientifico, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?)",
-        [name, nameScientific, recommendations, actions]
+        "INSERT INTO plaga (id_plaga, nombre, nombre_cientifico, descripcion, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?, ?)",
+        [name, nameScientific, description, recommendations, actions]
       );
 
       return result[0].insertId;
