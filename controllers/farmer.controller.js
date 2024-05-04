@@ -129,4 +129,18 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  static async getNameFarmers(req, res) {
+    try {
+      const response = await FarmerModel.getNameFarmers();
+      if (response[0].length > 0) {
+        return res.json(response[0]);
+      }
+      return res.json({
+        message: "No se han encontrado datos de los agricultores",
+      });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }

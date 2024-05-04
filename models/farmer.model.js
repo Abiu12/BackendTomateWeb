@@ -106,4 +106,23 @@ export class FarmerModel {
       );
     }
   }
+
+  static async getNameFarmers() {
+    try {
+      const result = await connection.query(
+        `SELECT a.id_agricultor, CONCAT(p.nombre,' ', p.primer_apellido,' ', p.segundo_apellido) AS nombre
+        FROM agricultor a
+        JOIN persona p ON a.id_persona = p.id_persona
+        JOIN usuario u ON a.id_persona = u.id_persona
+        WHERE p.estado = 'activo' AND u.rol = 'farmer'
+      `
+      );
+      return result;
+    } catch (error) {
+      throw new Error(
+        "Error al obtener los nombres de la base de datos",
+        error
+      );
+    }
+  }
 }
