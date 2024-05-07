@@ -55,4 +55,20 @@ export class GreenhouseController {
     }
     res.json({ exists: false });
   }
+  static async delete(req, res) {
+    try {
+      const { idGreenhouse } = req.params;
+      const response = await GreenhouseModel.delete({ idGreenhouse });
+      if (response[0].affectedRows == 0)
+        return res.json({
+          message: "No existe un invernadero con ese id",
+        });
+
+      return res.json({ message: "El invernadero ha sido eliminado" });
+
+      console.log(response);
+    } catch (error) {
+      res.status(500).json({ message: error });
+    }
+  }
 }

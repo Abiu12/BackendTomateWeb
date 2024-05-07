@@ -93,4 +93,20 @@ export class GreenhouseModel {
     );
     return result;
   }
+
+  static async delete({ idGreenhouse }) {
+    try {
+      const result = await connection.query(
+        `
+        DELETE
+        FROM invernadero
+        WHERE id_invernadero = ?
+        `,
+        [idGreenhouse]
+      );
+      return result;
+    } catch (error) {
+      throw new Error("Hubo un error al eliminar el invernadero");
+    }
+  }
 }
