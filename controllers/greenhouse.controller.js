@@ -9,7 +9,18 @@ export class GreenhouseController {
       res.status(500).json({ error: error.message });
     }
   }
-
+  static async getById(req, res) {
+    try {
+      const { idGreenhouse } = req.params;
+      const response = await GreenhouseModel.getById({ idGreenhouse });
+      if (response.length == 0) {
+        return res.json({ message: "No hay datos de este invernadero" });
+      }
+      return res.json(response);
+    } catch (error) {
+      return res.status(500).json({ message: error });
+    }
+  }
   static async create(req, res) {
     try {
       const { idFarmer, name, typeGreenhouse, humidity, size } = req.body;
@@ -65,8 +76,6 @@ export class GreenhouseController {
         });
 
       return res.json({ message: "El invernadero ha sido eliminado" });
-
-      console.log(response);
     } catch (error) {
       res.status(500).json({ message: error });
     }

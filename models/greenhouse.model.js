@@ -33,7 +33,7 @@ export class GreenhouseModel {
         "SELECT * FROM invernadero WHERE id_invernadero = ?",
         [idGreenhouse]
       );
-      return greenhouse[0];
+      return greenhouse;
     } catch (error) {
       throw new Error("Error al obtener el invernadero desde la base de datos");
     }
