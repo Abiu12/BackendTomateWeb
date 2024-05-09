@@ -121,4 +121,14 @@ export class LoginController {
       return res.send(500).json({ error: error.message });
     }
   }
+  static async registerTokenNotification(req, res) {
+    try {
+      const { userName, token } = req.body;
+      const response = await UserModel.registerTokenNotification({
+        input: { userName, token },
+      });
+      if (response) return res.json({ mesagge: true });
+      return res.status(500).json({ mesagge: false });
+    } catch (error) {}
+  }
 }

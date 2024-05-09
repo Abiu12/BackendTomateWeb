@@ -11,6 +11,18 @@ export class PlagueController {
       res.status(500).json({ error: error.message });
     }
   }
+  static async getById(req, res) {
+    try {
+      const { idPlague } = req.params;
+      const response = await PlagueModel.getById({ idPlague });
+      if (!response) {
+        return res.json({ message: "No se encontró la plaga" });
+      }
+      return res.json(response);
+    } catch (error) {
+      res.status(500).json({ message: error });
+    }
+  }
   static async create(req, res) {
     try {
       const { name, nameScientific, recommendations, actions } = req.body;

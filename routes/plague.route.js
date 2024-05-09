@@ -4,6 +4,8 @@ export const PlagueRouter = Router();
 
 //obtener todas las plagas
 PlagueRouter.get("/", PlagueController.getAll);
+//Obtener una plaga por id
+PlagueRouter.get("/:idPlague", PlagueController.getById);
 //crear  una plaga
 PlagueRouter.post("/", PlagueController.create);
 //actualizar
