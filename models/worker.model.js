@@ -35,9 +35,10 @@ export class WorkerModel {
     try {
       const [worker] = await connection.query(
         `
-        SELECT t.*, p.*
+        SELECT t.*, p.*, u.*
         FROM trabajador t
         JOIN persona p ON t.id_persona = p.id_persona
+        JOIN usuario u ON u.id_persona = p.id_persona
         WHERE t.id_trabajador = ? AND p.estado = 'activo';
         `,
         [idWorker]
