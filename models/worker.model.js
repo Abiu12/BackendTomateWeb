@@ -34,7 +34,12 @@ export class WorkerModel {
   static async getById({ idWorker }) {
     try {
       const [worker] = await connection.query(
-        "SELECT * FROM trabajador WHERE id_trabajador = ?;",
+        `
+        SELECT t.*, p.*
+        FROM trabajador t
+        JOIN persona p ON t.id_persona = p.id_persona
+        WHERE t.id_trabajador = ? AND p.estado = 'activo';
+        `,
         [idWorker]
       );
       if (worker.length === 0) {
