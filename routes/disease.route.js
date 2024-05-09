@@ -5,6 +5,8 @@ export const DiseaseRouter = Router();
 
 //obtener todas las enfermedades
 DiseaseRouter.get("/", DiseaseController.getAll);
+//Obtener una plaga por id
+DiseaseRouter.get("/:idDisease", DiseaseController.getById);
 //crear una enfermedad
 DiseaseRouter.post("/", DiseaseController.create);
 //actualizar

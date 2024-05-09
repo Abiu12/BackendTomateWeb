@@ -11,6 +11,18 @@ export class DiseaseController {
       res.status(500).json({ error: error.message });
     }
   }
+  static async getById(req, res) {
+    try {
+      const { idDisease } = req.params;
+      const response = await DiseaseModel.getById({ idDisease });
+      if (!response) {
+        return res.json({ message: "No se encontró la enfermedad" });
+      }
+      return res.json(response);
+    } catch (error) {
+      res.status(500).json({ message: error });
+    }
+  }
   static async create(req, res) {
     try {
       const { name, nameScientific, recommendations, description, actions } =
