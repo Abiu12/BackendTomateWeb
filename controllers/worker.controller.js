@@ -134,4 +134,15 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
+  static async getNotificationsByStatus(req, res) {
+    try {
+      const { idWorker, status } = req.params;
+      const notifications = await WorkerModel.getNotificationsByStatus({
+        input: { idWorker, status },
+      });
+      res.json(notifications);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }

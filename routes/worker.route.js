@@ -9,6 +9,11 @@ WorkerRouter.get(
   "/getgreenhouses/:idWorker",
   WorkerController.getGreenhousesByIdWorker
 );
+//Obtener notificaciones de un agricultor
+WorkerRouter.get(
+  "/getnotifications/:idWorker/:status",
+  WorkerController.getNotificationsByStatus
+);
 WorkerRouter.post("/:idFarmer", WorkerController.create);
 WorkerRouter.delete("/:idWorker", WorkerController.delete);
 WorkerRouter.patch("/:idWorker", WorkerController.update);

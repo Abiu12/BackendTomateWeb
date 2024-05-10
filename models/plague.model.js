@@ -47,7 +47,8 @@ export class PlagueModel {
   }
   static async create({ input }) {
     try {
-      const { name, nameScientific, description, recommendations, actions } = input;
+      const { name, nameScientific, description, recommendations, actions } =
+        input;
 
       const result = await connection.query(
         "INSERT INTO plaga (id_plaga, nombre, nombre_cientifico, descripcion, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?, ?)",
@@ -91,15 +92,15 @@ export class PlagueModel {
         name,
         nameScientific,
         recommendations,
-        description,
         actions,
+        description,
       } = input;
       const result = await connection.query(
         `UPDATE plaga
             SET nombre = ?, nombre_cientifico = ?, recomendaciones = ?, acciones = ?, descripcion = ?
             WHERE id_plaga = ?
             `,
-        [name, nameScientific, recommendations, description, actions, idPlague]
+        [name, nameScientific, recommendations, actions, description, idPlague]
       );
       return result;
     } catch (error) {

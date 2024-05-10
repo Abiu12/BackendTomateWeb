@@ -36,7 +36,7 @@ export class PlagueController {
   }
   static async update(req, res) {
     try {
-      const { name, nameScientific, recommendations, description, actions } =
+      const { name, nameScientific, recommendations, actions, description } =
         req.body;
       const { idPlague } = req.params;
       const result = await PlagueModel.update({
@@ -44,8 +44,8 @@ export class PlagueController {
           name,
           nameScientific,
           recommendations,
-          description,
           actions,
+          description,
           idPlague,
         },
       });

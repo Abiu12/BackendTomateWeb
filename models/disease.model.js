@@ -96,15 +96,15 @@ export class DiseaseModel {
         name,
         nameScientific,
         recommendations,
-        description,
         actions,
+        description,
       } = input;
       const result = await connection.query(
         `UPDATE enfermedad
             SET nombre = ?, nombre_cientifico = ?, recomendaciones = ?, acciones = ?, descripcion = ?
             WHERE id_enfermedad = ?
             `,
-        [name, nameScientific, recommendations, description, actions, idDisease]
+        [name, nameScientific, recommendations, actions, description, idDisease]
       );
       return result;
     } catch (error) {

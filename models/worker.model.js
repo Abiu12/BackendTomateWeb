@@ -101,4 +101,52 @@ export class WorkerModel {
       );
     }
   }
+  static async getNotificationsByStatus({ input }) {
+    try {
+      const { idWorker, status } = input;
+      const [notifications] = await connection.query(
+        `SELECT 
+        ia.*,
+        t.id_trabajador,
+        i.nombre AS nombre_invernadero,
+        c.*,
+        CONCAT_WS(', ', 
+            GROUP_CONCAT(DISTINCT p.nombre), 
+            GROUP_CONCAT(DISTINCT e.nombre)
+        ) AS nombres_detectados
+    FROM 
+        trabajador t
+    JOIN 
+        trabajadorinvernadero ti ON t.id_trabajador = ti.id_trabajador
+    JOIN 
+        invernadero i ON ti.id_invernadero = i.id_invernadero
+    JOIN 
+        cama c ON i.id_invernadero = c.id_invernadero
+    JOIN 
+        imagenanalizada ia ON c.id_cama = ia.id_cama
+    LEFT JOIN 
+        imagenanalizadaenfermedad iae ON ia.id_imagenanalizada = iae.id_imagenanalizada
+    LEFT JOIN 
+        imagenanalizadaplaga iap ON ia.id_imagenanalizada = iap.id_imagenanalizada
+    LEFT JOIN 
+        plaga p ON iap.id_plaga = p.id_plaga
+    LEFT JOIN 
+        enfermedad e ON iae.id_enfermedad = e.id_enfermedad
+    WHERE 
+        t.id_trabajador = ?  
+        AND ia.estado = ?  
+    GROUP BY
+        ia.id_imagenanalizada
+    ORDER BY
+        STR_TO_DATE(ia.fecha, '%d-%m-%Y') DESC;
+            `,
+        [idWorker, status]
+      );
+      return notifications;
+    } catch (error) {
+      throw new Error(
+        "Error al obtener las notificaciones por estado desde la base de datos"
+      );
+    }
+  }
 }

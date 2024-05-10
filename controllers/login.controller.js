@@ -68,7 +68,6 @@ export class LoginController {
 
       transporter.sendMail(mailConfig, function (error, info) {
         if (error) {
-          console.log(error);
           return reject({ message: "An error has occurred" });
         }
         return resolve({ message: "Email sent successfully" });
@@ -105,16 +104,9 @@ export class LoginController {
   static async getDataByUsername(req, res) {
     try {
       const { username, password, role } = req.body;
-      console.log(
-        "Datos que recibe el controlador: ",
-        username,
-        password,
-        role
-      );
       const response = await LoginModel.getDataByUsername({
         input: { username, password, role },
       });
-      console.log("La respuesta es: ", response);
       if (response) return res.json(response[0]);
       return res.json({ message: "No existen datos de este usuario" });
     } catch (error) {

@@ -44,10 +44,8 @@ export class LoginModel {
   static async getDataByUsername({ input }) {
     try {
       const { username, password, role } = input;
-      console.log("Datos que recibe el modelo", username, password, role);
       let result;
       if (role === "farmer") {
-        console.log("Es farmer");
         result = await connection.query(
           `
                 SELECT persona.*, agricultor.*,usuario.*
@@ -59,7 +57,6 @@ export class LoginModel {
           [username, password]
         );
       } else if (role === "worker") {
-        console.log("Es worker");
         result = await connection.query(
           `
                 SELECT persona.*, trabajador.*,usuario.*
@@ -71,7 +68,6 @@ export class LoginModel {
           [username, password]
         );
       } else if (role === "admin") {
-        console.log("Es admin");
         result = await connection.query(
           `
                 SELECT persona.*,usuario.*
@@ -82,7 +78,6 @@ export class LoginModel {
           [username, password]
         );
       }
-      console.log("El result es: ", result);
       if (result == undefined || result[0].length === 0) {
         return null;
       }

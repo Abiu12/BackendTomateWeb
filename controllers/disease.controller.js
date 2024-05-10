@@ -37,7 +37,7 @@ export class DiseaseController {
   }
   static async update(req, res) {
     try {
-      const { name, nameScientific, recommendations, description, actions } =
+      const { name, nameScientific, recommendations, actions, description } =
         req.body;
       const { idDisease } = req.params;
       const result = await DiseaseModel.update({
@@ -45,8 +45,8 @@ export class DiseaseController {
           name,
           nameScientific,
           recommendations,
-          description,
           actions,
+          description,
           idDisease,
         },
       });

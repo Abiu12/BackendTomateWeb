@@ -82,7 +82,7 @@ export class FarmerController {
         password,
         role,
       } = req.body;
-      console.log(req.body);
+
       const farmer = await FarmerModel.getById({ idFarmer });
       const idPerson = farmer.id_persona;
       await PersonModel.update({
