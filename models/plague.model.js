@@ -38,7 +38,7 @@ export class PlagueModel {
         "SELECT id_plaga FROM plaga WHERE nombre = ?",
         [namePlague]
       );
-      return plague[0][0].id_plaga;
+      return plague[0];
     } catch (error) {
       throw new Error(
         "Error al obtener el ID de la plaga desde la base de datos"

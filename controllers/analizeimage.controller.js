@@ -5,112 +5,128 @@ import { PlagueModel } from "../models/plague.model.js";
 import { AnalizedImagePlagueModel } from "../models/analizedimageplague.model.js";
 import { DiseaseModel } from "../models/disease.model.js";
 import { AnalyzedImageDiseaseModel } from "../models/analizedimagedisease.model.js";
-import { readFile, unlink } from "fs/promises";
+import { unlink } from "fs/promises";
 
 // Firebase
-import { getFirestore, doc, getDoc, updateDoc } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import firebaseConfig from "../config/firebase.config.js";
 
 import { createRequire } from "node:module";
+import { UserModel } from "../models/user.model.js";
 const require = createRequire(import.meta.url);
 const fs = require("fs");
 
 export class AnalizeImageController {
   static async detected(req, res) {
-    const imageFile = req.file;
-    const { idBed } = req.params;
-    const urlImage = imageFile.path;
-    // const urlImage = "C:/Users/calle/OneDrive/Escritorio/Abiu/Residencia/App web/BackendTomateWeb/uploads/1a883c56474cb176994b4a926e1e76f3"
-    const detection = await AnalizeImageController.script(urlImage);
-    const resultDeteccion = AnalizeImageController.filterDetection(detection);
-    // Después de usar la imagen, elimínala del sistema de archivos
-    await unlink(urlImage);
-    //si detecto algo lo registramos
-    if (resultDeteccion.names.length > 0) {
-      const message = {
-        to: "ExponentPushToken[BSTfylOk0JnQQUKaNZ3hlO]",
-        sound: "default",
-        title: "¡Las plagas atacan tus tomates🥺!",
-        body: "Picale acá para ver que se encontró en tu imagen",
-        data: { someData: "Por fin" },
-      };
-      await fetch("https://exp.host/--/api/v2/push/send", {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Accept-encoding": "gzip, deflate",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(message),
-      });
+    try {
+      const imageFile = req.file;
+      const { idBed, idUser } = req.params;
 
-      const storage = getStorage(firebaseConfig.appFirebase);
-      const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
-      const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
-      // Sube el blob al Storage
-      await uploadBytes(imageRef, imagenBuffer);
-      // Obtiene la URL de descarga de la imagen subida
-      const downloadURL = await getDownloadURL(imageRef);
-
-      const date = new Date();
-      const formattedDate = `${date.getDate()}-${
-        date.getMonth() + 1
-      }-${date.getFullYear()}`;
-      //Obtenemos id de la imagen creada
-      const idAnalizedImage = await AnalizedImageModel.create({
-        input: {
-          path: downloadURL,
-          idBed,
-          date: formattedDate,
-          status: "Sin ver",
-        },
-      });
-      //De lo detectado registramos en las tablas de plagas y enfermedades
-      for (const name of resultDeteccion.names) {
-        var id = 0;
-        if (name == "Araña roja" || name == "Mosca blanca") {
-          id = await PlagueModel.getIdByName({ namePlague: name });
-          await AnalizedImagePlagueModel.create({
-            input: { idAnalizedImage, idPlague: id },
-          });
+      const urlImage = imageFile.path;
+      const detection = await AnalizeImageController.script(urlImage);
+      const resultDeteccion = AnalizeImageController.filterDetection(detection);
+      await unlink(urlImage);
+      //si detecto algo lo registramos
+      if (resultDeteccion.names.length > 0) {
+        const storage = getStorage(firebaseConfig.appFirebase);
+        const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
+        const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
+        await uploadBytes(imageRef, imagenBuffer);
+        const downloadURL = await getDownloadURL(imageRef);
+        const date = new Date();
+        const formattedDate = `${date.getDate()}-${
+          date.getMonth() + 1
+        }-${date.getFullYear()}`;
+        const idAnalizedImage = await AnalizedImageModel.create({
+          input: {
+            path: downloadURL,
+            idBed,
+            date: formattedDate,
+            status: "Sin ver",
+          },
+        });
+        for (const name of resultDeteccion.names) {
+          const resultRegisterName = await AnalizeImageController.registerName(
+            name,
+            idAnalizedImage
+          );
+          if (!resultRegisterName) {
+            res.status(500).json({
+              message: `Hubo un error en las plagas y enfermedades ya registradas`,
+            });
+          }
         }
-        if (
-          name == "Alternariosis" ||
-          name == "Botritis" ||
-          name == "Mildiu del tomate" ||
-          name == "Oídio"
-        ) {
-          id = await DiseaseModel.getIdByName({ nameDisease: name });
-          await AnalyzedImageDiseaseModel.create({
-            input: { idAnalizedImage, idDisease: id },
-          });
+        //Generar la notificación.
+        const expoToken = await UserModel.getTokenByIdUser({ idUser });
+        if (expoToken[0]) {
+          const responseNotification =
+            await AnalizeImageController.sendNotification(
+              expoToken[0].notificacion_token
+            );
+          if (responseNotification) {
+            return res.json({
+              message: "Imagen analizada correctamente, espere su notificación",
+            });
+          }
         }
       }
-      //Generar la notificación.
-      return res.json({
-        message: "Imagen analizada correctamente, espere su notificación",
-      });
+      return res.json({ message: "No se ha detectado nada en la imagen" });
+    } catch (error) {
+      res.status(500).json({ message: `Hubo un error ${error}` });
     }
-    return res.json({ message: "No se ha detectado nada en la imagen" });
+  }
+  static async detectedGuest(req, res) {
+    try {
+      const imageFile = req.file;
+      const { tokenNotification } = req.params;
+      const urlImage = imageFile.path;
+      const detection = await AnalizeImageController.script(urlImage);
+      const resultDeteccion = AnalizeImageController.filterDetection(detection);
+      await unlink(urlImage);
+      //si detecto algo lo registramos
+      if (resultDeteccion.names.length > 0) {
+        const storage = getStorage(firebaseConfig.appFirebase);
+        const imageRef = ref(storage, `guest/${resultDeteccion.name_image}`);
+        const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
+        await uploadBytes(imageRef, imagenBuffer);
+        const downloadURL = await getDownloadURL(imageRef);
+
+        const responseNotification =
+          await AnalizeImageController.sendNotification(tokenNotification);
+
+        const body = {
+          urlImage: downloadURL,
+          detected: resultDeteccion,
+        };
+
+        return res.json({ body });
+
+        // console.log(downloadURL);
+        // const date = new Date();
+        // const formattedDate = `${date.getDate()}-${
+        //   date.getMonth() + 1
+        // }-${date.getFullYear()}`;
+
+        // if (responseNotification) {
+        //   return res.json({
+        //     message: "Imagen analizada correctamente, espere su notificación",
+        //   });
+        // }
+      }
+      return res.json({ message: "No se ha detectado nada en la imagen" });
+    } catch (error) {
+      res.status(500).json({ message: `Hubo un error ${error}` });
+    }
   }
   static filterDetection(detection) {
-    // Verificar si detection tiene la propiedad 'names' y es un arreglo
     if (detection && Array.isArray(detection.names)) {
-      // Filtrar los nombres únicos
       const uniqueNames = detection.names.filter((name, index) => {
-        // Devolver true solo si el índice de la primera ocurrencia de 'name' es igual al índice actual
         return detection.names.indexOf(name) === index;
       });
-
-      // Actualizar el objeto detection con los nombres únicos
       detection.names = uniqueNames;
-
-      // Devolver el objeto detection modificado
       return detection;
     } else {
-      // Si detection no tiene la propiedad 'names' o no es un arreglo, devolver el objeto sin cambios
       return detection;
     }
   }
@@ -137,5 +153,59 @@ export class AnalizeImageController {
         }
       });
     });
+  }
+  static async sendNotification(to) {
+    const message = {
+      to: to,
+      sound: "default",
+      title: "¡Las plagas atacan tus tomates🥺!",
+      body: "Picale acá para ver que se encontró en tu imagen",
+      data: { someData: "Por fin" },
+    };
+    const response = await fetch("https://exp.host/--/api/v2/push/send", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Accept-encoding": "gzip, deflate",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
+    if (response.ok) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  static async registerName(name, idAnalizedImage) {
+    let id;
+    if (name == "Araña roja" || name == "Mosca blanca") {
+      id = await PlagueModel.getIdByName({ namePlague: name });
+      if (id[0]) {
+        const response = await AnalizedImagePlagueModel.create({
+          input: { idAnalizedImage, idPlague: id[0].id_plaga },
+        });
+        if (response[0].affectedRows == 1) {
+          return true;
+        }
+      }
+      return false;
+    } else if (
+      name == "Alternariosis" ||
+      name == "Botritis" ||
+      name == "Mildiu del tomate" ||
+      name == "Oídio"
+    ) {
+      id = await DiseaseModel.getIdByName({ nameDisease: name });
+      if (id[0]) {
+        const response = await AnalyzedImageDiseaseModel.create({
+          input: { idAnalizedImage, idDisease: id },
+        });
+        if (response[0].affectedRows == 1) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
 }

@@ -104,4 +104,16 @@ export class UserModel {
       throw new Error("Error en el servidor ", error);
     }
   }
+  static async getTokenByIdUser({ idUser }) {
+    try {
+      const result = await connection.query(
+        `SELECT notificacion_token FROM usuario WHERE id_usuario = ?`,
+        idUser
+      );
+      return result[0];
+      console.log(result);
+    } catch (error) {
+      throw new Error("Error en el servidor ", error);
+    }
+  }
 }
