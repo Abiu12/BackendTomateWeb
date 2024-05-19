@@ -92,16 +92,23 @@ export class AnlizedImageController {
     }
   }
 
-  //ACA me quede
+  //Ya
   static async updateStatusAnalizedImage(req, res) {
-    const { idAnalizedImage } = req.params;
-    const { status } = req.body;
-    await AnalizedImageModel.updateStatusAnalizedImage({
-      input: { idAnalizedImage, status },
-    });
-    res.json({ message: "Estado actualizado" });
+    try {
+      const { idAnalizedImage } = req.params;
+      const { status } = req.body;
+      const response = await AnalizedImageModel.updateStatusAnalizedImage({
+        input: { idAnalizedImage, status },
+      });
+      if (response[0].affectedRows == 1) {
+        return res.json({ message: "Estado actualizado" });
+      }
+      return res.json({ message: "No se ha encontrado la imagen analizada" });
+    } catch (error) {
+      res.status(500).json({ message: `Hubo un problema ${error}` });
+    }
   }
-
+  //Ya
   static async getRecomendationsAndActionsByGuests(req, res) {
     try {
       const { detected } = req.body;

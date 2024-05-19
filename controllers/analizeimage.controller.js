@@ -18,6 +18,7 @@ const require = createRequire(import.meta.url);
 const fs = require("fs");
 
 export class AnalizeImageController {
+  //Ya
   static async detected(req, res) {
     try {
       const imageFile = req.file;
@@ -76,6 +77,7 @@ export class AnalizeImageController {
       res.status(500).json({ message: `Hubo un error ${error}` });
     }
   }
+  //Ya
   static async detectedGuest(req, res) {
     try {
       const imageFile = req.file;
@@ -99,26 +101,14 @@ export class AnalizeImageController {
           urlImage: downloadURL,
           detected: resultDeteccion,
         };
-
         return res.json({ body });
-
-        // console.log(downloadURL);
-        // const date = new Date();
-        // const formattedDate = `${date.getDate()}-${
-        //   date.getMonth() + 1
-        // }-${date.getFullYear()}`;
-
-        // if (responseNotification) {
-        //   return res.json({
-        //     message: "Imagen analizada correctamente, espere su notificación",
-        //   });
-        // }
       }
       return res.json({ message: "No se ha detectado nada en la imagen" });
     } catch (error) {
       res.status(500).json({ message: `Hubo un error ${error}` });
     }
   }
+  //Ya
   static filterDetection(detection) {
     if (detection && Array.isArray(detection.names)) {
       const uniqueNames = detection.names.filter((name, index) => {
@@ -130,6 +120,7 @@ export class AnalizeImageController {
       return detection;
     }
   }
+  //Ya
   static script(urlImage) {
     return new Promise((resolve, reject) => {
       let datos = "";
@@ -154,6 +145,7 @@ export class AnalizeImageController {
       });
     });
   }
+  //Ya
   static async sendNotification(to) {
     const message = {
       to: to,
@@ -177,35 +169,40 @@ export class AnalizeImageController {
       return false;
     }
   }
+  //Ya
   static async registerName(name, idAnalizedImage) {
-    let id;
-    if (name == "Araña roja" || name == "Mosca blanca") {
-      id = await PlagueModel.getIdByName({ namePlague: name });
-      if (id[0]) {
-        const response = await AnalizedImagePlagueModel.create({
-          input: { idAnalizedImage, idPlague: id[0].id_plaga },
-        });
-        if (response[0].affectedRows == 1) {
-          return true;
+    try {
+      let id;
+      if (name == "Araña roja" || name == "Mosca blanca") {
+        id = await PlagueModel.getIdByName({ namePlague: name });
+        if (id[0]) {
+          const response = await AnalizedImagePlagueModel.create({
+            input: { idAnalizedImage, idPlague: id[0].id_plaga },
+          });
+          if (response[0].affectedRows == 1) {
+            return true;
+          }
         }
-      }
-      return false;
-    } else if (
-      name == "Alternariosis" ||
-      name == "Botritis" ||
-      name == "Mildiu del tomate" ||
-      name == "Oídio"
-    ) {
-      id = await DiseaseModel.getIdByName({ nameDisease: name });
-      if (id[0]) {
-        const response = await AnalyzedImageDiseaseModel.create({
-          input: { idAnalizedImage, idDisease: id },
-        });
-        if (response[0].affectedRows == 1) {
-          return true;
+        return false;
+      } else if (
+        name == "Alternariosis" ||
+        name == "Botritis" ||
+        name == "Mildiu del tomate" ||
+        name == "Oídio"
+      ) {
+        id = await DiseaseModel.getIdByName({ nameDisease: name });
+        if (id[0]) {
+          const response = await AnalyzedImageDiseaseModel.create({
+            input: { idAnalizedImage, idDisease: id },
+          });
+          if (response[0].affectedRows == 1) {
+            return true;
+          }
         }
+        return false;
       }
-      return false;
+    } catch (error) {
+      throw new Error(`Hubo un error: ${error}`);
     }
   }
 }

@@ -1,6 +1,7 @@
 import { AdminModel } from "../models/admin.model.js";
 
 export class AdminController {
+  // Ya
   static async getData(req, res) {
     try {
       const response = await AdminModel.getData();
@@ -14,6 +15,7 @@ export class AdminController {
       res.status(500).json({ message: error });
     }
   }
+  // Ya
   static async update(req, res) {
     try {
       const { name, surname, secondSurname, phone, email, nameUser, password } =

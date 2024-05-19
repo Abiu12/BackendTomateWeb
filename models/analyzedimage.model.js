@@ -91,13 +91,14 @@ export class AnalizedImageModel {
   static async updateStatusAnalizedImage({ input }) {
     try {
       const { idAnalizedImage, status } = input;
-      await connection.query(
+      const result = await connection.query(
         `UPDATE imagenanalizada
                 SET estado = ?
                 WHERE id_imagenanalizada = ?
                 `,
         [status, idAnalizedImage]
       );
+      return result;
     } catch (error) {
       throw new Error(
         "Error al actualizar el estado de la imagen analizada en la base de datos"
