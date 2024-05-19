@@ -34,9 +34,7 @@ export class AnalizedImageModel {
       );
       return analizedImage;
     } catch (error) {
-      throw new Error(
-        "Error al obtener las imágenes analizadas asociadas a la cama desde la base de datos"
-      );
+      throw new Error(`Error ${error}`);
     }
   }
 

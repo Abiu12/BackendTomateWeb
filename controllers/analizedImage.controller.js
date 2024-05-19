@@ -4,6 +4,7 @@ import { AnalyzedImageDiseaseModel } from "../models/analizedimagedisease.model.
 import { PlagueModel } from "../models/plague.model.js";
 import { DiseaseModel } from "../models/disease.model.js";
 export class AnlizedImageController {
+  // Ya
   static async getAnalizedImageByBed(req, res) {
     try {
       const { idBed } = req.params;
@@ -11,7 +12,7 @@ export class AnlizedImageController {
         idBed,
       });
       if (analizedImages.length == 0) {
-        return res.json({ message: "No existe la cama" });
+        return res.json({ message: "No hay imagenes analizadas de la cama" });
       }
       const results = [];
       for (const image of analizedImages) {
@@ -72,6 +73,7 @@ export class AnlizedImageController {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }
   }
+  //Ya
   static async getRecomendationsAndActionsByIdAnalizedImage(req, res) {
     try {
       const { idAnalizedImage } = req.params;
