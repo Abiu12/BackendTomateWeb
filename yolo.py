@@ -29,8 +29,6 @@
 # print(json.dumps(resultados))
 
 
-
-
 # import sys
 # import requests
 # import cv2
@@ -72,7 +70,7 @@
 #     # Crear el nombre de archivo de salida dinámico
 #     timestamp = time.strftime("%Y%m%d_%H%M%S")  # Obtener la fecha y hora actual
 #     output_path = f"imagen_{timestamp}.jpg"
-    
+
 #     # Guardar las detecciones visualizadas
 #     output_image = pred.plot()
 
@@ -101,13 +99,14 @@ import os
 
 try:
     # Ruta de la imagen subida a través de Multer
-    input_path = sys.argv[1]  # Ajusta la ruta según donde Multer guarde la imagen
+    # Ajusta la ruta según donde Multer guarde la imagen
+    input_path = sys.argv[1]
     # input_path = 'rotated_315_Botritis_52.jpg'
     # Decodificar la imagen utilizando OpenCV
     img = cv2.imread(input_path)
 
     # Crear instancia del modelo YOLO
-    model = YOLO('best.pt')
+    model = YOLO('best200.pt')
 
     # Realizar predicción sobre la imagen
     pred = model.predict(img)[0]
@@ -129,11 +128,10 @@ try:
     # # Concatena la ruta del directorio actual con el nombre del archivo de salida
     full_output_path = os.path.join(current_directory, output_path)
 
-
     # Resultados
     resultados = {
         "full_path": full_output_path,
-        "name_image":output_path,
+        "name_image": output_path,
         "names": names
     }
 

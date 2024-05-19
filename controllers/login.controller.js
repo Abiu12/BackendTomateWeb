@@ -5,19 +5,31 @@ import { require } from "../utils/require.js";
 const nodemailer = require("nodemailer");
 export class LoginController {
   static async login(req, res) {
-    const { username, password } = req.body;
-    const { response, token } = await LoginModel.login({
-      input: { username, password },
-    });
-    if (response) {
-      const rol = response[0][0].rol;
-      return res.json({ rol, token });
+    try {
+      const { username, password } = req.body;
+      const { response, token } = await LoginModel.login({
+        input: { username, password },
+      });
+      if (response) {
+        const rol = response[0][0].rol;
+        return res.json({ rol, token });
+      }
+      res.json({ message: "Error en las credenciales" });
+    } catch (error) {
+      res.status(500).json({ mesagge: `Hubo un problema ${error}` });
     }
-    res.json({ message: "Error en las credenciales" });
   }
   static async checkEmailExistence(req, res) {
     const { email } = req.body;
     const response = await LoginModel.checkEmailExistence({ input: { email } });
+    if (response[0].length > 0) {
+      return res.json({ exists: true });
+    }
+    res.json({ exists: false });
+  }
+  static async userNameExistence(req, res) {
+    const { userName } = req.body;
+    const response = await LoginModel.userNameExistence({ userName });
     if (response[0].length > 0) {
       return res.json({ exists: true });
     }

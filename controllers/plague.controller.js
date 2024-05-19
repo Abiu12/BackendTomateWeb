@@ -25,11 +25,15 @@ export class PlagueController {
   }
   static async create(req, res) {
     try {
-      const { name, nameScientific, recommendations, actions } = req.body;
-      const result = await PlagueModel.create({
-        input: { name, nameScientific, recommendations, actions },
+      const { name, nameScientific, recommendations, actions, description } =
+        req.body;
+      const response = await PlagueModel.create({
+        input: { name, nameScientific, recommendations, actions, description },
       });
-      res.json({ message: "Plaga registrada" });
+      if (response[0].affectedRows == 1) {
+        return res.status(201).json({ message: "Plaga registrada" });
+      }
+      return res.json({ message: "Hubo un problema al registrar la plaga" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

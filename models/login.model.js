@@ -20,8 +20,8 @@ export class LoginModel {
   static async login({ input }) {
     const { username, password } = input;
     const response = await connection.query(
-      "SELECT rol FROM usuario WHERE nombre_usuario = ? AND contrasenia = ?",
-      [username, password]
+      "SELECT rol FROM usuario WHERE BINARY LOWER(nombre_usuario) = ? AND BINARY LOWER(contrasenia) = ?",
+      [username.toLowerCase(), password.toLowerCase()]
     );
     if (response[0].length > 0) {
       const rolUsuario = response[0][0].rol;
@@ -40,6 +40,17 @@ export class LoginModel {
       [email]
     );
     return response;
+  }
+  static async userNameExistence({ userName }) {
+    try {
+      const result = await connection.query(
+        `SELECT * FROM usuario WHERE nombre_usuario = ?`,
+        [userName]
+      );
+      return result;
+    } catch (error) {
+      throw new Error("Error en la base de datos: ", error);
+    }
   }
   static async getDataByUsername({ input }) {
     try {

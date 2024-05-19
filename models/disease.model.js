@@ -32,6 +32,17 @@ export class DiseaseModel {
       throw new Error("Error al obtener la enfermedad desde la base de datos");
     }
   }
+  static async getByName({ name }) {
+    try {
+      const [disease] = await connection.query(
+        "SELECT * FROM enfermedad WHERE nombre = ?",
+        [name]
+      );
+      return disease[0];
+    } catch (error) {
+      throw new Error("Error al obtener la plaga desde la base de datos");
+    }
+  }
   static async create({ input }) {
     try {
       const { name, nameScientific, description, recommendations, actions } =

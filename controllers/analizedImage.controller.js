@@ -73,14 +73,24 @@ export class AnlizedImageController {
     }
   }
   static async getRecomendationsAndActionsByIdAnalizedImage(req, res) {
-    const { idAnalizedImage } = req.params;
-    //Obtener recomendaciones y acciones para lo detectado en la imagen
-    const recomendationsAndActions =
-      await AnalizedImageModel.getRecomendationsAndActionsByIdAnalizedImage({
-        idAnalizedImage,
-      });
-    res.json(recomendationsAndActions);
+    try {
+      const { idAnalizedImage } = req.params;
+      const recomendationsAndActions =
+        await AnalizedImageModel.getRecomendationsAndActionsByIdAnalizedImage({
+          idAnalizedImage,
+        });
+      if (recomendationsAndActions.length == 0) {
+        return res.json({
+          message: "No se encontraron los datos de la imagen",
+        });
+      }
+      return res.json(recomendationsAndActions);
+    } catch (error) {
+      res.json({ message: `Hubo un problema ${error}` });
+    }
   }
+
+  //ACA me quede
   static async updateStatusAnalizedImage(req, res) {
     const { idAnalizedImage } = req.params;
     const { status } = req.body;
@@ -88,5 +98,50 @@ export class AnlizedImageController {
       input: { idAnalizedImage, status },
     });
     res.json({ message: "Estado actualizado" });
+  }
+
+  static async getRecomendationsAndActionsByGuests(req, res) {
+    try {
+      const { detected } = req.body;
+      if (detected.length > 0) {
+        let response = [];
+        for (const detect of detected) {
+          if (detect === "Mosca blanca" || detect === "Araña roja") {
+            let recomendationsActions = await PlagueModel.getByName({
+              name: detect,
+            });
+            if (recomendationsActions) {
+              response.push(recomendationsActions);
+            } else {
+              return res.json({
+                message:
+                  "No se encuentra la informacion relacionada de la plaga en la base de datos",
+              });
+            }
+          } else if (
+            detect === "Alternariosis" ||
+            detect === "Botritis" ||
+            detect === "Mildiu del tomate"
+          ) {
+            let recomendationsActions = await DiseaseModel.getByName({
+              name: detect,
+            });
+            if (recomendationsActions) {
+              response.push(recomendationsActions);
+            } else {
+              return res.json({
+                message:
+                  "No se encuentra la informacion relacionada de la enfermedad en la base de datos",
+              });
+            }
+          }
+        }
+        return res.json(response);
+      } else {
+        return res.json({ message: "No hay nada detectado" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: `Hubo un problema ${error}` });
+    }
   }
 }

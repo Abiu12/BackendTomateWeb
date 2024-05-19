@@ -32,6 +32,18 @@ export class PlagueModel {
       throw new Error("Error al obtener la plaga desde la base de datos");
     }
   }
+
+  static async getByName({ name }) {
+    try {
+      const [plague] = await connection.query(
+        "SELECT * FROM plaga WHERE nombre = ?",
+        [name]
+      );
+      return plague[0];
+    } catch (error) {
+      throw new Error("Error al obtener la plaga desde la base de datos");
+    }
+  }
   static async getIdByName({ namePlague }) {
     try {
       const plague = await connection.query(
@@ -47,15 +59,14 @@ export class PlagueModel {
   }
   static async create({ input }) {
     try {
-      const { name, nameScientific, description, recommendations, actions } =
+      const { name, nameScientific, recommendations, actions, description } =
         input;
 
       const result = await connection.query(
-        "INSERT INTO plaga (id_plaga, nombre, nombre_cientifico, descripcion, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?, ?)",
-        [name, nameScientific, description, recommendations, actions]
+        "INSERT INTO plaga (id_plaga, nombre, nombre_cientifico,  recomendaciones, acciones,descripcion) VALUES (NULL, ?, ?, ?, ?, ?)",
+        [name, nameScientific, recommendations, actions, description]
       );
-
-      return result[0].insertId;
+      return result;
     } catch (error) {
       throw new Error("Error al crear la plaga en la base de datos");
     }
