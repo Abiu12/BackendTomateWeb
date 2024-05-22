@@ -12,7 +12,9 @@ export class AnlizedImageController {
         idBed,
       });
       if (analizedImages.length == 0) {
-        return res.json({ message: "No hay imagenes analizadas de la cama" });
+        return res
+          .status(404)
+          .json({ message: "No hay imagenes analizadas de la cama" });
       }
       const results = [];
       for (const image of analizedImages) {
@@ -26,7 +28,7 @@ export class AnlizedImageController {
             { idAnalizedImage: image.id_imagenanalizada }
           );
         if (idPlagues.length == 0 && idDiseases.length == 0) {
-          return res.json({
+          return res.status(404).json({
             message: "No hay plagas y enfermedades asociadas a la imagen",
           });
         }
@@ -36,10 +38,10 @@ export class AnlizedImageController {
           const namePlaga = await PlagueModel.getById({
             idPlague: plague.id_plaga,
           });
-          if (namePlaga) {
-            namesPlagues.push(namePlaga.nombre);
+          if (namePlaga.length > 0) {
+            namesPlagues.push(namePlaga[0].nombre);
           } else {
-            return res.json({
+            return res.status(404).json({
               message: "No se encontró un nombre de plaga registrado a ese id",
             });
           }
@@ -48,10 +50,10 @@ export class AnlizedImageController {
           const nameDisease = await DiseaseModel.getById({
             idDisease: disease.id_enfermedad,
           });
-          if (nameDisease) {
-            namesDiseases.push(nameDisease.nombre);
+          if (nameDisease.length > 0) {
+            namesDiseases.push(nameDisease[0].nombre);
           } else {
-            return res.json({
+            return res.status(404).json({
               message:
                 "No se encontró un nombre de enfermedad registrado a ese id",
             });
