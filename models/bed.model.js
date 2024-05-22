@@ -18,43 +18,45 @@ export class BedModel {
         "INSERT INTO cama (id_cama,numero_cama,tipo_cultivo,id_invernadero) values (NULL,?,?,?)",
         [numberBed, typeCrop, idGreenhouse]
       );
-      return result[0].insertId;
+      return result;
     } catch (error) {
-      throw new Error("Error al crear la cama en la base de datos");
+      throw new Error(error);
     }
   }
   static async getById({ idBed }) {
     try {
-      const result = await connection.query(
+      const [result] = await connection.query(
         `SELECT * FROM cama  WHERE id_cama = ?`,
         [idBed]
       );
-      return result[0];
+      return result;
     } catch (error) {
-      throw new Error("Error al obtener la cama en la base de datos");
+      throw new Error(error);
     }
   }
   static async update({ input }) {
     try {
       const { idBed, numberBed, typeCrop, idGreenhouse } = input;
-      await connection.query(
+      const result = await connection.query(
         `UPDATE cama
                 SET numero_cama = ?, tipo_cultivo = ?, id_invernadero = ?
                 WHERE id_cama = ?;
                 `,
         [numberBed, typeCrop, idGreenhouse, idBed]
       );
+      return result;
     } catch (error) {
-      throw new Error("Error al actualizar la cama en la base de datos");
+      throw new Error(error);
     }
   }
+  //Ya
   static async getBedByGreenhouse({ idGreenhouse }) {
     try {
-      const [beds] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM cama WHERE id_invernadero = ?",
         [idGreenhouse]
       );
-      return beds;
+      return result;
     } catch (error) {
       throw new Error(
         "Error al obtener las camas asociadas al invernadero desde la base de datos"

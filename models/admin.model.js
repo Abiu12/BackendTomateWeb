@@ -21,7 +21,7 @@ export class AdminModel {
       );
       return result[0];
     } catch (error) {
-      throw new Error({ message: `Hubo un error ${error}` });
+      throw new Error(error);
     }
   }
 
@@ -53,7 +53,7 @@ export class AdminModel {
         return false;
       }
     } catch (error) {
-      throw new Error({ message: `Hubo un error ${error}` });
+      throw new Error(error);
     }
   }
 }

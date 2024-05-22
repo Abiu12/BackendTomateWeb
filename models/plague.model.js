@@ -11,52 +11,51 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class PlagueModel {
+  // ya
   static async getAll() {
     try {
-      const [plagues] = await connection.query("SELECT * FROM plaga");
-      return plagues;
+      const [result] = await connection.query("SELECT * FROM plaga");
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener todas las plagas desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
+  // ya
   static async getById({ idPlague }) {
     try {
-      const [plague] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM plaga WHERE id_plaga = ?",
         [idPlague]
       );
-      return plague[0];
+      return result;
     } catch (error) {
-      throw new Error("Error al obtener la plaga desde la base de datos");
+      throw new Error(error);
     }
   }
 
   static async getByName({ name }) {
     try {
-      const [plague] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM plaga WHERE nombre = ?",
         [name]
       );
-      return plague[0];
+      return result;
     } catch (error) {
-      throw new Error("Error al obtener la plaga desde la base de datos");
+      throw new Error(error);
     }
   }
   static async getIdByName({ namePlague }) {
     try {
-      const plague = await connection.query(
+      const result = await connection.query(
         "SELECT id_plaga FROM plaga WHERE nombre = ?",
         [namePlague]
       );
-      return plague[0];
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener el ID de la plaga desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
+  //ya
   static async create({ input }) {
     try {
       const { name, nameScientific, recommendations, actions, description } =
@@ -68,14 +67,14 @@ export class PlagueModel {
       );
       return result;
     } catch (error) {
-      throw new Error("Error al crear la plaga en la base de datos");
+      throw new Error(error);
     }
   }
   static async getRecomendationsAndActionsPlagueByIdAnalizedImage({
     idAnalizedImage,
   }) {
     try {
-      const [recomendationsandactionsplague] = await connection.query(
+      const [result] = await connection.query(
         `SELECT 
                     ia.*, 
                     p.*
@@ -89,13 +88,12 @@ export class PlagueModel {
                 `,
         [idAnalizedImage]
       );
-      return recomendationsandactionsplague;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener las recomendaciones y acciones de la plaga por ID de imagen analizada desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
+  //ya
   static async update({ input }) {
     try {
       const {
@@ -115,9 +113,10 @@ export class PlagueModel {
       );
       return result;
     } catch (error) {
-      throw new Error("Error al actualizar la plaga en la base de datos");
+      throw new Error(error);
     }
   }
+  //ya
   static async delete({ idPlague }) {
     try {
       const result = await connection.query(
@@ -129,16 +128,21 @@ export class PlagueModel {
       );
       return result;
     } catch (error) {
-      throw new Error("Hubo un error al eliminar la plaga en la base de datos");
+      throw new Error(error);
     }
   }
+  // ya
   static async checkExist({ namePlague }) {
-    const result = await connection.query(
-      `
-            SELECT * FROM plaga WHERE nombre = ?
-            `,
-      [namePlague]
-    );
-    return result;
+    try {
+      const [result] = await connection.query(
+        `
+              SELECT * FROM plaga WHERE nombre = ?
+              `,
+        [namePlague]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

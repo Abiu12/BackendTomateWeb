@@ -26,7 +26,7 @@ export class DashboardModel {
       );
       return result;
     } catch (error) {
-      throw new Error(`Ha ocurrido un error en la base de datos `, error);
+      throw new Error(error);
     }
   }
   //Ya
@@ -44,7 +44,7 @@ export class DashboardModel {
       );
       return result;
     } catch (error) {
-      throw new Error(`Ha ocurrido un error en la base de datos ${error}`);
+      throw new Error(error);
     }
   }
   // static async getTotalAnalizedImagesByFarmerByGreenhouse({ input }) {

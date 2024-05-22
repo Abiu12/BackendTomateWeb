@@ -17,47 +17,59 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class LoginModel {
+  // ya
   static async login({ input }) {
-    const { username, password } = input;
-    const response = await connection.query(
-      "SELECT rol FROM usuario WHERE BINARY LOWER(nombre_usuario) = ? AND BINARY LOWER(contrasenia) = ?",
-      [username.toLowerCase(), password.toLowerCase()]
-    );
-    if (response[0].length > 0) {
-      const rolUsuario = response[0][0].rol;
-      const token = jwt.sign({ username, rolUsuario }, "Stack", {
-        expiresIn: "50m",
-      });
-      return { response, token };
-    } else {
-      return [];
+    try {
+      const { username, password } = input;
+      const response = await connection.query(
+        "SELECT rol FROM usuario WHERE BINARY LOWER(nombre_usuario) = ? AND BINARY LOWER(contrasenia) = ?",
+        [username.toLowerCase(), password.toLowerCase()]
+      );
+      if (response[0].length > 0) {
+        const rolUsuario = response[0][0].rol;
+        const token = jwt.sign({ username, rolUsuario }, "Stack", {
+          expiresIn: "50m",
+        });
+        return { response, token };
+      } else {
+        return [];
+      }
+    } catch (error) {
+      throw new Error(error);
     }
   }
+  // ya
   static async checkEmailExistence({ input }) {
-    const { email } = input;
-    const response = await connection.query(
-      `SELECT * FROM persona WHERE correo_electronico = ?`,
-      [email]
-    );
-    return response;
+    try {
+      const { email } = input;
+      const [result] = await connection.query(
+        `SELECT * FROM persona WHERE correo_electronico = ? and estado = "activo"`,
+        [email]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
+  // ya
   static async userNameExistence({ userName }) {
     try {
-      const result = await connection.query(
+      const [result] = await connection.query(
         `SELECT * FROM usuario WHERE nombre_usuario = ?`,
         [userName]
       );
       return result;
     } catch (error) {
-      throw new Error("Error en la base de datos: ", error);
+      throw new Error(error);
     }
   }
+  // ya
   static async getDataByUsername({ input }) {
     try {
       const { username, password, role } = input;
       let result;
       if (role === "farmer") {
-        result = await connection.query(
+        [result] = await connection.query(
           `
                 SELECT persona.*, agricultor.*,usuario.*
                 FROM usuario
@@ -68,7 +80,7 @@ export class LoginModel {
           [username, password]
         );
       } else if (role === "worker") {
-        result = await connection.query(
+        [result] = await connection.query(
           `
                 SELECT persona.*, trabajador.*,usuario.*
                 FROM usuario
@@ -79,7 +91,7 @@ export class LoginModel {
           [username, password]
         );
       } else if (role === "admin") {
-        result = await connection.query(
+        [result] = await connection.query(
           `
                 SELECT persona.*,usuario.*
                 FROM usuario
@@ -89,12 +101,9 @@ export class LoginModel {
           [username, password]
         );
       }
-      if (result == undefined || result[0].length === 0) {
-        return null;
-      }
       return result;
     } catch (error) {
-      throw new Error("Error al obtener los datos de la base de datos");
+      throw new Error(error);
     }
   }
 }

@@ -11,89 +11,91 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class GreenhouseModel {
+  // Ya
   static async getAll() {
     try {
-      const [greenhouses] = await connection.query(
+      const [result] = await connection.query(
         `SELECT i.*, CONCAT(p.nombre, ' ', p.primer_apellido, ' ', p.segundo_apellido) AS nombre_agricultor
                 FROM invernadero i
                 JOIN agricultor a ON i.id_agricultor = a.id_agricultor
                 JOIN persona p ON a.id_persona = p.id_persona;`
       );
-      return greenhouses;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener todos los invernaderos desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
-
+  // ya
   static async getById({ idGreenhouse }) {
     try {
-      const [greenhouse] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM invernadero WHERE id_invernadero = ?",
         [idGreenhouse]
       );
-      return greenhouse;
+      return result;
     } catch (error) {
-      throw new Error("Error al obtener el invernadero desde la base de datos");
+      throw new Error(error);
     }
   }
 
+  //Ya
   static async create({ input }) {
     try {
       const { idFarmer, name, typeGreenhouse, humidity, size } = input;
-
       const result = await connection.query(
         "INSERT INTO invernadero (id_invernadero, id_agricultor, nombre, tipo_invernadero, humedad, tamanio) VALUES (NULL, ?, ?, ?, ?, ?)",
         [idFarmer, name, typeGreenhouse, humidity, size]
       );
-
-      return result[0].insertId;
+      return result;
     } catch (error) {
-      throw new Error("Error al crear el invernadero en la base de datos");
+      throw new Error(error);
     }
   }
-
+  //Ya
   static async update({ input }) {
     try {
       const { idGreenhouse, idFarmer, name, typeGreenhouse, humidity, size } =
         input;
 
-      await connection.query(
+      const result = await connection.query(
         `UPDATE invernadero
                 SET id_agricultor = ?, nombre = ?, tipo_invernadero = ?, humedad = ?, tamanio = ?
                 WHERE id_invernadero = ?;`,
         [idFarmer, name, typeGreenhouse, humidity, size, idGreenhouse]
       );
+
+      return result;
     } catch (error) {
-      throw new Error("Error al actualizar el invernadero en la base de datos");
+      throw new Error(error);
     }
   }
-
+  // ya
   static async getGreenhouseByIdFarmer({ idFarmer }) {
     try {
-      const [greenhouses] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM invernadero WHERE id_agricultor = ?;",
         [idFarmer]
       );
-      return greenhouses;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener los invernaderos por ID de agricultor desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
-
+  // Ya
   static async checkExist({ nameGreenhouse }) {
-    const result = await connection.query(
-      `
-                SELECT * FROM invernadero WHERE nombre = ?
-                `,
-      [nameGreenhouse]
-    );
-    return result;
+    try {
+      const result = await connection.query(
+        `
+                  SELECT * FROM invernadero WHERE nombre = ?
+                  `,
+        [nameGreenhouse]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
-
+  //Ya
   static async delete({ idGreenhouse }) {
     try {
       const result = await connection.query(
@@ -106,7 +108,7 @@ export class GreenhouseModel {
       );
       return result;
     } catch (error) {
-      throw new Error("Hubo un error al eliminar el invernadero");
+      throw new Error(error);
     }
   }
 }

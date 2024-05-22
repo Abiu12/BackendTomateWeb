@@ -3,26 +3,27 @@ import { PersonModel } from "../models/person.model.js";
 import { UserModel } from "../models/user.model.js";
 import { WorkerModel } from "../models/worker.model.js";
 export class FarmerController {
+  // Ya web
   static async getAll(req, res) {
     try {
-      const farmers = await FarmerModel.getAll();
-      res.json(farmers);
+      const response = await FarmerModel.getAll();
+      return res.json(response);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //Ya web
   static async getById(req, res) {
     try {
       const { id } = req.params;
-      const farmer = await FarmerModel.getById({ idFarmer: id });
-      if (farmer) return res.json(farmer);
-      return res.status(404).json({ message: "Agricultor no encontrado" });
+      const response = await FarmerModel.getById({ idFarmer: id });
+      if (response.length > 0) return res.json(response[0]);
+      return res.status(404).json([]);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //Ya web
   static async create(req, res) {
     try {
       const {
@@ -38,37 +39,62 @@ export class FarmerController {
       const idPerson = await PersonModel.create({
         input: { name, surname, secondSurname, phone, email },
       });
-      await FarmerModel.create({ idPerson });
-      await UserModel.create({ input: { nameUser, password, idPerson, role } });
-      res.status(201).json({ message: "Agricultor creado" });
+      if (idPerson) {
+        const responseFarmer = await FarmerModel.create({ idPerson });
+        const responseUser = await UserModel.create({
+          input: { nameUser, password, idPerson, role },
+        });
+        if (
+          responseFarmer[0].affectedRows == 1 &&
+          responseUser[0].affectedRows == 1
+        ) {
+          return res.status(201).json({ message: "Agricultor creado" });
+        }
+        return res.json({
+          message: "Hubo un problema al registrar al agricultor",
+        });
+      }
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //Ya web
   static async delete(req, res) {
     try {
       const { idFarmer } = req.params;
       const farmer = await FarmerModel.getById({ idFarmer });
-      await PersonModel.delete({ idPerson: farmer.id_persona });
-      res.json({ message: "El agricultor ha sido eliminado" });
+      if (farmer.length > 0) {
+        const response = await PersonModel.delete({
+          idPerson: farmer[0].id_persona,
+        });
+        if (response[0].affectedRows == 1) {
+          return res.json({ message: "El agricultor ha sido eliminado" });
+        }
+      }
+      return res.status(404).json({ message: "No se encontró al agricultor" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
 
+  //Ya
   static async getWorkersByIdFarmer(req, res) {
     try {
       const { idFarmer } = req.params;
-      const workerByFarmer = await WorkerModel.getWorkersByIdFarmer({
+      const response = await WorkerModel.getWorkersByIdFarmer({
         idFarmer,
       });
-      res.json(workerByFarmer);
+      if (response.length > 0) {
+        return res.json(response);
+      }
+      return res
+        .status(404)
+        .json({ message: "No hay trabajadores registrados del agricultor" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //Ya
   static async update(req, res) {
     try {
       const { idFarmer } = req.params;
@@ -84,59 +110,87 @@ export class FarmerController {
       } = req.body;
 
       const farmer = await FarmerModel.getById({ idFarmer });
-      const idPerson = farmer.id_persona;
-      await PersonModel.update({
-        input: { idPerson, name, surname, secondSurname, phone, email },
-      });
-      await UserModel.update({ input: { idPerson, nameUser, password } });
-      res.json({ message: "Se han actualizado los datos del agricultor" });
+      if (farmer.length > 0) {
+        const responsePersonUpdate = await PersonModel.update({
+          input: {
+            idPerson: farmer[0].id_persona,
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email,
+          },
+        });
+        const responseUserUpdate = await UserModel.update({
+          input: { idPerson: farmer[0].id_persona, nameUser, password },
+        });
+        if (
+          responsePersonUpdate[0].affectedRows == 1 &&
+          responseUserUpdate[0].affectedRows == 1
+        ) {
+          return res.json({
+            message: "Se han actualizado los datos del agricultor",
+          });
+        }
+      }
+      return res.status(400).json({ message: "No se encontró el agricultor" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //Ya
   static async changePassword(req, res) {
     try {
       const { idFarmer } = req.params;
       const { oldPassword, newPassword } = req.body;
       const farmer = await FarmerModel.getById({ idFarmer });
-      const user = await UserModel.getByIdPerson({
-        idPerson: farmer.id_persona,
-      });
-      if (user) {
-        if (user.contrasenia === oldPassword) {
-          await UserModel.changePassword({
-            input: { newPassword, idPerson: farmer.id_persona },
-          });
-          return res.json({ message: "La contraseña se ha cambiado" });
-        } else {
-          return res.json({ message: "La contraseña es incorrecta" });
+      if (farmer.length > 0) {
+        const user = await UserModel.getByIdPerson({
+          idPerson: farmer[0].id_persona,
+        });
+        if (user.length > 0) {
+          if (user[0].contrasenia === oldPassword) {
+            const response = await UserModel.changePassword({
+              input: { newPassword, idPerson: farmer[0].id_persona },
+            });
+            if (response[0].affectedRows == 1) {
+              return res.json({ message: "La contraseña se ha cambiado" });
+            }
+          } else {
+            return res.json({ message: "La contraseña es incorrecta" });
+          }
         }
       }
+      return res.json({ message: "No se encuentra el agricultor" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  // Ya
   static async getNotificationsByStatus(req, res) {
     try {
       const { idFarmer, status } = req.params;
-      const notifications = await FarmerModel.getNotificationsByStatus({
+      const response = await FarmerModel.getNotificationsByStatus({
         input: { idFarmer, status },
       });
-      res.json(notifications);
+      if (response.length > 0) {
+        return res.json(response);
+      }
+      return res
+        .status(404)
+        .json({ message: "No se encontraron notificaciones" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //Ya
   static async getNameFarmers(req, res) {
     try {
       const response = await FarmerModel.getNameFarmers();
-      if (response[0].length > 0) {
-        return res.json(response[0]);
+      if (response.length > 0) {
+        return res.json(response);
       }
-      return res.json({
+      return res.status(404).json({
         message: "No se han encontrado datos de los agricultores",
       });
     } catch (error) {

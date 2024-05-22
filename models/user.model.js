@@ -11,6 +11,7 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class UserModel {
+  //Ya
   static async create({ input }) {
     try {
       const { nameUser, password, role, idPerson } = input;
@@ -20,57 +21,54 @@ export class UserModel {
       );
       return result;
     } catch (error) {
-      throw new Error("Error al crear el usuario en la base de datos");
+      throw new Error(error);
     }
   }
-
+  //ya
   static async update({ input }) {
     try {
       const { idPerson, nameUser, password } = input;
-      await connection.query(
+      const result = await connection.query(
         `UPDATE usuario
                 SET nombre_usuario = ?, contrasenia = ?
                 WHERE id_persona = ?;
                 `,
         [nameUser, password, idPerson]
       );
+      return result;
     } catch (error) {
-      throw new Error("Error al actualizar el usuario en la base de datos");
+      throw new Error(error);
     }
   }
-
+  //Ya
   static async changePassword({ input }) {
     try {
       const { newPassword, idPerson } = input;
-      await connection.query(
+      const result = await connection.query(
         `UPDATE usuario
                 SET contrasenia = ?
                 WHERE id_persona = ?
                 `,
         [newPassword, idPerson]
       );
-      return true;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al cambiar la contraseña del usuario en la base de datos"
-      );
+      throw new Error(error);
     }
   }
-
+  // Ya
   static async getByIdPerson({ idPerson }) {
     try {
-      const user = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM usuario WHERE id_persona = ?",
         [idPerson]
       );
-      return user[0][0];
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener el usuario por ID de persona desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
-
+  //Ya
   static async registerTokenNotification({ input }) {
     try {
       const { userName, token } = input;
@@ -87,7 +85,7 @@ export class UserModel {
       }
       return false;
     } catch (error) {
-      throw new Error("Error en el servidor ", error);
+      throw new Error(error);
     }
   }
 
@@ -99,9 +97,8 @@ export class UserModel {
       );
       if (result[0].length == 0) return false;
       return true;
-      //   return result[0];
     } catch (error) {
-      throw new Error("Error en el servidor ", error);
+      throw new Error(error);
     }
   }
   static async getTokenByIdUser({ idUser }) {
@@ -111,9 +108,8 @@ export class UserModel {
         idUser
       );
       return result[0];
-      console.log(result);
     } catch (error) {
-      throw new Error("Error en el servidor ", error);
+      throw new Error(error);
     }
   }
 }

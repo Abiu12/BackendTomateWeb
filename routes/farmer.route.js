@@ -3,7 +3,7 @@ import { FarmerController } from "../controllers/farmer.controller.js";
 
 export const FarmerRouter = Router();
 
-//Obtener el nombre completo del agricultor con su id
+//Obtener el nombre completo del agricultor junto con su id
 FarmerRouter.get("/getNameFarmers", FarmerController.getNameFarmers);
 
 //obtener todos los agricultores

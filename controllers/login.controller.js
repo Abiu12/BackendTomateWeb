@@ -4,6 +4,7 @@ import { UserModel } from "../models/user.model.js";
 import { require } from "../utils/require.js";
 const nodemailer = require("nodemailer");
 export class LoginController {
+  // ya
   static async login(req, res) {
     try {
       const { username, password } = req.body;
@@ -19,22 +20,35 @@ export class LoginController {
       res.status(500).json({ mesagge: `Hubo un problema ${error}` });
     }
   }
+  // Ya
   static async checkEmailExistence(req, res) {
-    const { email } = req.body;
-    const response = await LoginModel.checkEmailExistence({ input: { email } });
-    if (response[0].length > 0) {
-      return res.json({ exists: true });
+    try {
+      const { email } = req.body;
+      const response = await LoginModel.checkEmailExistence({
+        input: { email },
+      });
+      if (response.length > 0) {
+        return res.json({ exists: true });
+      }
+      res.json({ exists: false });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-    res.json({ exists: false });
   }
+  // ya
   static async userNameExistence(req, res) {
-    const { userName } = req.body;
-    const response = await LoginModel.userNameExistence({ userName });
-    if (response[0].length > 0) {
-      return res.json({ exists: true });
+    try {
+      const { userName } = req.body;
+      const response = await LoginModel.userNameExistence({ userName });
+      if (response.length > 0) {
+        return res.json({ exists: true });
+      }
+      return res.json({ exists: false });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
     }
-    res.json({ exists: false });
   }
+  //ya
   static sendEmail(req, res) {
     const { recipient_email, OTP } = req.body;
     const response = new Promise((resolve, reject) => {
@@ -87,19 +101,20 @@ export class LoginController {
     });
     return res.json({ message: response.message });
   }
+  // ya
   static async changePassword(req, res) {
     try {
       const { email, newPassword } = req.body;
       const person = await PersonModel.getByEmail({ email });
       if (person.length === 0) {
-        return res.json({
+        return res.status(404).json({
           message: "No existe un usuario asociado a ese email",
         });
       } else {
         const response = await UserModel.changePassword({
-          input: { idPerson: person.id_persona, newPassword },
+          input: { idPerson: person[0].id_persona, newPassword },
         });
-        if (response) {
+        if (response[0].affectedRows == 1) {
           return res.json({
             message: "Se ha cambiado la contraseña correctamente",
           });
@@ -113,18 +128,22 @@ export class LoginController {
       res.status(500).json({ error: error.message });
     }
   }
+  // ya
   static async getDataByUsername(req, res) {
     try {
       const { username, password, role } = req.body;
       const response = await LoginModel.getDataByUsername({
         input: { username, password, role },
       });
-      if (response) return res.json(response[0]);
-      return res.json({ message: "No existen datos de este usuario" });
+      if (response.length > 0) return res.json(response[0]);
+      return res
+        .status(404)
+        .json({ message: "No existen datos de este usuario" });
     } catch (error) {
       return res.send(500).json({ error: error.message });
     }
   }
+  // ya
   static async registerTokenNotification(req, res) {
     try {
       const { userName, token } = req.body;

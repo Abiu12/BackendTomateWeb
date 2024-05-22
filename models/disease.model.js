@@ -11,75 +11,67 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class DiseaseModel {
+  //Ya
   static async getAll() {
     try {
-      const [diseases] = await connection.query("SELECT * FROM enfermedad");
-      return diseases;
+      const [result] = await connection.query("SELECT * FROM enfermedad");
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener todas las enfermedades desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
   static async getById({ idDisease }) {
     try {
-      const [disease] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM enfermedad WHERE id_enfermedad = ?",
         [idDisease]
       );
-      return disease[0];
+      return result;
     } catch (error) {
-      throw new Error("Error al obtener la enfermedad desde la base de datos");
+      throw new Error(error);
     }
   }
   static async getByName({ name }) {
     try {
-      const [disease] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM enfermedad WHERE nombre = ?",
         [name]
       );
-      return disease[0];
+      return result;
     } catch (error) {
-      throw new Error("Error al obtener la plaga desde la base de datos");
+      throw new Error(error);
     }
   }
+  //Ya
   static async create({ input }) {
     try {
       const { name, nameScientific, description, recommendations, actions } =
         input;
-
       const result = await connection.query(
         "INSERT INTO enfermedad (id_enfermedad, nombre, nombre_cientifico, descripcion, recomendaciones, acciones) VALUES (NULL, ?, ?, ?, ?, ?)",
         [name, nameScientific, description, recommendations, actions]
       );
-
-      return result[0].insertId;
+      return result;
     } catch (error) {
-      throw new Error("Error al crear la enfermedad en la base de datos");
+      throw new Error(error);
     }
   }
   static async getIdByName({ nameDisease }) {
     try {
-      const disease = await connection.query(
+      const result = await connection.query(
         "SELECT id_enfermedad FROM enfermedad WHERE nombre = ?",
         [nameDisease]
       );
-      if (disease[0].length > 0) {
-        return disease[0][0].id_enfermedad;
-      } else {
-        throw new Error("La enfermedad no fue encontrada en la base de datos");
-      }
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener el ID de la enfermedad desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
   static async getRecomendationsAndActionsDiseaseByIdAnalizedImage({
     idAnalizedImage,
   }) {
     try {
-      const [recomendationsandactionsdisease] = await connection.query(
+      const [result] = await connection.query(
         `SELECT 
                     ia.*, 
                     e.*
@@ -93,11 +85,9 @@ export class DiseaseModel {
                 `,
         [idAnalizedImage]
       );
-      return recomendationsandactionsdisease;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener las recomendaciones y acciones de la enfermedad asociada a la imagen analizada desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
   static async update({ input }) {
@@ -119,9 +109,11 @@ export class DiseaseModel {
       );
       return result;
     } catch (error) {
-      throw new Error("Error al actualizar la enfermedad en la base de datos");
+      throw new Error(error);
     }
   }
+
+  //Ya
   static async delete({ idDisease }) {
     try {
       const result = await connection.query(
@@ -133,18 +125,21 @@ export class DiseaseModel {
       );
       return result;
     } catch (error) {
-      throw new Error(
-        "Hubo un error al eliminar la enfermedad en la base de datos"
-      );
+      throw new Error(error);
     }
   }
+  //Ya
   static async checkExist({ nameDisease }) {
-    const result = await connection.query(
-      `
-                SELECT * FROM enfermedad WHERE nombre = ?
-                `,
-      [nameDisease]
-    );
-    return result;
+    try {
+      const result = await connection.query(
+        `
+                  SELECT * FROM enfermedad WHERE nombre = ?
+                  `,
+        [nameDisease]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
   }
 }

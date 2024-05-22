@@ -23,23 +23,19 @@ export class AnalizedImagePlagueModel {
       );
       return result;
     } catch (error) {
-      throw new Error(
-        "Error al crear la relación imagen-analizada-plaga en la base de datos"
-      );
+      throw new Error(error);
     }
   }
 
   static async getAnalizedImagePlagueByIdAnalizedImage({ idAnalizedImage }) {
     try {
-      const [analizedImagePlague] = await connection.query(
+      const [result] = await connection.query(
         "SELECT * FROM imagenanalizadaplaga WHERE id_imagenanalizada = ?",
         [idAnalizedImage]
       );
-      return analizedImagePlague;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener la relación imagen-analizada-plaga desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
 }

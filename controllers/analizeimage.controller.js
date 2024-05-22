@@ -175,7 +175,7 @@ export class AnalizeImageController {
       let id;
       if (name == "Araña roja" || name == "Mosca blanca") {
         id = await PlagueModel.getIdByName({ namePlague: name });
-        if (id[0]) {
+        if (id.length > 0) {
           const response = await AnalizedImagePlagueModel.create({
             input: { idAnalizedImage, idPlague: id[0].id_plaga },
           });
@@ -191,9 +191,9 @@ export class AnalizeImageController {
         name == "Oídio"
       ) {
         id = await DiseaseModel.getIdByName({ nameDisease: name });
-        if (id[0]) {
+        if (id.length > 0) {
           const response = await AnalyzedImageDiseaseModel.create({
-            input: { idAnalizedImage, idDisease: id },
+            input: { idAnalizedImage, idDisease: id[0].id_enfermedad },
           });
           if (response[0].affectedRows == 1) {
             return true;

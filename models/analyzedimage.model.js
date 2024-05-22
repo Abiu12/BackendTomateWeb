@@ -23,7 +23,7 @@ export class AnalizedImageModel {
       );
       return result[0].insertId;
     } catch (error) {
-      throw new Error("Error al crear la imagen analizada en la base de datos");
+      throw new Error(error);
     }
   }
   static async getAnalizedImageByBed({ idBed }) {

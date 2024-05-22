@@ -35,4 +35,4 @@ app.use("/analyzeimage", upload.single("image"), AnalizeImageRouter);
 app.use("/dashboard", DashboardRouter);
 app.use("/login", LoginRouter);
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+app.listen(port, () => console.log(`Servidor corriendo en el puerto ${port}!`));

@@ -11,26 +11,25 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class FarmerModel {
+  //Ya
   static async getAll() {
     try {
-      const [farmers] = await connection.query(
+      const [result] = await connection.query(
         `SELECT a.id_agricultor, p.*, u.* 
                 FROM agricultor a 
                 JOIN persona p ON a.id_persona = p.id_persona 
                 JOIN usuario u ON p.id_persona = u.id_persona 
                 WHERE p.estado = 'activo' and u.rol= "farmer";`
       );
-      return farmers;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener todos los agricultores desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
-
+  //Ya
   static async getById({ idFarmer }) {
     try {
-      const [farmer] = await connection.query(
+      const [result] = await connection.query(
         `SELECT a.id_agricultor, p.*,u.*
                 FROM agricultor a
                 JOIN persona p ON a.id_persona = p.id_persona
@@ -39,31 +38,28 @@ export class FarmerModel {
                 `,
         [idFarmer]
       );
-      if (farmer.length === 0) {
-        return [];
-      }
-      return farmer[0];
+      return result;
     } catch (error) {
-      throw new Error("Error al obtener el agricultor desde la base de datos");
+      throw new Error(error);
     }
   }
-
+  //Ya
   static async create({ idPerson }) {
     try {
       const result = await connection.query(
         "INSERT INTO agricultor (id_agricultor, id_persona) VALUES (NULL, ?)",
         [idPerson]
       );
-      return result[0].insertId;
+      return result;
     } catch (error) {
-      throw new Error("Error al crear el agricultor en la base de datos");
+      throw new Error(error);
     }
   }
-
+  // Ya
   static async getNotificationsByStatus({ input }) {
     try {
       const { idFarmer, status } = input;
-      const [notifications] = await connection.query(
+      const [result] = await connection.query(
         `SELECT 
                 ia.*,
                 a.id_agricultor,
@@ -99,17 +95,15 @@ export class FarmerModel {
             `,
         [idFarmer, status]
       );
-      return notifications;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener las notificaciones por estado desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
-
+  // Ya
   static async getNameFarmers() {
     try {
-      const result = await connection.query(
+      const [result] = await connection.query(
         `SELECT a.id_agricultor, CONCAT(p.nombre,' ', p.primer_apellido,' ', p.segundo_apellido) AS nombre
         FROM agricultor a
         JOIN persona p ON a.id_persona = p.id_persona
@@ -119,10 +113,7 @@ export class FarmerModel {
       );
       return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener los nombres de la base de datos",
-        error
-      );
+      throw new Error(error);
     }
   }
 }

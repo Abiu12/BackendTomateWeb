@@ -4,27 +4,31 @@ import { UserModel } from "../models/user.model.js";
 import { WorkerGreenhouseModel } from "../models/workergreenhouse.js";
 
 export class WorkerController {
+  // ya web
   static async getAll(req, res) {
     try {
-      const workers = await WorkerModel.getAll();
-      res.json(workers);
+      const response = await WorkerModel.getAll();
+      if (response.length > 0) {
+        return res.json(response);
+      }
+      return res.status(404).json({ message: "No hay trabajadores" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  // ya web
   static async getById(req, res) {
     try {
       const { idWorker } = req.params;
-      const worker = await WorkerModel.getById({ idWorker });
-      if (worker.length == 0)
+      const response = await WorkerModel.getById({ idWorker });
+      if (response.length == 0)
         return res.status(404).json({ message: "Trabajador no encontrado" });
-      return res.json(worker);
+      return res.json(response[0]);
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  // ya
   static async create(req, res) {
     try {
       const {
@@ -48,18 +52,25 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //ya
   static async delete(req, res) {
     try {
       const { idWorker } = req.params;
       const worker = await WorkerModel.getById({ idWorker });
-      await PersonModel.delete({ idPerson: worker.id_persona });
-      res.json({ message: "El trabajador ha sido eliminado" });
+      if (worker.length > 0) {
+        const response = await PersonModel.delete({
+          idPerson: worker[0].id_persona,
+        });
+        if (response[0].affectedRows == 1) {
+          return res.json({ message: "El trabajador ha sido eliminado" });
+        }
+      }
+      return res.status(404).json({ message: "No se encontró al trabajador" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //ya
   static async update(req, res) {
     try {
       const { idWorker } = req.params;
@@ -75,43 +86,70 @@ export class WorkerController {
         role,
       } = req.body;
       const worker = await WorkerModel.getById({ idWorker });
-      const idPerson = worker.id_persona;
-      await WorkerModel.update({
-        input: { idWorker: worker.id_trabajador, idFarmer },
-      });
-      await PersonModel.update({
-        input: { idPerson, name, surname, secondSurname, phone, email },
-      });
-      await UserModel.update({ input: { idPerson, nameUser, password, role } });
-      res.json({ message: "Se han actualizado los datos del trabajador" });
+      if (worker.length > 0) {
+        const responseWorker = await WorkerModel.update({
+          input: { idWorker: worker[0].id_trabajador, idFarmer },
+        });
+        const responsePerson = await PersonModel.update({
+          input: {
+            idPerson: worker[0].id_persona,
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email,
+          },
+        });
+        const responseUser = await UserModel.update({
+          input: { idPerson: worker[0].id_persona, nameUser, password, role },
+        });
+        if (
+          responseWorker[0].affectedRows == 1 ||
+          responsePerson[0].affectedRows == 1 ||
+          responseUser[0].affectedRows == 1
+        ) {
+          return res.json({
+            message: "Se han actualizado los datos del trabajador",
+          });
+        }
+      }
+      return res.json({ message: "No se ha encontrado el trabajador" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //ya
   static async assignGreenhouse(req, res) {
     try {
       const { idWorker } = req.params;
       const { idGreenhouse } = req.body;
-      await WorkerGreenhouseModel.create({ input: { idWorker, idGreenhouse } });
-      res.json({ message: "Invernadero asociado a trabajador" });
+      const response = await WorkerGreenhouseModel.create({
+        input: { idWorker, idGreenhouse },
+      });
+      if (response[0].affectedRows == 1) {
+        return res.json({ message: "Invernadero asociado a trabajador" });
+      }
+      return res.json({ message: "No se encontró al trabajador" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //ya
   static async getGreenhousesByIdWorker(req, res) {
     try {
       const { idWorker } = req.params;
-      const greenhouses = await WorkerGreenhouseModel.getGreenhousesByIdWorker({
+      const response = await WorkerGreenhouseModel.getGreenhousesByIdWorker({
         idWorker,
       });
-      return res.json(greenhouses);
+      if (response.length > 0) {
+        return res.json(response);
+      }
+      return res.json({ message: "El trabajador no tiene invernaderos" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  // ya
   static async changePassword(req, res) {
     try {
       const { idWorker } = req.params;
@@ -120,27 +158,35 @@ export class WorkerController {
       const user = await UserModel.getByIdPerson({
         idPerson: worker.id_persona,
       });
-      if (user) {
-        if (user.contrasenia === oldPassword) {
-          await UserModel.changePassword({
-            input: { newPassword, idPerson: worker.id_persona },
-          });
-          return res.json({ message: "La contraseña se ha cambiado" });
-        } else {
-          return res.json({ message: "La contraseña es incorrecta" });
+      if (worker.length > 0) {
+        if (user.length > 0) {
+          if (user[0].contrasenia === oldPassword) {
+            await UserModel.changePassword({
+              input: { newPassword, idPerson: worker[0].id_persona },
+            });
+            return res.json({ message: "La contraseña se ha cambiado" });
+          } else {
+            return res.json({ message: "La contraseña es incorrecta" });
+          }
         }
+        return res.json({ message: "No existe el usuario" });
       }
+      return res.json({ message: "No existe el trabajador" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
+  //ya
   static async getNotificationsByStatus(req, res) {
     try {
       const { idWorker, status } = req.params;
-      const notifications = await WorkerModel.getNotificationsByStatus({
+      const response = await WorkerModel.getNotificationsByStatus({
         input: { idWorker, status },
       });
-      res.json(notifications);
+      if (response.length > 0) {
+        return res.json(response);
+      }
+      return res.json({ message: "No hay notificaciones" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

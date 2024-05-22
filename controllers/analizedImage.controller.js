@@ -16,6 +16,7 @@ export class AnlizedImageController {
       }
       const results = [];
       for (const image of analizedImages) {
+        //TENGO DUDAS
         const idPlagues =
           await AnalizedImagePlagueModel.getAnalizedImagePlagueByIdAnalizedImage(
             { idAnalizedImage: image.id_imagenanalizada }
@@ -24,7 +25,7 @@ export class AnlizedImageController {
           await AnalyzedImageDiseaseModel.getAnalizedImageDiseaseByIdAnalizedImage(
             { idAnalizedImage: image.id_imagenanalizada }
           );
-        if (idPlagues.length == 0 && idDiseases == 0) {
+        if (idPlagues.length == 0 && idDiseases.length == 0) {
           return res.json({
             message: "No hay plagas y enfermedades asociadas a la imagen",
           });
@@ -119,7 +120,7 @@ export class AnlizedImageController {
             let recomendationsActions = await PlagueModel.getByName({
               name: detect,
             });
-            if (recomendationsActions) {
+            if (recomendationsActions.length > 0) {
               response.push(recomendationsActions);
             } else {
               return res.json({
@@ -135,7 +136,7 @@ export class AnlizedImageController {
             let recomendationsActions = await DiseaseModel.getByName({
               name: detect,
             });
-            if (recomendationsActions) {
+            if (recomendationsActions.length > 0) {
               response.push(recomendationsActions);
             } else {
               return res.json({

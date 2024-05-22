@@ -1,14 +1,21 @@
 import { GreenhouseModel } from "../models/greenhouse.model.js";
 
 export class GreenhouseController {
+  // Ya
   static async getAll(req, res) {
     try {
-      const resultGreenhouses = await GreenhouseModel.getAll();
-      res.json(resultGreenhouses);
+      const response = await GreenhouseModel.getAll();
+      if (response.length > 0) {
+        return res.json(response);
+      }
+      return res
+        .status(404)
+        .json({ message: "No hay invernaderos registrados" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
+  //Ya
   static async getById(req, res) {
     try {
       const { idGreenhouse } = req.params;
@@ -21,51 +28,64 @@ export class GreenhouseController {
       return res.status(500).json({ message: error });
     }
   }
+  // ya
   static async create(req, res) {
     try {
       const { idFarmer, name, typeGreenhouse, humidity, size } = req.body;
-      const result = await GreenhouseModel.create({
+      const response = await GreenhouseModel.create({
         input: { idFarmer, name, typeGreenhouse, humidity, size },
       });
-      res.status(201).json({ message: "Invernadero creado" });
+      if (response[0].affectedRows == 1) {
+        return res.status(201).json({ message: "Invernadero creado" });
+      }
+      return res.json({ message: "Hubo un problema " });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  //ya
   static async update(req, res) {
     try {
       const { idGreenhouse } = req.params;
       const { idFarmer, name, typeGreenhouse, humidity, size } = req.body;
-      const result = await GreenhouseModel.update({
+      const response = await GreenhouseModel.update({
         input: { idGreenhouse, idFarmer, name, typeGreenhouse, humidity, size },
       });
-      res.json({ message: "Invernadero actualizado" });
+      if (response[0].affectedRows == 1) {
+        return res.json({ message: "Invernadero actualizado" });
+      }
+      return res.json({ message: "No se ha actualizado el invernadero" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  // Ya
   static async getGreenhouseByFarmer(req, res) {
     try {
       const { idFarmer } = req.params;
-      const greenhouses = await GreenhouseModel.getGreenhouseByIdFarmer({
+      const response = await GreenhouseModel.getGreenhouseByIdFarmer({
         idFarmer,
       });
-      res.json(greenhouses);
+      if (response.length > 0) {
+        return res.json(response);
+      }
+      return res
+        .status(404)
+        .json({ message: "El agricultor no tiene invernaderos" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
   }
-
+  // Ya
   static async checkExist(req, res) {
     const { nameGreenhouse } = req.params;
     const response = await GreenhouseModel.checkExist({ nameGreenhouse });
     if (response[0].length > 0) {
       return res.json({ exists: true });
     }
-    res.json({ exists: false });
+    return res.json({ exists: false });
   }
+  // Ya
   static async delete(req, res) {
     try {
       const { idGreenhouse } = req.params;

@@ -11,9 +11,10 @@ const config = {
 const connection = await mysql.createConnection(config);
 
 export class WorkerModel {
+  // ya
   static async getAll() {
     try {
-      const [workers] = await connection.query(
+      const [result] = await connection.query(
         `
                 SELECT t.id_trabajador, t.id_agricultor, p.*, u.*
                 FROM trabajador t
@@ -23,17 +24,15 @@ export class WorkerModel {
                 ;
                 `
       );
-      return workers;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener todos los trabajadores desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
-
+  //ya
   static async getById({ idWorker }) {
     try {
-      const [worker] = await connection.query(
+      const [result] = await connection.query(
         `
         SELECT t.*, p.*, u.*
         FROM trabajador t
@@ -43,14 +42,9 @@ export class WorkerModel {
         `,
         [idWorker]
       );
-      if (worker.length === 0) {
-        return [];
-      }
-      return worker[0];
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener el trabajador por ID desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
 
@@ -63,28 +57,29 @@ export class WorkerModel {
       );
       return result[0].insertId;
     } catch (error) {
-      throw new Error("Error al crear el trabajador en la base de datos");
+      throw new Error(error);
     }
   }
-
+  // Ya
   static async update({ input }) {
     try {
       const { idWorker, idFarmer } = input;
-      await connection.query(
+      const result = await connection.query(
         `UPDATE trabajador
                 SET id_agricultor = ?
                 WHERE id_trabajador = ?
                 `,
         [idFarmer, idWorker]
       );
+      return result;
     } catch (error) {
-      throw new Error("Error al actualizar el trabajador en la base de datos");
+      throw new Error(error);
     }
   }
-
+  //Ya
   static async getWorkersByIdFarmer({ idFarmer }) {
     try {
-      const [farmers] = await connection.query(
+      const [result] = await connection.query(
         `
                 SELECT t.id_trabajador, t.id_agricultor, p.*, u.*
                 FROM trabajador t
@@ -94,17 +89,15 @@ export class WorkerModel {
                 `,
         [idFarmer]
       );
-      return farmers;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener los trabajadores por ID de agricultor desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
   static async getNotificationsByStatus({ input }) {
     try {
       const { idWorker, status } = input;
-      const [notifications] = await connection.query(
+      const [result] = await connection.query(
         `SELECT 
         ia.*,
         t.id_trabajador,
@@ -142,11 +135,9 @@ export class WorkerModel {
             `,
         [idWorker, status]
       );
-      return notifications;
+      return result;
     } catch (error) {
-      throw new Error(
-        "Error al obtener las notificaciones por estado desde la base de datos"
-      );
+      throw new Error(error);
     }
   }
 }
