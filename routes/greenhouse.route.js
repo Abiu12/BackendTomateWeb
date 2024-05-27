@@ -11,7 +11,7 @@ GreenhouseRouter.get("/:idGreenhouse", GreenhouseController.getById);
 GreenhouseRouter.post("/", GreenhouseController.create);
 // Eliminar un invernadero
 GreenhouseRouter.delete("/:idGreenhouse", GreenhouseController.delete);
-//Obtener los invernaderos por idAgricultor
+//ESTE Obtener los invernaderos por idAgricultor
 GreenhouseRouter.get(
   "/farmer/:idFarmer",
   GreenhouseController.getGreenhouseByFarmer
