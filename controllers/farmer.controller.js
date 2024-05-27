@@ -174,7 +174,7 @@ export class FarmerController {
         input: { idFarmer, status },
       });
       if (response.length > 0) {
-        return res.json(response);
+        return res.status(200).json(response);
       }
       return res
         .status(404)

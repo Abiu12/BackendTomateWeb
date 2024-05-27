@@ -13,11 +13,11 @@ export class LoginController {
       });
       if (response) {
         const rol = response[0][0].rol;
-        return res.json({ rol, token });
+        return res.status(200).json({ rol, token });
       }
-      res.json({ message: "Error en las credenciales" });
+      res.status(400).json({ message: "Error en las credenciales" });
     } catch (error) {
-      res.status(500).json({ mesagge: `Hubo un problema ${error}` });
+      res.status(500).json({ error: error.mesagge });
     }
   }
   // Ya
@@ -150,8 +150,10 @@ export class LoginController {
       const response = await UserModel.registerTokenNotification({
         input: { userName, token },
       });
-      if (response) return res.json({ mesagge: true });
-      return res.status(500).json({ mesagge: false });
-    } catch (error) {}
+      if (response) return res.status(200).json({ mesagge: true });
+      return res.status(400).json({ mesagge: false });
+    } catch (error) {
+      res.status(500).json({ error: error.mesagge });
+    }
   }
 }

@@ -48,12 +48,10 @@ export class AnalizeImageController {
           },
         });
         for (const name of resultDeteccion.names) {
-          const resultRegisterName = await AnalizeImageController.registerName(
-            name,
-            idAnalizedImage
-          );
-          if (!resultRegisterName) {
-            res.status(500).json({
+          const responseRegisterName =
+            await AnalizeImageController.registerName(name, idAnalizedImage);
+          if (!responseRegisterName) {
+            res.status(404).json({
               message: `Hubo un error en las plagas y enfermedades ya registradas`,
             });
           }
@@ -101,9 +99,11 @@ export class AnalizeImageController {
           urlImage: downloadURL,
           detected: resultDeteccion,
         };
-        return res.json({ body });
+        return res.status(200).json({ body });
       }
-      return res.json({ message: "No se ha detectado nada en la imagen" });
+      return res
+        .status(404)
+        .json({ message: "No se ha detectado nada en la imagen" });
     } catch (error) {
       res.status(500).json({ message: `Hubo un error ${error}` });
     }

@@ -10,7 +10,7 @@ BedRouter.get("/:idBed", BedController.getById);
 //crear una cama
 BedRouter.post("/", BedController.create);
 //eliminar una cama
-// BedRouter.delete('/:id',BedController.delete)
+BedRouter.delete("/:idBed", BedController.delete);
 //Actualizar una cama
 BedRouter.patch("/:idBed", BedController.update);
 //obtener las camas de un invernadero

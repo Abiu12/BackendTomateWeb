@@ -45,9 +45,21 @@ export class WorkerController {
       const idPerson = await PersonModel.create({
         input: { name, surname, secondSurname, phone, email },
       });
-      await WorkerModel.create({ input: { idFarmer, idPerson } });
-      await UserModel.create({ input: { nameUser, password, idPerson, role } });
-      res.status(201).json({ message: "Trabajador creado" });
+      if (idPerson) {
+        const responseWorker = await WorkerModel.create({
+          input: { idFarmer, idPerson },
+        });
+        const responseUser = await UserModel.create({
+          input: { nameUser, password, idPerson, role },
+        });
+        if (
+          responseWorker[0].affectedRows === 1 &&
+          responseUser[0].affectedRows == 1
+        ) {
+          return res.status(201).json({ message: "Trabajador creado" });
+        }
+      }
+      return res.status(400).json({ message: "Hubo un problema" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
@@ -184,9 +196,9 @@ export class WorkerController {
         input: { idWorker, status },
       });
       if (response.length > 0) {
-        return res.json(response);
+        return res.status(200).json(response);
       }
-      return res.json({ message: "No hay notificaciones" });
+      return res.status(404).json({ message: "No hay notificaciones" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

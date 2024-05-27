@@ -55,7 +55,7 @@ export class WorkerModel {
         "INSERT INTO trabajador (id_trabajador, id_agricultor, id_persona) VALUES (NULL, ?, ?)",
         [idFarmer, idPerson]
       );
-      return result[0].insertId;
+      return result;
     } catch (error) {
       throw new Error(error);
     }

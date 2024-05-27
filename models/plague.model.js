@@ -46,7 +46,7 @@ export class PlagueModel {
   }
   static async getIdByName({ namePlague }) {
     try {
-      const result = await connection.query(
+      const [result] = await connection.query(
         "SELECT id_plaga FROM plaga WHERE nombre = ?",
         [namePlague]
       );

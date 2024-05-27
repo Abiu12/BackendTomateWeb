@@ -30,7 +30,18 @@ export class BedController {
       res.status(500).json({ message: `Hubo un error ${error}` });
     }
   }
-
+  static async delete(req, res) {
+    try {
+      const { idBed } = req.params;
+      const response = await BedModel.delete({ idBed });
+      if (response[0].affectedRows == 1) {
+        return res.status(200).json({ message: "La cama ha sido eliminada" });
+      }
+      return res.status(404).json({ message: "No se ha encontrado la cama" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
   //Ya
   static async update(req, res) {
     try {
@@ -53,9 +64,11 @@ export class BedController {
       const { idGreenhouse } = req.params;
       const response = await BedModel.getBedByGreenhouse({ idGreenhouse });
       if (response.length > 0) {
-        return res.json(response);
+        return res.status(200).json(response);
       }
-      return res.json({ message: "El invernadero no tiene registras camas" });
+      return res
+        .status(400)
+        .json({ message: "El invernadero no tiene registradas camas" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

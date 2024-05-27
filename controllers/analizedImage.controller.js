@@ -27,10 +27,9 @@ export class AnlizedImageController {
           await AnalyzedImageDiseaseModel.getAnalizedImageDiseaseByIdAnalizedImage(
             { idAnalizedImage: image.id_imagenanalizada }
           );
+        //ESTE EN REALIDAD SIRVE
         if (idPlagues.length == 0 && idDiseases.length == 0) {
-          return res.status(404).json({
-            message: "No hay plagas y enfermedades asociadas a la imagen",
-          });
+          continue;
         }
         var namesPlagues = [];
         var namesDiseases = [];
@@ -71,7 +70,7 @@ export class AnlizedImageController {
         };
         results.push(informationImage);
       }
-      res.json(results);
+      res.status(200).json(results);
     } catch (error) {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }
@@ -85,11 +84,11 @@ export class AnlizedImageController {
           idAnalizedImage,
         });
       if (recomendationsAndActions.length == 0) {
-        return res.json({
+        return res.status(404).json({
           message: "No se encontraron los datos de la imagen",
         });
       }
-      return res.json(recomendationsAndActions);
+      return res.status(200).json(recomendationsAndActions);
     } catch (error) {
       res.json({ message: `Hubo un problema ${error}` });
     }
@@ -106,7 +105,9 @@ export class AnlizedImageController {
       if (response[0].affectedRows == 1) {
         return res.json({ message: "Estado actualizado" });
       }
-      return res.json({ message: "No se ha encontrado la imagen analizada" });
+      return res
+        .status(404)
+        .json({ message: "No se ha encontrado la imagen analizada" });
     } catch (error) {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }
@@ -115,43 +116,39 @@ export class AnlizedImageController {
   static async getRecomendationsAndActionsByGuests(req, res) {
     try {
       const { detected } = req.body;
-      if (detected.length > 0) {
-        let response = [];
-        for (const detect of detected) {
-          if (detect === "Mosca blanca" || detect === "Araña roja") {
-            let recomendationsActions = await PlagueModel.getByName({
-              name: detect,
+      let response = [];
+      for (const detect of detected) {
+        if (detect === "Mosca blanca" || detect === "Araña roja") {
+          let recomendationsActions = await PlagueModel.getByName({
+            name: detect,
+          });
+          if (recomendationsActions.length > 0) {
+            response.push(recomendationsActions[0]);
+          } else {
+            return res.json({
+              message:
+                "No se encuentra la informacion relacionada de la plaga en la base de datos",
             });
-            if (recomendationsActions.length > 0) {
-              response.push(recomendationsActions);
-            } else {
-              return res.json({
-                message:
-                  "No se encuentra la informacion relacionada de la plaga en la base de datos",
-              });
-            }
-          } else if (
-            detect === "Alternariosis" ||
-            detect === "Botritis" ||
-            detect === "Mildiu del tomate"
-          ) {
-            let recomendationsActions = await DiseaseModel.getByName({
-              name: detect,
+          }
+        } else if (
+          detect === "Alternariosis" ||
+          detect === "Botritis" ||
+          detect === "Mildiu del tomate"
+        ) {
+          let recomendationsActions = await DiseaseModel.getByName({
+            name: detect,
+          });
+          if (recomendationsActions.length > 0) {
+            response.push(recomendationsActions[0]);
+          } else {
+            return res.json({
+              message:
+                "No se encuentra la informacion relacionada de la enfermedad en la base de datos",
             });
-            if (recomendationsActions.length > 0) {
-              response.push(recomendationsActions);
-            } else {
-              return res.json({
-                message:
-                  "No se encuentra la informacion relacionada de la enfermedad en la base de datos",
-              });
-            }
           }
         }
-        return res.json(response);
-      } else {
-        return res.json({ message: "No hay nada detectado" });
       }
+      return res.json(response);
     } catch (error) {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }

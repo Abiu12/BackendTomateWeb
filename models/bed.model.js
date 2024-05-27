@@ -49,6 +49,20 @@ export class BedModel {
       throw new Error(error);
     }
   }
+  static async delete({ idBed }) {
+    try {
+      const result = await connection.query(
+        `DELETE 
+        FROM cama 
+        WHERE id_cama = ?
+        `,
+        [idBed]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
   //Ya
   static async getBedByGreenhouse({ idGreenhouse }) {
     try {

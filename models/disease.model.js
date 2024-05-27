@@ -58,7 +58,7 @@ export class DiseaseModel {
   }
   static async getIdByName({ nameDisease }) {
     try {
-      const result = await connection.query(
+      const [result] = await connection.query(
         "SELECT id_enfermedad FROM enfermedad WHERE nombre = ?",
         [nameDisease]
       );
