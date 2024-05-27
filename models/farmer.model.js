@@ -116,4 +116,20 @@ export class FarmerModel {
       throw new Error(error);
     }
   }
+
+  static async deleteAsignGreenhouse({ idGreenhouseWorker }) {
+    try {
+      const result = await connection.query(
+        `
+      DELETE
+      FROM trabajadorinvernadero
+      WHERE id_trabajadorinvernadero = ?
+      `,
+        [idGreenhouseWorker]
+      );
+      return result;
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }

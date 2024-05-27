@@ -38,3 +38,9 @@ FarmerRouter.get(
   "/getnotifications/:idFarmer/:status",
   FarmerController.getNotificationsByStatus
 );
+
+//Eliminar un invernadero asignado a un trabajador
+FarmerRouter.delete(
+  "/deleteAsignGreenhouse/:idGreenhouseWorker",
+  FarmerController.deleteAsignGreenhouse
+);

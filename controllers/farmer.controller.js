@@ -197,4 +197,24 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
+
+  //Eliminar asignacion de trabajador a invernadero
+  static async deleteAsignGreenhouse(req, res) {
+    try {
+      const { idGreenhouseWorker } = req.params;
+      const response = await FarmerModel.deleteAsignGreenhouse({
+        idGreenhouseWorker,
+      });
+      if (response[0].affectedRows == 1) {
+        return res
+          .status(200)
+          .json({ message: "La asignación ha sido eliminada" });
+      }
+      return res
+        .status(404)
+        .json({ message: "No se ha encontrado ninguna asignación" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
