@@ -26,3 +26,8 @@ WorkerRouter.patch(
   "/changepassword/:idWorker",
   WorkerController.changePassword
 );
+//ELiminar la asignacion de un invernadero a un agricultor
+WorkerRouter.delete(
+  "/deleteAsignGreenhouse/:idWorkerGreenhouse",
+  WorkerController.deleteAsignGreenhouse
+);

@@ -203,4 +203,20 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
+  static async deleteAsignGreenhouse(req, res) {
+    try {
+      const { idWorkerGreenhouse } = req.params;
+      const response = await WorkerGreenhouseModel.deleteAsignGreenhouse({
+        idWorkerGreenhouse,
+      });
+      if (response[0].affectedRows == 1) {
+        return res.status(200).json({ message: "Asignación eliminada" });
+      }
+      return res
+        .status(404)
+        .json({ message: "No se ha encontrado la asignación" });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }
