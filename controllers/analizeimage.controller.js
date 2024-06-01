@@ -51,7 +51,7 @@ export class AnalizeImageController {
           const responseRegisterName =
             await AnalizeImageController.registerName(name, idAnalizedImage);
           if (!responseRegisterName) {
-            res.status(404).json({
+            return res.status(404).json({
               message: `Hubo un error en las plagas y enfermedades ya registradas`,
             });
           }
@@ -69,6 +69,50 @@ export class AnalizeImageController {
             });
           }
         }
+      }
+      return res.json({ message: "No se ha detectado nada en la imagen" });
+    } catch (error) {
+      res.status(500).json({ message: `Hubo un error ${error}` });
+    }
+  }
+  static async detectedWeb(req, res) {
+    try {
+      const imageFile = req.file;
+      const { idBed } = req.params;
+
+      const urlImage = imageFile.path;
+      const detection = await AnalizeImageController.script(urlImage);
+      const resultDeteccion = AnalizeImageController.filterDetection(detection);
+      await unlink(urlImage);
+      //si detecto algo lo registramos
+      if (resultDeteccion.names.length > 0) {
+        const storage = getStorage(firebaseConfig.appFirebase);
+        const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
+        const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
+        await uploadBytes(imageRef, imagenBuffer);
+        const downloadURL = await getDownloadURL(imageRef);
+        const date = new Date();
+        const formattedDate = `${date.getDate()}-${
+          date.getMonth() + 1
+        }-${date.getFullYear()}`;
+        const idAnalizedImage = await AnalizedImageModel.create({
+          input: {
+            path: downloadURL,
+            idBed,
+            date: formattedDate,
+            status: "Sin ver",
+          },
+        });
+        for (const name of resultDeteccion.names) {
+          const responseRegisterName =
+            await AnalizeImageController.registerName(name, idAnalizedImage);
+          if (!responseRegisterName) {
+            return res.status(404).json({
+              message: `Hubo un error en las plagas y enfermedades ya registradas`,
+            });
+          }
+        }
+        return res.status(200).json({ message: "Se ha analizado la imagen" });
       }
       return res.json({ message: "No se ha detectado nada en la imagen" });
     } catch (error) {
@@ -150,8 +194,8 @@ export class AnalizeImageController {
     const message = {
       to: to,
       sound: "default",
-      title: "¡Las plagas atacan tus tomates🥺!",
-      body: "Picale acá para ver que se encontró en tu imagen",
+      title: "¡Alerta, atacan tus tomates🥺!",
+      body: "Da clic para ver tus notificaciones",
       data: { someData: "Por fin" },
     };
     const response = await fetch("https://exp.host/--/api/v2/push/send", {

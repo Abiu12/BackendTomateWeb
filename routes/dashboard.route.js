@@ -14,23 +14,8 @@ DashboardRouter.get(
   DashboardController.getTotalDiseasesByIdGreenhouse
 );
 
-// //Obtener el total de imagenes analizadas de un invernadero de un agricultor
-// DashboardRouter.get(
-//   "/getnumberanalizedimages/:idFarmer/:idGreenhouse",
-//   DashboardController.getAnalizedImagesByFarmerByGreenhouse
-// );
-// //Obtener el cultivo mas atacado de un invernadero de un agricultor
-// DashboardRouter.get(
-//   "/getmostatackedcrop/:idFarmer/:idGreenhouse",
-//   DashboardController.getMostAtackedCropByFarmerByGreenhouse
-// );
-// //Obtener las enfermedades por agricultor de invernadero
-// DashboardRouter.get(
-//   "/getdiseases/:idFarmer/:idGreenhouse",
-//   DashboardController.getDiseasesByFarmerByGreenhouse
-// );
-// //Obtener las plagas por agricultor de invernadero
-// DashboardRouter.get(
-//   "/getplagues/:idFarmer/:idGreenhouse",
-//   DashboardController.getPlaguesByFarmerByGreenhouse
-// );
+// De un invernadero dado su ID_INVERNADERO traer la cantidad de estados de sus imagenes analizadas
+DashboardRouter.get(
+  "/getTotalImagesAnalizedByStatus/:idGreenhouse",
+  DashboardController.getTotalImagesAnalizedByStatus
+);

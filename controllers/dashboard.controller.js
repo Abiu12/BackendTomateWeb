@@ -29,51 +29,18 @@ export class DashboardController {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }
   }
-
-  // static async getAnalizedImagesByFarmerByGreenhouse(req, res) {
-  //   try {
-  //     const { idFarmer, idGreenhouse } = req.params;
-  //     const result =
-  //       await DashboardModel.getTotalAnalizedImagesByFarmerByGreenhouse({
-  //         input: { idFarmer, idGreenhouse },
-  //       });
-  //     return res.json(result);
-  //   } catch (error) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // }
-  // static async getMostAtackedCropByFarmerByGreenhouse(req, res) {
-  //   try {
-  //     const { idFarmer, idGreenhouse } = req.params;
-  //     const result =
-  //       await DashboardModel.getMostAtackedCropByFarmerByGreenhouse({
-  //         input: { idFarmer, idGreenhouse },
-  //       });
-  //     return res.json(result);
-  //   } catch (error) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // }
-  // static async getDiseasesByFarmerByGreenhouse(req, res) {
-  //   try {
-  //     const { idFarmer, idGreenhouse } = req.params;
-  //     const result = await DashboardModel.getDiseasesByFarmerByGreenhouse({
-  //       input: { idFarmer, idGreenhouse },
-  //     });
-  //     return res.json(result);
-  //   } catch (error) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // }
-  // static async getPlaguesByFarmerByGreenhouse(req, res) {
-  //   try {
-  //     const { idFarmer, idGreenhouse } = req.params;
-  //     const result = await DashboardModel.getPlaguesByFarmerByGreenhouse({
-  //       input: { idFarmer, idGreenhouse },
-  //     });
-  //     return res.json(result);
-  //   } catch (error) {
-  //     res.status(500).json({ error: error.message });
-  //   }
-  // }
+  static async getTotalImagesAnalizedByStatus(req, res) {
+    try {
+      const { idGreenhouse } = req.params;
+      const response = await DashboardModel.getTotalImagesAnalizedByStatus({
+        idGreenhouse,
+      });
+      if (response[0].length > 0) {
+        return res.status(200).json(response[0]);
+      }
+      return res.status(404).json({ message: "No se encontró informacion" });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }

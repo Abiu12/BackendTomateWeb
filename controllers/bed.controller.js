@@ -8,7 +8,7 @@ export class BedController {
         input: { numberBed, typeCrop, idGreenhouse },
       });
       if (response[0].affectedRows == 1) {
-        return res.json({ message: "La cama fué creada" });
+        return res.status(201).json({ message: "La cama fué creada" });
       }
       return res.json({
         message: "Hubo un problema al crear la cama en la base de datos",
@@ -67,7 +67,7 @@ export class BedController {
         return res.status(200).json(response);
       }
       return res
-        .status(400)
+        .status(404)
         .json({ message: "El invernadero no tiene registradas camas" });
     } catch (error) {
       res.status(500).json({ error: error.message });
