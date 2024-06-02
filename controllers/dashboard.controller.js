@@ -43,4 +43,32 @@ export class DashboardController {
       return res.status(500).json({ error: error.message });
     }
   }
+  static async getCountPlagues(req, res) {
+    try {
+      const { idGreenhouse } = req.params;
+      const response = await DashboardModel.getCountPlagues({ idGreenhouse });
+      if (response[0].length > 0) {
+        return res.status(200).json(response[0]);
+      }
+      return res
+        .status(404)
+        .json({ message: "No se encontró nada del invernadero" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+  static async getCountDiseases(req, res) {
+    try {
+      const { idGreenhouse } = req.params;
+      const response = await DashboardModel.getCountDiseases({ idGreenhouse });
+      if (response[0].length > 0) {
+        return res.status(200).json(response[0]);
+      }
+      return res
+        .status(404)
+        .json({ message: "No se encontró nada del invernadero" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }

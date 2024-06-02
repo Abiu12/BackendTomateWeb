@@ -70,4 +70,58 @@ export class DashboardModel {
       throw new Error(error);
     }
   }
+  static async getCountPlagues({ idGreenhouse }) {
+    try {
+      const result = await connection.query(
+        `
+      SELECT 
+      p.nombre AS Nombre,
+      COUNT(iap.id_plaga) AS Cantidad
+      FROM 
+        imagenanalizada ia
+      INNER JOIN 
+      cama c ON ia.id_cama = c.id_cama
+      INNER JOIN 
+      imagenanalizadaplaga iap ON ia.id_imagenanalizada = iap.id_imagenanalizada
+      INNER JOIN 
+      plaga p ON iap.id_plaga = p.id_plaga
+      WHERE 
+      c.id_invernadero = ?
+      GROUP BY 
+      p.nombre;
+        `,
+        [idGreenhouse]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  static async getCountDiseases({ idGreenhouse }) {
+    try {
+      const result = await connection.query(
+        `
+      SELECT 
+      p.nombre AS Nombre,
+      COUNT(iap.id_enfermedad) AS Cantidad
+      FROM 
+        imagenanalizada ia
+      INNER JOIN 
+      cama c ON ia.id_cama = c.id_cama
+      INNER JOIN 
+      imagenanalizadaenfermedad iap ON ia.id_imagenanalizada = iap.id_imagenanalizada
+      INNER JOIN 
+      enfermedad p ON iap.id_enfermedad = p.id_enfermedad
+      WHERE 
+      c.id_invernadero = ?
+      GROUP BY 
+      p.nombre;
+        `,
+        [idGreenhouse]
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

@@ -19,3 +19,14 @@ DashboardRouter.get(
   "/getTotalImagesAnalizedByStatus/:idGreenhouse",
   DashboardController.getTotalImagesAnalizedByStatus
 );
+
+//De un invernadero dado su ID_INVERNADERO traer la cantidad de cada una de las plagas
+DashboardRouter.get(
+  "/getCountPlagues/:idGreenhouse",
+  DashboardController.getCountPlagues
+);
+//De un invernadero dado su ID_INVERNADERO traer la cantidad de cada una de las enfermedades
+DashboardRouter.get(
+  "/getCountDiseases/:idGreenhouse",
+  DashboardController.getCountDiseases
+);
