@@ -71,4 +71,20 @@ export class DashboardController {
       res.status(500).json({ error: error.message });
     }
   }
+  static async totalPlaguesDiseases(req, res) {
+    try {
+      const { idGreenhouse } = req.params;
+      const response = await DashboardModel.totalPlaguesDiseases({
+        idGreenhouse,
+      });
+      if (response[0].length) {
+        return res.status(200).json(response[0]);
+      }
+      return res
+        .status(404)
+        .json({ message: "No hay información de este invernadero" });
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
 }

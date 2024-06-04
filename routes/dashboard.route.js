@@ -30,3 +30,9 @@ DashboardRouter.get(
   "/getCountDiseases/:idGreenhouse",
   DashboardController.getCountDiseases
 );
+
+//Cantidad de plagas y enfermedades, ultimo de migue
+DashboardRouter.get(
+  "/totalPlaguesDiseases/:idGreenhouse",
+  DashboardController.totalPlaguesDiseases
+);
