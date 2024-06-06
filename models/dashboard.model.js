@@ -154,4 +154,31 @@ ORDER BY
       throw new Error(error);
     }
   }
+  static async totalPlaguesDiseasesByDate({ idGreenhouse, date }) {
+    try {
+      const result = await connection.query(
+        `SELECT 
+        ia.fecha,
+        COALESCE(SUM(CASE WHEN iap.id_plaga IS NOT NULL THEN 1 ELSE 0 END), 0) AS Cantidad_Plagas,
+        COALESCE(SUM(CASE WHEN iae.id_enfermedad IS NOT NULL THEN 1 ELSE 0 END), 0) AS Cantidad_Enfermedades
+    FROM 
+        imagenanalizada ia
+    LEFT JOIN 
+        cama c ON ia.id_cama = c.id_cama
+    LEFT JOIN 
+        imagenanalizadaplaga iap ON ia.id_imagenanalizada = iap.id_imagenanalizada
+    LEFT JOIN 
+        imagenanalizadaenfermedad iae ON ia.id_imagenanalizada = iae.id_imagenanalizada
+    WHERE 
+        c.id_invernadero = ?
+        AND ia.fecha = ?
+    GROUP BY`,
+        idGreenhouse,
+        date
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

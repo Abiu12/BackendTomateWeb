@@ -87,4 +87,19 @@ export class DashboardController {
       return res.status(500).json({ error: error.message });
     }
   }
+  static async totalPlaguesDiseasesByDate(req, res) {
+    try {
+      const { idGreenhouse, date } = req.params;
+      const response = await DashboardModel.totalPlaguesDiseasesByDate({
+        idGreenhouse,
+        date,
+      });
+      if (response[0].length > 0) {
+        return res.status(200).json(response[0]);
+      }
+      return res.status(404).json({ message: "No se encontraron datos" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
