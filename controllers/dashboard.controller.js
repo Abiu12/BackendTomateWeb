@@ -89,7 +89,8 @@ export class DashboardController {
   }
   static async totalPlaguesDiseasesByDate(req, res) {
     try {
-      const { idGreenhouse, date } = req.params;
+      const { idGreenhouse } = req.params;
+      const { date } = req.body;
       const response = await DashboardModel.totalPlaguesDiseasesByDate({
         idGreenhouse,
         date,
