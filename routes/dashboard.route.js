@@ -38,7 +38,7 @@ DashboardRouter.get(
 );
 
 // cantidad de plagas y enfermedades detectadas dado un ID INVERNADERO pero ahora con una fecha especifica
-DashboardRouter.get(
+DashboardRouter.post(
   "/getTotalPlaguesDiseasesDetectedByDate/:idGreenhouse/",
   DashboardController.totalPlaguesDiseasesByDate
 );
