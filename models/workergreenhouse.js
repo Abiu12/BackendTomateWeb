@@ -57,4 +57,20 @@ export class WorkerGreenhouseModel {
       throw new Error(error);
     }
   }
+  static async existsAsignGreenhouse({ idGreenhouse, idWorker }) {
+    try {
+      try {
+        const [result] = await connection.query(
+          `
+        SELECT * FROM trabajadorinvernadero
+        WHERE id_invernadero = ? AND id_trabajador = ?
+        `,
+          [idGreenhouse, idWorker]
+        );
+        return result;
+      } catch (error) {
+        throw new Error(error);
+      }
+    } catch (error) {}
+  }
 }

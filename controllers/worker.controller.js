@@ -219,4 +219,17 @@ export class WorkerController {
       return res.status(500).json({ error: error.message });
     }
   }
+  static async existsAsignGreenhouse(req, res) {
+    try {
+      const { idWorker, idGreenhouse } = req.params;
+      const response = await WorkerGreenhouseModel.existsAsignGreenhouse({
+        idWorker,
+        idGreenhouse,
+      });
+      if (response.length > 0) {
+        return res.status(200).json({ exists: true });
+      }
+      return res.status(404).json({ exists: false });
+    } catch (error) {}
+  }
 }

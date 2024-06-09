@@ -14,6 +14,12 @@ WorkerRouter.get(
   "/getnotifications/:idWorker/:status",
   WorkerController.getNotificationsByStatus
 );
+
+//Existe la asiganacion de invernadero
+WorkerRouter.get(
+  "/existsAsignGreenhouse/:idWorker/:idGreenhouse",
+  WorkerController.existsAsignGreenhouse
+);
 WorkerRouter.post("/:idFarmer", WorkerController.create);
 WorkerRouter.delete("/:idWorker", WorkerController.delete);
 WorkerRouter.patch("/:idWorker", WorkerController.update);
