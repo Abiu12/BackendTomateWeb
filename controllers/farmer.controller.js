@@ -2,8 +2,8 @@ import { FarmerModel } from "../models/farmer.model.js";
 import { PersonModel } from "../models/person.model.js";
 import { UserModel } from "../models/user.model.js";
 import { WorkerModel } from "../models/worker.model.js";
+import bcrypt from "bcrypt";
 export class FarmerController {
-  // Ya web
   static async getAll(req, res) {
     try {
       const response = await FarmerModel.getAll();
@@ -12,7 +12,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya web
   static async getById(req, res) {
     try {
       const { id } = req.params;
@@ -23,7 +22,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya web
   static async create(req, res) {
     try {
       const {
@@ -36,13 +34,14 @@ export class FarmerController {
         password,
         role,
       } = req.body;
+      const passwordHash = await bcrypt.hash(password, 10);
       const idPerson = await PersonModel.create({
         input: { name, surname, secondSurname, phone, email },
       });
       if (idPerson) {
         const responseFarmer = await FarmerModel.create({ idPerson });
         const responseUser = await UserModel.create({
-          input: { nameUser, password, idPerson, role },
+          input: { nameUser, password: passwordHash, idPerson, role },
         });
         if (
           responseFarmer[0].affectedRows == 1 &&
@@ -58,7 +57,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya web
   static async delete(req, res) {
     try {
       const { idFarmer } = req.params;
@@ -76,8 +74,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-
-  //Ya
   static async getWorkersByIdFarmer(req, res) {
     try {
       const { idFarmer } = req.params;
@@ -94,7 +90,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async update(req, res) {
     try {
       const { idFarmer } = req.params;
@@ -138,7 +133,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async changePassword(req, res) {
     try {
       const { idFarmer } = req.params;
@@ -166,7 +160,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-  // Ya
   static async getNotificationsByStatus(req, res) {
     try {
       const { idFarmer, status } = req.params;
@@ -183,7 +176,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async getNameFarmers(req, res) {
     try {
       const response = await FarmerModel.getNameFarmers();
@@ -197,8 +189,6 @@ export class FarmerController {
       res.status(500).json({ error: error.message });
     }
   }
-
-  //Eliminar asignacion de trabajador a invernadero
   static async deleteAsignGreenhouse(req, res) {
     try {
       const { idGreenhouseWorker } = req.params;

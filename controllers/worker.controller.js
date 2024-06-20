@@ -2,9 +2,8 @@ import { WorkerModel } from "../models/worker.model.js";
 import { PersonModel } from "../models/person.model.js";
 import { UserModel } from "../models/user.model.js";
 import { WorkerGreenhouseModel } from "../models/workergreenhouse.js";
-
+import bcrypt from "bcrypt";
 export class WorkerController {
-  // ya web
   static async getAll(req, res) {
     try {
       const response = await WorkerModel.getAll();
@@ -16,7 +15,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  // ya web
   static async getById(req, res) {
     try {
       const { idWorker } = req.params;
@@ -28,7 +26,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  // ya
   static async create(req, res) {
     try {
       const {
@@ -41,6 +38,7 @@ export class WorkerController {
         password,
         role,
       } = req.body;
+      const passwordHash = await bcrypt.hash(password, 10);
       const { idFarmer } = req.params;
       const idPerson = await PersonModel.create({
         input: { name, surname, secondSurname, phone, email },
@@ -50,7 +48,7 @@ export class WorkerController {
           input: { idFarmer, idPerson },
         });
         const responseUser = await UserModel.create({
-          input: { nameUser, password, idPerson, role },
+          input: { nameUser, password: passwordHash, idPerson, role },
         });
         if (
           responseWorker[0].affectedRows === 1 &&
@@ -64,7 +62,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async delete(req, res) {
     try {
       const { idWorker } = req.params;
@@ -82,7 +79,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async update(req, res) {
     try {
       const { idWorker } = req.params;
@@ -130,7 +126,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async assignGreenhouse(req, res) {
     try {
       const { idWorker } = req.params;
@@ -146,7 +141,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async getGreenhousesByIdWorker(req, res) {
     try {
       const { idWorker } = req.params;
@@ -161,7 +155,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  // ya
   static async changePassword(req, res) {
     try {
       const { idWorker } = req.params;
@@ -188,7 +181,6 @@ export class WorkerController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async getNotificationsByStatus(req, res) {
     try {
       const { idWorker, status } = req.params;

@@ -1,7 +1,6 @@
 import { GreenhouseModel } from "../models/greenhouse.model.js";
 
 export class GreenhouseController {
-  // Ya
   static async getAll(req, res) {
     try {
       const response = await GreenhouseModel.getAll();
@@ -15,7 +14,6 @@ export class GreenhouseController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async getById(req, res) {
     try {
       const { idGreenhouse } = req.params;
@@ -28,7 +26,6 @@ export class GreenhouseController {
       return res.status(500).json({ message: error });
     }
   }
-  // ya
   static async create(req, res) {
     try {
       const { idFarmer, name, typeGreenhouse, humidity, size } = req.body;
@@ -43,7 +40,6 @@ export class GreenhouseController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async update(req, res) {
     try {
       const { idGreenhouse } = req.params;
@@ -59,7 +55,6 @@ export class GreenhouseController {
       res.status(500).json({ error: error.message });
     }
   }
-  // Ya
   static async getGreenhouseByFarmer(req, res) {
     try {
       const { idFarmer } = req.params;
@@ -76,7 +71,6 @@ export class GreenhouseController {
       res.status(500).json({ error: error.message });
     }
   }
-  // Ya
   static async checkExist(req, res) {
     const { nameGreenhouse } = req.params;
     const response = await GreenhouseModel.checkExist({ nameGreenhouse });
@@ -85,7 +79,6 @@ export class GreenhouseController {
     }
     return res.json({ exists: false });
   }
-  // Ya
   static async delete(req, res) {
     try {
       const { idGreenhouse } = req.params;

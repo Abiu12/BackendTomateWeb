@@ -131,9 +131,9 @@ export class LoginController {
   // ya
   static async getDataByUsername(req, res) {
     try {
-      const { username, password, role } = req.body;
+      const { username, role } = req.body;
       const response = await LoginModel.getDataByUsername({
-        input: { username, password, role },
+        input: { username, role },
       });
       if (response.length > 0) return res.json(response[0]);
       return res
