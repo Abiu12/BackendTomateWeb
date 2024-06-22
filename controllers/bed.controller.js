@@ -34,7 +34,7 @@ export class BedController {
     try {
       const { idBed } = req.params;
       const response = await BedModel.delete({ idBed });
-      if (response[0].affectedRows == 1) {
+      if (response) {
         return res.status(200).json({ message: "La cama ha sido eliminada" });
       }
       return res.status(404).json({ message: "No se ha encontrado la cama" });

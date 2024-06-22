@@ -79,11 +79,9 @@ export class AnalizeImageController {
     try {
       const imageFile = req.file;
       const { idBed } = req.params;
-
-      const urlImage = imageFile.path;
-      const detection = await AnalizeImageController.script(urlImage);
+      const detection = await AnalizeImageController.script(imageFile.path);
       const resultDeteccion = AnalizeImageController.filterDetection(detection);
-      await unlink(urlImage);
+      await unlink(imageFile.path);
       //si detecto algo lo registramos
       if (resultDeteccion.names.length > 0) {
         const storage = getStorage(firebaseConfig.appFirebase);
@@ -124,10 +122,9 @@ export class AnalizeImageController {
     try {
       const imageFile = req.file;
       const { tokenNotification } = req.params;
-      const urlImage = imageFile.path;
-      const detection = await AnalizeImageController.script(urlImage);
+      const detection = await AnalizeImageController.script(imageFile.path);
       const resultDeteccion = AnalizeImageController.filterDetection(detection);
-      await unlink(urlImage);
+      await unlink(imageFile.path);
       //si detecto algo lo registramos
       if (resultDeteccion.names.length > 0) {
         const storage = getStorage(firebaseConfig.appFirebase);

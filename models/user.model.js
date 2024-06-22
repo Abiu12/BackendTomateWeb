@@ -3,7 +3,6 @@ import { configDb } from "../utils/configDb.js";
 
 const connection = await mysql.createConnection(configDb);
 export class UserModel {
-  //Ya
   static async create({ input }) {
     try {
       const { nameUser, password, role, idPerson } = input;
@@ -16,7 +15,6 @@ export class UserModel {
       throw new Error(error);
     }
   }
-  //ya
   static async update({ input }) {
     try {
       const { idPerson, nameUser, password } = input;
@@ -32,7 +30,6 @@ export class UserModel {
       throw new Error(error);
     }
   }
-  //Ya
   static async changePassword({ input }) {
     try {
       const { newPassword, idPerson } = input;
@@ -48,7 +45,6 @@ export class UserModel {
       throw new Error(error);
     }
   }
-  // Ya
   static async getByIdPerson({ idPerson }) {
     try {
       const [result] = await connection.query(
@@ -60,7 +56,6 @@ export class UserModel {
       throw new Error(error);
     }
   }
-  //Ya
   static async registerTokenNotification({ input }) {
     try {
       const { userName, token } = input;
@@ -76,6 +71,20 @@ export class UserModel {
         return true;
       }
       return false;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+  static async delete({ idPerson }) {
+    try {
+      const result = await connection.query(
+        `
+        DELETE from usuario
+        WHERE id_persona = ?
+        `,
+        [idPerson]
+      );
+      return result;
     } catch (error) {
       throw new Error(error);
     }

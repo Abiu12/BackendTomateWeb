@@ -43,19 +43,50 @@ export class BedModel {
   }
   static async delete({ idBed }) {
     try {
-      const result = await connection.query(
-        `DELETE 
-        FROM cama 
+      try {
+        await connection.beginTransaction();
+        await connection.query(
+          `
+        DELETE FROM imagenanalizadaplaga
+        WHERE id_imagenanalizada IN (
+          SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama = ?
+        )
+      `,
+          [idBed]
+        );
+        await connection.query(
+          `
+        DELETE FROM imagenanalizadaenfermedad
+        WHERE id_imagenanalizada IN (
+          SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama = ?
+        )
+      `,
+          [idBed]
+        );
+        await connection.query(
+          `
+        DELETE FROM imagenanalizada
         WHERE id_cama = ?
-        `,
-        [idBed]
-      );
-      return result;
+      `,
+          [idBed]
+        );
+        await connection.query(
+          `
+        DELETE FROM cama
+        WHERE id_cama = ?
+      `,
+          [idBed]
+        );
+
+        await connection.commit();
+        return true;
+      } catch (error) {
+        throw new Error(error);
+      }
     } catch (error) {
       throw new Error(error);
     }
   }
-  //Ya
   static async getBedByGreenhouse({ idGreenhouse }) {
     try {
       const [result] = await connection.query(

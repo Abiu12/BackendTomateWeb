@@ -87,10 +87,56 @@ export class GreenhouseModel {
       throw new Error(error);
     }
   }
-  //Ya
   static async delete({ idGreenhouse }) {
     try {
-      const result = await connection.query(
+      await connection.beginTransaction();
+      await connection.query(
+        `
+      DELETE FROM imagenanalizadaplaga
+      WHERE id_imagenanalizada IN (
+        SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama IN (
+          SELECT id_cama FROM cama WHERE id_invernadero = ?
+        )
+      )
+    `,
+        [idGreenhouse]
+      );
+      await connection.query(
+        `
+      DELETE FROM imagenanalizadaenfermedad
+      WHERE id_imagenanalizada IN (
+        SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama IN (
+          SELECT id_cama FROM cama WHERE id_invernadero = ?
+        )
+      )
+    `,
+        [idGreenhouse]
+      );
+      await connection.query(
+        `
+      DELETE FROM imagenanalizada
+      WHERE id_cama IN (
+        SELECT id_cama FROM cama WHERE id_invernadero = ?
+      )
+    `,
+        [idGreenhouse]
+      );
+      await connection.query(
+        `
+      DELETE FROM cama
+      WHERE id_invernadero = ?
+    `,
+        [idGreenhouse]
+      );
+      await connection.query(
+        `
+      DELETE FROM invernadero
+      WHERE id_invernadero = ?
+    `,
+        [idGreenhouse]
+      );
+
+      await connection.query(
         `
         DELETE
         FROM invernadero
@@ -98,7 +144,8 @@ export class GreenhouseModel {
         `,
         [idGreenhouse]
       );
-      return result;
+      await connection.commit();
+      return true;
     } catch (error) {
       throw new Error(error);
     }

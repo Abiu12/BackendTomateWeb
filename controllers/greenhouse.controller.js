@@ -1,3 +1,5 @@
+import { AnalizedImageModel } from "../models/analyzedimage.model.js";
+import { BedModel } from "../models/bed.model.js";
 import { GreenhouseModel } from "../models/greenhouse.model.js";
 
 export class GreenhouseController {
@@ -82,15 +84,15 @@ export class GreenhouseController {
   static async delete(req, res) {
     try {
       const { idGreenhouse } = req.params;
-      const response = await GreenhouseModel.delete({ idGreenhouse });
-      if (response[0].affectedRows == 0)
-        return res.json({
+      const responseGreenhouse = await GreenhouseModel.delete({ idGreenhouse });
+      if (!responseGreenhouse)
+        return res.status(404).json({
           message: "No existe un invernadero con ese id",
         });
 
       return res.json({ message: "El invernadero ha sido eliminado" });
     } catch (error) {
-      res.status(500).json({ message: error });
+      res.status(500).json({ message: error.message });
     }
   }
 }

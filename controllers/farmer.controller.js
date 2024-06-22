@@ -60,15 +60,10 @@ export class FarmerController {
   static async delete(req, res) {
     try {
       const { idFarmer } = req.params;
-      const farmer = await FarmerModel.getById({ idFarmer });
-      if (farmer.length > 0) {
-        const response = await PersonModel.delete({
-          idPerson: farmer[0].id_persona,
-        });
-        if (response[0].affectedRows == 1) {
-          return res.json({ message: "El agricultor ha sido eliminado" });
-        }
-      }
+      //
+      const response = await FarmerModel.delete({ idFarmer });
+      if (response)
+        return res.json({ message: "El agricultor ha sido eliminado" });
       return res.status(404).json({ message: "No se encontró al agricultor" });
     } catch (error) {
       res.status(500).json({ error: error.message });

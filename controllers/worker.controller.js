@@ -65,15 +65,9 @@ export class WorkerController {
   static async delete(req, res) {
     try {
       const { idWorker } = req.params;
-      const worker = await WorkerModel.getById({ idWorker });
-      if (worker.length > 0) {
-        const response = await PersonModel.delete({
-          idPerson: worker[0].id_persona,
-        });
-        if (response[0].affectedRows == 1) {
-          return res.json({ message: "El trabajador ha sido eliminado" });
-        }
-      }
+
+      return res.json({ message: "El trabajador ha sido eliminado" });
+
       return res.status(404).json({ message: "No se encontró al trabajador" });
     } catch (error) {
       res.status(500).json({ error: error.message });

@@ -12,7 +12,7 @@ export class LoginModel {
       const { username, password } = input;
 
       const response = await connection.query(
-        "SELECT rol,contrasenia FROM usuario WHERE BINARY LOWER(nombre_usuario) = ? ",
+        "SELECT rol,contrasenia FROM usuario WHERE BINARY LOWER(nombre_usuario) = ?",
         [username]
       );
 

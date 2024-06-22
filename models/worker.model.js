@@ -132,4 +132,70 @@ export class WorkerModel {
       throw new Error(error);
     }
   }
+  static async delete({ idPerson, idWorker }) {
+    try {
+      // Iniciar una transacción
+      await connection.beginTransaction();
+
+      await connection.query(
+        `
+  DELETE FROM trabajador
+  WHERE id_trabajador = ?
+`,
+        [idWorker]
+      );
+
+      await connection.query(
+        `
+  DELETE FROM trabajadorinvernadero
+  WHERE id_trabajador = ?
+`,
+        [idWorker]
+      );
+
+      await connection.query(
+        `
+                UPDATE persona
+                SET estado = 'inactivo'
+                WHERE id_persona = ?;
+                `,
+        [idPerson]
+      );
+
+      // Confirmar la transacción
+      await connection.commit();
+
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  static async deleteByIdFarmer({ idPerson, idFarmer }) {
+    try {
+      // Iniciar una transacción
+      await connection.beginTransaction();
+
+      await connection.query(
+        `
+  DELETE FROM trabajador
+  WHERE id_agricultor = ?`,
+        [idFarmer]
+      );
+      await connection.query(
+        `
+                UPDATE persona
+                SET estado = 'inactivo'
+                WHERE id_persona = ?;
+                `,
+        [idPerson]
+      );
+      // Confirmar la transacción
+      await connection.commit();
+
+      return true;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

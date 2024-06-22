@@ -124,4 +124,146 @@ export class FarmerModel {
       res.status(500).json({ error: error.message });
     }
   }
+  static async delete({ idFarmer }) {
+    try {
+      // Iniciar una transacción
+      await connection.beginTransaction();
+      //Actualizar el estado en persona del agricultor
+      await connection.query(
+        `
+          UPDATE persona
+          SET estado = 'inactivo'
+          WHERE id_persona IN (
+          SELECT id_persona FROM agricultor WHERE id_agricultor = ?
+          );
+          `,
+        [idFarmer]
+      );
+      //Actualizar estado de persona de trabajador
+      await connection.query(
+        `
+        UPDATE persona
+        SET estado = 'inactivo'
+        WHERE id_persona IN (
+        SELECT id_persona FROM trabajador WHERE id_agricultor = ?
+        )
+        `,
+        [idFarmer]
+      );
+      //Eliminar los registros de imagenes analizadas plaga
+      await connection.query(
+        `
+  DELETE FROM imagenanalizadaplaga
+  WHERE id_imagenanalizada IN (
+    SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama IN (
+      SELECT id_cama FROM cama WHERE id_invernadero IN (
+        SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+      )
+    )
+  )`,
+        [idFarmer]
+      );
+      //Eliminar los registros de imagenes analizadas enfermedad
+      await connection.query(
+        `
+  DELETE FROM imagenanalizadaenfermedad
+  WHERE id_imagenanalizada IN (
+    SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama IN (
+      SELECT id_cama FROM cama WHERE id_invernadero IN (
+        SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+      )
+    )
+  )
+`,
+        [idFarmer]
+      );
+      //Eliminar los registros de imagenes analizadas
+      await connection.query(
+        `
+  DELETE FROM imagenanalizada
+  WHERE id_cama IN (
+    SELECT id_cama FROM cama WHERE id_invernadero IN (
+      SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+    )
+  )
+`,
+        [idFarmer]
+      );
+      //Eliminar las camas
+      await connection.query(
+        `
+  DELETE FROM cama
+  WHERE id_invernadero IN (
+    SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+  )
+`,
+        [idFarmer]
+      );
+
+      //Eliminar las asignaciones de los trabajadores
+      await connection.query(
+        `
+        DELETE FROM trabajadorinvernadero
+        WHERE id_trabajador IN (
+          SELECT id_trabajador FROM trabajador 
+          WHERE id_agricultor = ?
+        )
+        `,
+        [idFarmer]
+      );
+      //Eliminar los invernaderos
+      await connection.query(
+        `
+        DELETE FROM invernadero
+        WHERE id_agricultor = ?
+        `,
+        [idFarmer]
+      );
+      //Eliminar los usuarios de los trabajadores
+      await connection.query(
+        `
+        DELETE FROM usuario
+        WHERE id_persona IN(
+          SELECT id_persona FROM  trabajador WHERE id_agricultor = ?
+        )
+        `,
+        [idFarmer]
+      );
+      //Eliminar los trabajadores
+      await connection.query(
+        `
+        DELETE FROM trabajador 
+        WHERE id_agricultor = ?
+        `,
+        [idFarmer]
+      );
+      //Eliminar el usuario del agricultor
+      await connection.query(
+        `
+        DELETE FROM usuario
+        WHERE id_persona = (
+          SELECT id_persona FROM agricultor 
+            WHERE id_agricultor = ?
+        )
+        `,
+        [idFarmer]
+      );
+      //Eliminar el agricultor
+      await connection.query(
+        `
+  DELETE FROM agricultor
+  WHERE id_agricultor = ?
+`,
+        [idFarmer]
+      );
+
+      // Confirmar la transacción
+      await connection.commit();
+
+      return true;
+    } catch (error) {
+      await connection.rollback();
+      throw new Error(error.message);
+    }
+  }
 }

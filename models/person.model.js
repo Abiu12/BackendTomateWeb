@@ -45,9 +45,77 @@ export class PersonModel {
   }
 
   //Ya
-  static async delete({ idPerson }) {
+  static async delete({ idPerson, idFarmer }) {
     try {
-      const result = await connection.query(
+      // Iniciar una transacción
+      await connection.beginTransaction();
+      await connection.query(
+        `
+  DELETE FROM imagenanalizadaplaga
+  WHERE id_imagenanalizada IN (
+    SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama IN (
+      SELECT id_cama FROM cama WHERE id_invernadero IN (
+        SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+      )
+    )
+  )
+`,
+        [idFarmer]
+      );
+
+      await connection.query(
+        `
+  DELETE FROM imagenanalizadaenfermedad
+  WHERE id_imagenanalizada IN (
+    SELECT id_imagenanalizada FROM imagenanalizada WHERE id_cama IN (
+      SELECT id_cama FROM cama WHERE id_invernadero IN (
+        SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+      )
+    )
+  )
+`,
+        [idFarmer]
+      );
+
+      await connection.query(
+        `
+  DELETE FROM imagenanalizada
+  WHERE id_cama IN (
+    SELECT id_cama FROM cama WHERE id_invernadero IN (
+      SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+    )
+  )
+`,
+        [idFarmer]
+      );
+
+      await connection.query(
+        `
+  DELETE FROM cama
+  WHERE id_invernadero IN (
+    SELECT id_invernadero FROM invernadero WHERE id_agricultor = ?
+  )
+`,
+        [idFarmer]
+      );
+
+      await connection.query(
+        `
+  DELETE FROM invernadero
+  WHERE id_agricultor = ?
+`,
+        [idFarmer]
+      );
+
+      await connection.query(
+        `
+  DELETE FROM agricultor
+  WHERE id_agricultor = ?
+`,
+        [idFarmer]
+      );
+
+      await connection.query(
         `
                 UPDATE persona
                 SET estado = 'inactivo'
@@ -55,7 +123,11 @@ export class PersonModel {
                 `,
         [idPerson]
       );
-      return result;
+
+      // Confirmar la transacción
+      await connection.commit();
+
+      return true;
     } catch (error) {
       throw new Error(error);
     }
