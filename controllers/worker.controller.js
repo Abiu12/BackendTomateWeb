@@ -65,9 +65,9 @@ export class WorkerController {
   static async delete(req, res) {
     try {
       const { idWorker } = req.params;
-
-      return res.json({ message: "El trabajador ha sido eliminado" });
-
+      const response = await WorkerModel.delete({ idWorker });
+      if (response)
+        return res.json({ message: "El trabajador ha sido eliminado" });
       return res.status(404).json({ message: "No se encontró al trabajador" });
     } catch (error) {
       res.status(500).json({ error: error.message });

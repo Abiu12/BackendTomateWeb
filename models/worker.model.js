@@ -136,23 +136,7 @@ export class WorkerModel {
     try {
       // Iniciar una transacción
       await connection.beginTransaction();
-
-      await connection.query(
-        `
-  DELETE FROM trabajador
-  WHERE id_trabajador = ?
-`,
-        [idWorker]
-      );
-
-      await connection.query(
-        `
-  DELETE FROM trabajadorinvernadero
-  WHERE id_trabajador = ?
-`,
-        [idWorker]
-      );
-
+      //Actualizar el estado en persona
       await connection.query(
         `
                 UPDATE persona
@@ -160,6 +144,22 @@ export class WorkerModel {
                 WHERE id_persona = ?;
                 `,
         [idPerson]
+      );
+      //Eliminar las asignaciones de ese trabajdor
+      await connection.query(
+        `
+  DELETE FROM trabajadorinvernadero
+  WHERE id_trabajador = ?
+`,
+        [idWorker]
+      );
+      //Eliminar el trabajdor
+      await connection.query(
+        `
+  DELETE FROM trabajador
+  WHERE id_trabajador = ?
+`,
+        [idWorker]
       );
 
       // Confirmar la transacción
