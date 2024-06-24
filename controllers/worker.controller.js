@@ -38,7 +38,7 @@ export class WorkerController {
         password,
         role,
       } = req.body;
-      const passwordHash = await bcrypt.hash(password, 10);
+      const hashPassword = await bcrypt.hash(password, 10);
       const { idFarmer } = req.params;
       const idPerson = await PersonModel.create({
         input: { name, surname, secondSurname, phone, email },
@@ -48,7 +48,7 @@ export class WorkerController {
           input: { idFarmer, idPerson },
         });
         const responseUser = await UserModel.create({
-          input: { nameUser, password: passwordHash, idPerson, role },
+          input: { nameUser, password: hashPassword, idPerson, role },
         });
         if (
           responseWorker[0].affectedRows === 1 &&
@@ -154,23 +154,34 @@ export class WorkerController {
       const { idWorker } = req.params;
       const { oldPassword, newPassword } = req.body;
       const worker = await WorkerModel.getById({ idWorker });
-      const user = await UserModel.getByIdPerson({
-        idPerson: worker.id_persona,
-      });
+
       if (worker.length > 0) {
+        const user = await UserModel.getByIdPerson({
+          idPerson: worker[0].id_persona,
+        });
         if (user.length > 0) {
-          if (user[0].contrasenia === oldPassword) {
+          const validatePassword = await bcrypt.compare(
+            oldPassword,
+            user[0].contrasenia
+          );
+          if (validatePassword) {
+            const hashPassword = await bcrypt.hash(newPassword, 10);
             await UserModel.changePassword({
-              input: { newPassword, idPerson: worker[0].id_persona },
+              input: {
+                newPassword: hashPassword,
+                idPerson: worker[0].id_persona,
+              },
             });
             return res.json({ message: "La contraseña se ha cambiado" });
           } else {
-            return res.json({ message: "La contraseña es incorrecta" });
+            return res
+              .status(401)
+              .json({ message: "La contraseña es incorrecta" });
           }
         }
-        return res.json({ message: "No existe el usuario" });
+        return res.status(404).json({ message: "No existe el usuario" });
       }
-      return res.json({ message: "No existe el trabajador" });
+      return res.status(404).json({ message: "No existe el trabajador" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

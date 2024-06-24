@@ -153,6 +153,14 @@ export class WorkerModel {
 `,
         [idWorker]
       );
+      //Eliminar el usuario
+      await connection.query(
+        `DELETE FROM usuario
+        WHERE id_persona = ?
+        `,
+        [idPerson]
+      );
+
       //Eliminar el trabajdor
       await connection.query(
         `
