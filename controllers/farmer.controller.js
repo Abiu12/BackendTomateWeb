@@ -34,14 +34,14 @@ export class FarmerController {
         password,
         role,
       } = req.body;
-      const passwordHash = await bcrypt.hash(password, 10);
+      const hashPassword = await bcrypt.hash(password, 10);
       const idPerson = await PersonModel.create({
         input: { name, surname, secondSurname, phone, email },
       });
       if (idPerson) {
         const responseFarmer = await FarmerModel.create({ idPerson });
         const responseUser = await UserModel.create({
-          input: { nameUser, password: passwordHash, idPerson, role },
+          input: { nameUser, password: hashPassword, idPerson, role },
         });
         if (
           responseFarmer[0].affectedRows == 1 &&
@@ -138,15 +138,25 @@ export class FarmerController {
           idPerson: farmer[0].id_persona,
         });
         if (user.length > 0) {
-          if (user[0].contrasenia === oldPassword) {
+          const validatePassword = await bcrypt.compare(
+            oldPassword,
+            user[0].contrasenia
+          );
+          if (validatePassword) {
+            const hashPassword = await bcrypt.hash(newPassword, 10);
             const response = await UserModel.changePassword({
-              input: { newPassword, idPerson: farmer[0].id_persona },
+              input: {
+                newPassword: hashPassword,
+                idPerson: farmer[0].id_persona,
+              },
             });
             if (response[0].affectedRows == 1) {
               return res.json({ message: "La contraseña se ha cambiado" });
             }
           } else {
-            return res.json({ message: "La contraseña es incorrecta" });
+            return res
+              .status(401)
+              .json({ message: "La contraseña es incorrecta" });
           }
         }
       }
