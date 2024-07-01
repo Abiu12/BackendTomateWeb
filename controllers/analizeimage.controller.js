@@ -191,8 +191,8 @@ export class AnalizeImageController {
     const message = {
       to: to,
       sound: "default",
-      title: "¡Alerta, atacan tus tomates🥺!",
-      body: "Da clic para ver tus notificaciones",
+      title: "¡Alerta, atacan tu cultivo🥺!",
+      body: "Revisa tus notificaciones",
       data: { someData: "Por fin" },
     };
     const response = await fetch("https://exp.host/--/api/v2/push/send", {

@@ -6,3 +6,6 @@ export const AdminRouter = Router();
 AdminRouter.get("/", AdminController.getData);
 //Actualizar los datos del admin
 AdminRouter.patch("/", AdminController.update);
+
+//Cambiar la contraseña
+AdminRouter.patch("/changePassword", AdminController.changePassword);

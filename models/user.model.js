@@ -113,4 +113,16 @@ export class UserModel {
       throw new Error(error);
     }
   }
+  static async getAdmin() {
+    try {
+      const [result] = await connection.query(
+        `SELECT * FROM usuario
+        WHERE rol = 'admin'
+        `
+      );
+      return result;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }

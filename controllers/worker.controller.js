@@ -142,9 +142,11 @@ export class WorkerController {
         idWorker,
       });
       if (response.length > 0) {
-        return res.json(response);
+        return res.status(200).json(response);
       }
-      return res.json({ message: "El trabajador no tiene invernaderos" });
+      return res
+        .status(404)
+        .json({ message: "El trabajador no tiene invernaderos" });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
