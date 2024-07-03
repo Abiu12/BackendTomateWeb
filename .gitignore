@@ -1,5 +1,7 @@
 *.pt
 best.pt
+best100.pt
+best200.pt
 node_modules
 *.jpg
 .env
