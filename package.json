@@ -5,7 +5,7 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "init": " curl https://pyenv.run | bash && pyenv install 3.8.10 && pyenv global 3.8.10 &&pip install ultralytics numpy opencv-python Pillow && npm install -D -s",
+    "init": "npm install -D -s",
     "start": "node app.js"
   },
   "keywords": [],
