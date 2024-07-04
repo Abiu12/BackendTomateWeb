@@ -10,14 +10,8 @@ AdminRouter.patch("/", AdminController.update);
 //Cambiar la contraseña
 AdminRouter.patch("/changePassword", AdminController.changePassword);
 
-//Cambiar la contraseña agricultor
-AdminRouter.patch(
-  "/changePasswordFarmer/:idFarmer",
-  AdminController.updateFarmer
-);
+//Actualizar agricultor
+AdminRouter.patch("/updateFarmer/:idFarmer", AdminController.updateFarmer);
 
-//Cambiar la contraseña trabajador
-AdminRouter.patch(
-  "/changePasswordWorker/:idWorker",
-  AdminController.updateWorker
-);
+//Actualizar trabajador
+AdminRouter.patch("/updateWorker/:idWorker", AdminController.updateWorker);
