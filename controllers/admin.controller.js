@@ -75,4 +75,91 @@ export class AdminController {
       res.status(500).json({ error: error.message });
     }
   }
+  static async updateFarmer(req, res) {
+    try {
+      const { idFarmer } = req.params;
+      const { name, surname, secondSurname, phone, email, nameUser, password } =
+        req.body;
+      const farmer = await FarmerModel.getById({ idFarmer });
+      if (farmer.length > 0) {
+        const responsePersonUpdate = await PersonModel.update({
+          input: {
+            idPerson: farmer[0].id_persona,
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email,
+          },
+        });
+        const hashPassword = await bcrypt.hash(password, 10);
+        const responseUserUpdate = await UserModel.update({
+          input: { idPerson: farmer[0].id_persona, nameUser, hashPassword },
+        });
+        if (
+          responsePersonUpdate[0].affectedRows == 1 &&
+          responseUserUpdate[0].affectedRows == 1
+        ) {
+          return res.json({
+            message: "Se han actualizado los datos del agricultor",
+          });
+        }
+      }
+      return res.status(400).json({ message: "No se encontró el agricultor" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+  static async updateWorker(req, res) {
+    try {
+      const { idWorker } = req.params;
+      const {
+        idFarmer,
+        name,
+        surname,
+        secondSurname,
+        phone,
+        email,
+        nameUser,
+        password,
+      } = req.body;
+      const worker = await WorkerModel.getById({ idWorker });
+      if (worker.length > 0) {
+        const responseWorker = await WorkerModel.update({
+          input: { idWorker: worker[0].id_trabajador, idFarmer },
+        });
+        const responsePerson = await PersonModel.update({
+          input: {
+            idPerson: worker[0].id_persona,
+            name,
+            surname,
+            secondSurname,
+            phone,
+            email,
+          },
+        });
+        const hashPassword = await bcrypt.hash(password, 10);
+        const responseUser = await UserModel.update({
+          input: {
+            idPerson: worker[0].id_persona,
+            nameUser,
+            hashPassword,
+            role,
+          },
+        });
+        if (
+          responseWorker[0].affectedRows == 1 ||
+          responsePerson[0].affectedRows == 1 ||
+          responseUser[0].affectedRows == 1
+        ) {
+          return res.json({
+            message: "Se han actualizado los datos del trabajador",
+          });
+        }
+      }
+      return res.json({ message: "No se ha encontrado el trabajador" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
 }
