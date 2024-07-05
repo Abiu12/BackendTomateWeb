@@ -97,7 +97,11 @@ export class AdminController {
         });
         const hashPassword = await bcrypt.hash(password, 10);
         const responseUserUpdate = await UserModel.update({
-          input: { idPerson: farmer[0].id_persona, nameUser, hashPassword },
+          input: {
+            idPerson: farmer[0].id_persona,
+            nameUser,
+            password: hashPassword,
+          },
         });
         if (
           responsePersonUpdate[0].affectedRows == 1 &&
@@ -146,7 +150,7 @@ export class AdminController {
           input: {
             idPerson: worker[0].id_persona,
             nameUser,
-            hashPassword,
+            password: hashPassword,
           },
         });
         if (
