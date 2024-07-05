@@ -1,5 +1,8 @@
 import { AdminModel } from "../models/admin.model.js";
 import { UserModel } from "../models/user.model.js";
+import { FarmerModel } from "../models/farmer.model.js";
+import { PersonModel } from "../models/person.model.js";
+import { WorkerModel } from "../models/worker.model.js";
 import bcrypt from "bcrypt";
 export class AdminController {
   // Ya
@@ -144,7 +147,6 @@ export class AdminController {
             idPerson: worker[0].id_persona,
             nameUser,
             hashPassword,
-            role,
           },
         });
         if (
