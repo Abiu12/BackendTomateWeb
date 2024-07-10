@@ -166,7 +166,7 @@ export class AnalizeImageController {
     return new Promise((resolve, reject) => {
       let datos = "";
       // Comando para ejecutar el script de Python
-      const pythonProcess = spawn("python", ["yolo.py", urlImage]);
+      const pythonProcess = spawn("python3", ["yolo.py", urlImage]);
       // Capturar la salida del proceso
       pythonProcess.stdout.on("data", (data) => {
         datos += data.toString(); // Recopilar los datos en una variable
