@@ -14,8 +14,11 @@ import firebaseConfig from "../config/firebase.config.js";
 
 import { createRequire } from "node:module";
 import { UserModel } from "../models/user.model.js";
+import { SERVER_YOLO } from "../utils/serverYolo.js";
 const require = createRequire(import.meta.url);
 const fs = require("fs");
+const axios = require("axios");
+const FormData = require("form-data");
 
 export class AnalizeImageController {
   //Ya
@@ -23,133 +26,255 @@ export class AnalizeImageController {
     try {
       const imageFile = req.file;
       const { idBed, idUser } = req.params;
-
-      const urlImage = imageFile.path;
-      const detection = await AnalizeImageController.script(urlImage);
-      const resultDeteccion = AnalizeImageController.filterDetection(detection);
-      await unlink(urlImage);
-      //si detecto algo lo registramos
-      if (resultDeteccion.names.length > 0) {
-        const storage = getStorage(firebaseConfig.appFirebase);
-        const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
-        const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
-        await uploadBytes(imageRef, imagenBuffer);
-        const downloadURL = await getDownloadURL(imageRef);
-        const date = new Date();
-        const formattedDate = `${date.getDate()}-${
-          date.getMonth() + 1
-        }-${date.getFullYear()}`;
-        const idAnalizedImage = await AnalizedImageModel.create({
-          input: {
-            path: downloadURL,
-            idBed,
-            date: formattedDate,
-            status: "Sin ver",
+      const formData = new FormData();
+      formData.append("image", fs.createReadStream(imageFile.path));
+      //Se manda la imagen al servidor de yolo
+      const responseDetection = await axios.post(
+        `${SERVER_YOLO}/analyze`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
           },
-        });
-        for (const name of resultDeteccion.names) {
-          const responseRegisterName =
-            await AnalizeImageController.registerName(name, idAnalizedImage);
-          if (!responseRegisterName) {
-            return res.status(404).json({
-              message: `Hubo un error en las plagas y enfermedades ya registradas`,
-            });
-          }
         }
-        //Generar la notificación.
-        const expoToken = await UserModel.getTokenByIdUser({ idUser });
-        if (expoToken[0]) {
-          const responseNotification =
-            await AnalizeImageController.sendNotification(
-              expoToken[0].notificacion_token
+      );
+      await unlink(imageFile.path); // eliminamos la imagen que subio el front
+      if (responseDetection.status === 200) {
+        const detection = await responseDetection.data;
+        if (detection.names.length > 0) {
+          //obtenemos la imagen que generó
+          const responseImageAnalized = await axios.get(
+            `${SERVER_YOLO}/get_image/${detection.name_image}`,
+            {
+              responseType: "arraybuffer", // Recibir la respuesta como array de bytes
+            }
+          );
+          if (responseImageAnalized.status === 200) {
+            // Guardar la imagen en un archivo
+            fs.writeFileSync(
+              `${detection.name_image}`,
+              Buffer.from(responseImageAnalized.data)
             );
-          if (responseNotification) {
-            return res.json({
-              message: "Imagen analizada correctamente, espere su notificación",
-            });
+            const resultDeteccion =
+              AnalizeImageController.filterDetection(detection);
+            const downloadURL =
+              await AnalizeImageController.uploadImageToFirebase(
+                resultDeteccion,
+                idBed
+              );
+            AnalizeImageController.registerDataImageAnalizedToBd(
+              resultDeteccion,
+              downloadURL,
+              idBed
+            );
+            await unlink(detection.name_image); // eliminamos la imagen analizada
+            await axios.get(
+              `${SERVER_YOLO}/delete_image/${detection.name_image}`
+            ); // limpiamos el directorio del back de yolo
+            //Generar la notificación.
+            const expoToken = await UserModel.getTokenByIdUser({ idUser });
+            if (expoToken[0]) {
+              const responseNotification =
+                await AnalizeImageController.sendNotification(
+                  expoToken[0].notificacion_token
+                );
+              if (responseNotification) {
+                return res.json({
+                  message:
+                    "Imagen analizada correctamente, espere su notificación",
+                });
+              }
+            }
           }
+          return res.status(500).json({
+            message: "Hubo un problema al obtener la imagen con lo detectado",
+          });
         }
+        await axios.get(`${SERVER_YOLO} /delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
+        return res.json({ message: "No se ha detectado nada en la imagen" });
       }
-      return res.json({ message: "No se ha detectado nada en la imagen" });
+      return res.status(500).json({
+        message:
+          "Hubo un problema en el servidor del modelo de reconocimiento de imagenes",
+      });
     } catch (error) {
       res.status(500).json({ message: `Hubo un error ${error}` });
     }
   }
+
   static async detectedWeb(req, res) {
     try {
       const imageFile = req.file;
       const { idBed } = req.params;
-      const detection = await AnalizeImageController.script(imageFile.path);
-      const resultDeteccion = AnalizeImageController.filterDetection(detection);
-      await unlink(imageFile.path);
-      //si detecto algo lo registramos
-      if (resultDeteccion.names.length > 0) {
-        const storage = getStorage(firebaseConfig.appFirebase);
-        const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
-        const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
-        await uploadBytes(imageRef, imagenBuffer);
-        const downloadURL = await getDownloadURL(imageRef);
-        const date = new Date();
-        const formattedDate = `${date.getDate()}-${
-          date.getMonth() + 1
-        }-${date.getFullYear()}`;
-        const idAnalizedImage = await AnalizedImageModel.create({
-          input: {
-            path: downloadURL,
-            idBed,
-            date: formattedDate,
-            status: "Sin ver",
+      const formData = new FormData();
+      formData.append("image", fs.createReadStream(imageFile.path));
+      //Se manda la imagen al servidor de yolo
+      const responseDetection = await axios.post(
+        `${SERVER_YOLO}/analyze`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
           },
-        });
-        for (const name of resultDeteccion.names) {
-          const responseRegisterName =
-            await AnalizeImageController.registerName(name, idAnalizedImage);
-          if (!responseRegisterName) {
-            return res.status(404).json({
-              message: `Hubo un error en las plagas y enfermedades ya registradas`,
-            });
-          }
         }
-        return res.status(200).json({ message: "Se ha analizado la imagen" });
+      );
+      await unlink(imageFile.path); // eliminamos la imagen que subio el front
+      if (responseDetection.status === 200) {
+        const detection = await responseDetection.data;
+        if (detection.names.length > 0) {
+          //obtenemos la imagen que generó
+          const responseImageAnalized = await axios.get(
+            `${SERVER_YOLO}/get_image/${detection.name_image}`,
+            {
+              responseType: "arraybuffer", // Recibir la respuesta como array de bytes
+            }
+          );
+          if (responseImageAnalized.status === 200) {
+            // Guardar la imagen en un archivo
+            fs.writeFileSync(
+              `${detection.name_image}`,
+              Buffer.from(responseImageAnalized.data)
+            );
+            const resultDeteccion =
+              AnalizeImageController.filterDetection(detection);
+            const downloadURL =
+              await AnalizeImageController.uploadImageToFirebase(
+                resultDeteccion,
+                idBed
+              );
+            AnalizeImageController.registerDataImageAnalizedToBd(
+              resultDeteccion,
+              downloadURL,
+              idBed
+            );
+            await unlink(detection.name_image); // eliminamos la imagen analizada
+            await axios.get(
+              `${SERVER_YOLO}/delete_image/${detection.name_image}`
+            ); //limpiamos el directorio del back de yolo
+            return res
+              .status(200)
+              .json({ message: "Se ha analizado la imagen" });
+          }
+          return res.status(500).json({
+            message: "Hubo un problema al obtener la imagen con lo detectado",
+          });
+        }
+        await axios.get(`${SERVER_YOLO}/delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
+        return res.json({ message: "No se ha detectado nada en la imagen" });
       }
-      return res.json({ message: "No se ha detectado nada en la imagen" });
+      return res.status(500).json({
+        message:
+          "Hubo un problema en el servidor del modelo de reconocimiento de imagenes",
+      });
     } catch (error) {
       res.status(500).json({ message: `Hubo un error ${error}` });
     }
   }
-  //Ya
+
   static async detectedGuest(req, res) {
     try {
       const imageFile = req.file;
       const { tokenNotification } = req.params;
-      const detection = await AnalizeImageController.script(imageFile.path);
-      const resultDeteccion = AnalizeImageController.filterDetection(detection);
-      await unlink(imageFile.path);
-      //si detecto algo lo registramos
-      if (resultDeteccion.names.length > 0) {
-        const storage = getStorage(firebaseConfig.appFirebase);
-        const imageRef = ref(storage, `guest/${resultDeteccion.name_image}`);
-        const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
-        await uploadBytes(imageRef, imagenBuffer);
-        const downloadURL = await getDownloadURL(imageRef);
+      const formData = new FormData();
+      formData.append("image", fs.createReadStream(imageFile.path));
+      //Se manda la imagen al servidor de yolo
+      const responseDetection = await axios.post(
+        `${SERVER_YOLO}/analyze`,
+        formData,
+        {
+          headers: {
+            ...formData.getHeaders(),
+          },
+        }
+      );
+      await unlink(imageFile.path); // eliminamos la imagen que subio el front
+      if (responseDetection.status === 200) {
+        const detection = await responseDetection.data;
+        if (detection.names.length > 0) {
+          //obtenemos la imagen que generó
+          const responseImageAnalized = await axios.get(
+            `${SERVER_YOLO}/get_image/${detection.name_image}`,
+            {
+              responseType: "arraybuffer", // Recibir la respuesta como array de bytes
+            }
+          );
+          if (responseImageAnalized.status === 200) {
+            // Guardar la imagen en un archivo
+            fs.writeFileSync(
+              `${detection.name_image}`,
+              Buffer.from(responseImageAnalized.data)
+            );
+            const resultDeteccion =
+              AnalizeImageController.filterDetection(detection);
+            const storage = getStorage(firebaseConfig.appFirebase);
+            const imageRef = ref(
+              storage,
+              `guest/${resultDeteccion.name_image}`
+            );
+            const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
+            await uploadBytes(imageRef, imagenBuffer);
+            const downloadURL = await getDownloadURL(imageRef);
 
-        const responseNotification =
-          await AnalizeImageController.sendNotification(tokenNotification);
+            await AnalizeImageController.sendNotification(tokenNotification);
 
-        const body = {
-          urlImage: downloadURL,
-          detected: resultDeteccion,
-        };
-        return res.status(200).json({ body });
+            const body = {
+              urlImage: downloadURL,
+              detected: resultDeteccion,
+            };
+            return res.status(200).json({ body });
+          }
+          return res.status(500).json({
+            message: "Hubo un problema al obtener la imagen con lo detectado",
+          });
+        }
+        await axios.get(`${SERVER_YOLO}/cleandirectory`); // limpiamos el directorio del back de yolo
+        return res.json({ message: "No se ha detectado nada en la imagen" });
       }
-      return res
-        .status(404)
-        .json({ message: "No se ha detectado nada en la imagen" });
+      return res.status(500).json({
+        message:
+          "Hubo un problema en el servidor del modelo de reconocimiento de imagenes",
+      });
     } catch (error) {
       res.status(500).json({ message: `Hubo un error ${error}` });
     }
   }
-  //Ya
+  static async uploadImageToFirebase(resultDeteccion) {
+    const storage = getStorage(firebaseConfig.appFirebase);
+    const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
+    const imagenBuffer = fs.readFileSync(resultDeteccion.name_image);
+    await uploadBytes(imageRef, imagenBuffer);
+    const downloadURL = await getDownloadURL(imageRef);
+    return downloadURL;
+  }
+  static async registerDataImageAnalizedToBd(
+    resultDeteccion,
+    downloadURL,
+    idBed
+  ) {
+    const date = new Date();
+    const formattedDate = `${date.getDate()}-${
+      date.getMonth() + 1
+    }-${date.getFullYear()}`;
+    const idAnalizedImage = await AnalizedImageModel.create({
+      input: {
+        path: downloadURL,
+        idBed,
+        date: formattedDate,
+        status: "Sin ver",
+      },
+    });
+    for (const name of resultDeteccion.names) {
+      const responseRegisterName = await AnalizeImageController.registerName(
+        name,
+        idAnalizedImage
+      );
+      if (!responseRegisterName) {
+        return res.status(404).json({
+          message: `Hubo un error en las plagas y enfermedades ya registradas`,
+        });
+      }
+    }
+  }
   static filterDetection(detection) {
     if (detection && Array.isArray(detection.names)) {
       const uniqueNames = detection.names.filter((name, index) => {
@@ -161,32 +286,6 @@ export class AnalizeImageController {
       return detection;
     }
   }
-  //Ya
-  static script(urlImage) {
-    return new Promise((resolve, reject) => {
-      let datos = "";
-      // Comando para ejecutar el script de Python
-      const pythonProcess = spawn("python3", ["yolo.py", urlImage]);
-      // Capturar la salida del proceso
-      pythonProcess.stdout.on("data", (data) => {
-        datos += data.toString(); // Recopilar los datos en una variable
-      });
-      // Capturar los errores del proceso
-      pythonProcess.stderr.on("data", (data) => {});
-      // Manejar el cierre del proceso
-      pythonProcess.on("close", (code) => {
-        try {
-          const regex = /{([^}]*)}/;
-          const match = datos.match(regex); // Buscar coincidencia en el texto
-          const resultados = JSON.parse(match[0]); // Analizar los datos como JSON
-          resolve(resultados);
-        } catch (error) {
-          reject(error);
-        }
-      });
-    });
-  }
-  //Ya
   static async sendNotification(to) {
     const message = {
       to: to,
@@ -210,7 +309,6 @@ export class AnalizeImageController {
       return false;
     }
   }
-  //Ya
   static async registerName(name, idAnalizedImage) {
     try {
       let id;

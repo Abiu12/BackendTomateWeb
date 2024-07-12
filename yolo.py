@@ -114,8 +114,8 @@ def draw_boxes(image, boxes, names, font_path="arial.ttf", font_size=30):
 
 try:
     # Ruta de la imagen subida a través de Multer
-    # input_path = sys.argv[1]
-    input_path = 'imagen.jpg'
+    input_path = sys.argv[1]
+    # input_path = 'imagen.jpg'
     # Decodificar la imagen utilizando OpenCV
     img = cv2.imread(input_path)
 

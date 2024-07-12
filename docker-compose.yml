@@ -1,5 +1,5 @@
 services:
-  api:
+  api_express:
     build: .
     ports:
       - "3000:3000"
