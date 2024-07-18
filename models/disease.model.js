@@ -1,9 +1,8 @@
 import mysql from "mysql2/promise";
-import { configDb } from "../utils/configDb.js";
+import { configDb } from "../config/configDb.js";
 
 const connection = await mysql.createConnection(configDb);
 export class DiseaseModel {
-  //Ya
   static async getAll() {
     try {
       const [result] = await connection.query("SELECT * FROM enfermedad");
@@ -34,7 +33,6 @@ export class DiseaseModel {
       throw new Error(error);
     }
   }
-  //Ya
   static async create({ input }) {
     try {
       const { name, nameScientific, description, recommendations, actions } =
@@ -104,8 +102,6 @@ export class DiseaseModel {
       throw new Error(error);
     }
   }
-
-  //Ya
   static async delete({ idDisease }) {
     try {
       const result = await connection.query(
@@ -120,7 +116,6 @@ export class DiseaseModel {
       throw new Error(error);
     }
   }
-  //Ya
   static async checkExist({ nameDisease }) {
     try {
       const result = await connection.query(

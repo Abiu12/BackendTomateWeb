@@ -1,6 +1,5 @@
 import { DiseaseModel } from "../models/disease.model.js";
 export class DiseaseController {
-  //Ya
   static async getAll(req, res) {
     try {
       const response = await DiseaseModel.getAll();
@@ -12,7 +11,6 @@ export class DiseaseController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async getById(req, res) {
     try {
       const { idDisease } = req.params;
@@ -27,7 +25,6 @@ export class DiseaseController {
       res.status(500).json({ message: error });
     }
   }
-  //Ya
   static async create(req, res) {
     try {
       const { name, nameScientific, recommendations, description, actions } =
@@ -46,7 +43,6 @@ export class DiseaseController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async update(req, res) {
     try {
       const { name, nameScientific, recommendations, actions, description } =
@@ -70,7 +66,6 @@ export class DiseaseController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async delete(req, res) {
     try {
       const { idDisease } = req.params;
@@ -84,7 +79,6 @@ export class DiseaseController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async checkExist(req, res) {
     try {
       const { nameDisease } = req.params;

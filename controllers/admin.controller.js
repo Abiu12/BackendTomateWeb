@@ -5,7 +5,6 @@ import { PersonModel } from "../models/person.model.js";
 import { WorkerModel } from "../models/worker.model.js";
 import bcrypt from "bcrypt";
 export class AdminController {
-  // Ya
   static async getData(req, res) {
     try {
       const response = await AdminModel.getData();
@@ -19,12 +18,10 @@ export class AdminController {
       res.status(500).json({ message: error });
     }
   }
-  // Ya
   static async update(req, res) {
     try {
       const { name, surname, secondSurname, phone, email, nameUser, password } =
         req.body;
-
       const response = await AdminModel.update({
         input: {
           name,

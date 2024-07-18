@@ -1,8 +1,6 @@
 import { Router } from "express";
 import { DiseaseController } from "../controllers/disease.controller.js";
-
 export const DiseaseRouter = Router();
-
 //obtener todas las enfermedades
 DiseaseRouter.get("/", DiseaseController.getAll);
 //Obtener una plaga por id

@@ -1,5 +1,5 @@
 import mysql from "mysql2/promise";
-import { configDb } from "../utils/configDb.js";
+import { configDb } from "../config/configDb.js";
 
 const connection = await mysql.createConnection(configDb);
 export class WorkerModel {

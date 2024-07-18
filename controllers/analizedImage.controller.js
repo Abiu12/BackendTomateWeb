@@ -4,7 +4,6 @@ import { AnalyzedImageDiseaseModel } from "../models/analizedimagedisease.model.
 import { PlagueModel } from "../models/plague.model.js";
 import { DiseaseModel } from "../models/disease.model.js";
 export class AnlizedImageController {
-  // Ya
   static async getAnalizedImageByBed(req, res) {
     try {
       const { idBed } = req.params;
@@ -18,7 +17,6 @@ export class AnlizedImageController {
       }
       const results = [];
       for (const image of analizedImages) {
-        //TENGO DUDAS
         const idPlagues =
           await AnalizedImagePlagueModel.getAnalizedImagePlagueByIdAnalizedImage(
             { idAnalizedImage: image.id_imagenanalizada }
@@ -27,7 +25,6 @@ export class AnlizedImageController {
           await AnalyzedImageDiseaseModel.getAnalizedImageDiseaseByIdAnalizedImage(
             { idAnalizedImage: image.id_imagenanalizada }
           );
-        //ESTE EN REALIDAD SIRVE
         if (idPlagues.length == 0 && idDiseases.length == 0) {
           continue;
         }
@@ -75,7 +72,7 @@ export class AnlizedImageController {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }
   }
-  //Ya
+
   static async getRecomendationsAndActionsByIdAnalizedImage(req, res) {
     try {
       const { idAnalizedImage } = req.params;
@@ -94,7 +91,6 @@ export class AnlizedImageController {
     }
   }
 
-  //Ya
   static async updateStatusAnalizedImage(req, res) {
     try {
       const { idAnalizedImage } = req.params;
@@ -112,7 +108,7 @@ export class AnlizedImageController {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }
   }
-  //Ya
+
   static async getRecomendationsAndActionsByGuests(req, res) {
     try {
       const { detected } = req.body;

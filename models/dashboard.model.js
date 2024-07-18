@@ -1,9 +1,8 @@
 import mysql from "mysql2/promise";
-import { configDb } from "../utils/configDb.js";
+import { configDb } from "../config/configDb.js";
 
 const connection = await mysql.createConnection(configDb);
 export class DashboardModel {
-  //Ya
   static async getTotalPlaguesByIdGreenhouse({ idGreenhouse }) {
     try {
       const result = await connection.query(
@@ -21,7 +20,6 @@ export class DashboardModel {
       throw new Error(error);
     }
   }
-  //Ya
   static async getTotalDiseasesByIdGreenhouse({ idGreenhouse }) {
     try {
       const result = await connection.query(

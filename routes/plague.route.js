@@ -1,7 +1,6 @@
 import { Router } from "express";
 import { PlagueController } from "../controllers/plague.controller.js";
 export const PlagueRouter = Router();
-
 //obtener todas las plagas
 PlagueRouter.get("/", PlagueController.getAll);
 //Obtener una plaga por id

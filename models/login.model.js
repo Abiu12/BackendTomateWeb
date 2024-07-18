@@ -2,7 +2,7 @@ import mysql from "mysql2/promise";
 
 import { require } from "../utils/require.js";
 const jwt = require("jsonwebtoken");
-import { configDb } from "../utils/configDb.js";
+import { configDb } from "../config/configDb.js";
 import bcrypt from "bcrypt";
 const connection = await mysql.createConnection(configDb);
 export class LoginModel {

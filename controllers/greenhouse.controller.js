@@ -1,5 +1,3 @@
-import { AnalizedImageModel } from "../models/analyzedimage.model.js";
-import { BedModel } from "../models/bed.model.js";
 import { GreenhouseModel } from "../models/greenhouse.model.js";
 
 export class GreenhouseController {

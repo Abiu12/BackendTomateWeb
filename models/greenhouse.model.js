@@ -1,5 +1,5 @@
 import mysql from "mysql2/promise";
-import { configDb } from "../utils/configDb.js";
+import { configDb } from "../config/configDb.js";
 
 const connection = await mysql.createConnection(configDb);
 export class GreenhouseModel {
@@ -29,7 +29,6 @@ export class GreenhouseModel {
       throw new Error(error);
     }
   }
-
   //Ya
   static async create({ input }) {
     try {

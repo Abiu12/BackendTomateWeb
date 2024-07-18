@@ -1,6 +1,5 @@
 import { BedModel } from "../models/bed.model.js";
 export class BedController {
-  //Ya
   static async create(req, res) {
     try {
       const { numberBed, typeCrop, idGreenhouse } = req.body;
@@ -17,7 +16,6 @@ export class BedController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async getById(req, res) {
     try {
       const { idBed } = req.params;
@@ -42,7 +40,6 @@ export class BedController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async update(req, res) {
     try {
       const { idBed } = req.params;
@@ -58,7 +55,6 @@ export class BedController {
       res.status(500).json({ error: error.message });
     }
   }
-  //Ya
   static async getBedByGreenhouse(req, res) {
     try {
       const { idGreenhouse } = req.params;

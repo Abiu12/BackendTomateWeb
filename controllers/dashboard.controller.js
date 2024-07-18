@@ -1,6 +1,5 @@
 import { DashboardModel } from "../models/dashboard.model.js";
 export class DashboardController {
-  //Ya
   static async getTotalPlaguesByIdGreenhouse(req, res) {
     try {
       const { idGreenhouse } = req.params;
@@ -14,8 +13,6 @@ export class DashboardController {
       res.status(500).json({ message: `Hubo un problema ${error}` });
     }
   }
-
-  //Ya
   static async getTotalDiseasesByIdGreenhouse(req, res) {
     try {
       const { idGreenhouse } = req.params;
@@ -91,12 +88,10 @@ export class DashboardController {
     try {
       const { idGreenhouse } = req.params;
       const { date } = req.body;
-
       const response = await DashboardModel.totalPlaguesDiseasesByDate({
         idGreenhouse,
         date,
       });
-
       if (response.length > 0) {
         return res.status(200).json(response);
       } else {

@@ -3,8 +3,8 @@ import { PersonModel } from "../models/person.model.js";
 import { UserModel } from "../models/user.model.js";
 import { require } from "../utils/require.js";
 const nodemailer = require("nodemailer");
+import bcrypt from "bcrypt";
 export class LoginController {
-  // ya
   static async login(req, res) {
     try {
       const { username, password } = req.body;
@@ -20,7 +20,6 @@ export class LoginController {
       res.status(500).json({ error: error.mesagge });
     }
   }
-  // Ya
   static async checkEmailExistence(req, res) {
     try {
       const { email } = req.body;
@@ -35,7 +34,6 @@ export class LoginController {
       res.status(500).json({ error: error.message });
     }
   }
-  // ya
   static async userNameExistence(req, res) {
     try {
       const { userName } = req.body;
@@ -48,7 +46,6 @@ export class LoginController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static sendEmail(req, res) {
     const { recipient_email, OTP } = req.body;
     const response = new Promise((resolve, reject) => {
@@ -101,7 +98,6 @@ export class LoginController {
     });
     return res.json({ message: response.message });
   }
-  // ya
   static async changePassword(req, res) {
     try {
       const { email, newPassword } = req.body;
@@ -111,8 +107,9 @@ export class LoginController {
           message: "No existe un usuario asociado a ese email",
         });
       } else {
+        const hashPassword = await bcrypt.hash(newPassword, 10);
         const response = await UserModel.changePassword({
-          input: { idPerson: person[0].id_persona, newPassword },
+          input: { idPerson: person[0].id_persona, newPassword: hashPassword },
         });
         if (response[0].affectedRows == 1) {
           return res.json({
@@ -128,7 +125,6 @@ export class LoginController {
       res.status(500).json({ error: error.message });
     }
   }
-  // ya
   static async getDataByUsername(req, res) {
     try {
       const { username, role } = req.body;
@@ -143,7 +139,6 @@ export class LoginController {
       return res.send(500).json({ error: error.message });
     }
   }
-  // ya
   static async registerTokenNotification(req, res) {
     try {
       const { userName, token } = req.body;

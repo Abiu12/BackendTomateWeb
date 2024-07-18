@@ -1,6 +1,5 @@
 import { PlagueModel } from "../models/plague.model.js";
 export class PlagueController {
-  // ya
   static async getAll(req, res) {
     try {
       const response = await PlagueModel.getAll();
@@ -12,7 +11,6 @@ export class PlagueController {
       res.status(500).json({ error: error.message });
     }
   }
-  // ya
   static async getById(req, res) {
     try {
       const { idPlague } = req.params;
@@ -25,7 +23,6 @@ export class PlagueController {
       res.status(500).json({ message: error });
     }
   }
-  //ya
   static async create(req, res) {
     try {
       const { name, nameScientific, recommendations, actions, description } =
@@ -41,7 +38,6 @@ export class PlagueController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async update(req, res) {
     try {
       const { name, nameScientific, recommendations, actions, description } =
@@ -65,7 +61,6 @@ export class PlagueController {
       res.status(500).json({ error: error.message });
     }
   }
-  // ya
   static async delete(req, res) {
     try {
       const { idPlague } = req.params;
@@ -77,7 +72,6 @@ export class PlagueController {
       res.status(500).json({ error: error.message });
     }
   }
-  //ya
   static async checkExist(req, res) {
     const { namePlague } = req.params;
     const response = await PlagueModel.checkExist({ namePlague });

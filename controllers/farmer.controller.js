@@ -60,7 +60,6 @@ export class FarmerController {
   static async delete(req, res) {
     try {
       const { idFarmer } = req.params;
-      //
       const response = await FarmerModel.delete({ idFarmer });
       if (response)
         return res.json({ message: "El agricultor ha sido eliminado" });
@@ -88,17 +87,8 @@ export class FarmerController {
   static async update(req, res) {
     try {
       const { idFarmer } = req.params;
-      const {
-        name,
-        surname,
-        secondSurname,
-        phone,
-        email,
-        nameUser,
-        password,
-        role,
-      } = req.body;
-
+      const { name, surname, secondSurname, phone, email, nameUser, password } =
+        req.body;
       const farmer = await FarmerModel.getById({ idFarmer });
       if (farmer.length > 0) {
         const responsePersonUpdate = await PersonModel.update({

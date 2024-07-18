@@ -156,7 +156,6 @@ export class WorkerController {
       const { idWorker } = req.params;
       const { oldPassword, newPassword } = req.body;
       const worker = await WorkerModel.getById({ idWorker });
-
       if (worker.length > 0) {
         const user = await UserModel.getByIdPerson({
           idPerson: worker[0].id_persona,

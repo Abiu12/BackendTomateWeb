@@ -1,27 +1,22 @@
-import { spawn } from "child_process";
-
 import { AnalizedImageModel } from "../models/analyzedimage.model.js";
 import { PlagueModel } from "../models/plague.model.js";
 import { AnalizedImagePlagueModel } from "../models/analizedimageplague.model.js";
 import { DiseaseModel } from "../models/disease.model.js";
 import { AnalyzedImageDiseaseModel } from "../models/analizedimagedisease.model.js";
 import { unlink } from "fs/promises";
-
-// Firebase
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 import firebaseConfig from "../config/firebase.config.js";
 
 import { createRequire } from "node:module";
 import { UserModel } from "../models/user.model.js";
-import { SERVER_YOLO } from "../utils/serverYolo.js";
+import { SERVER_YOLO } from "../config/serverYolo.js";
 const require = createRequire(import.meta.url);
 const fs = require("fs");
 const axios = require("axios");
 const FormData = require("form-data");
 
 export class AnalizeImageController {
-  //Ya
   static async detected(req, res) {
     try {
       const imageFile = req.file;
