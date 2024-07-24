@@ -63,9 +63,9 @@ export class AnalizeImageController {
               idBed
             );
             await unlink(detection.name_image); // eliminamos la imagen analizada
-            await axios.get(
-              `${SERVER_YOLO}/delete_image/${detection.name_image}`
-            ); // limpiamos el directorio del back de yolo
+            // await axios.get(
+            //   `${SERVER_YOLO}/delete_image/${detection.name_image}`
+            // ); // limpiamos el directorio del back de yolo
             //Generar la notificación.
             const expoToken = await UserModel.getTokenByIdUser({ idUser });
             if (expoToken[0]) {
@@ -84,7 +84,7 @@ export class AnalizeImageController {
             message: "Hubo un problema al obtener la imagen con lo detectado",
           });
         }
-        await axios.get(`${SERVER_YOLO} /delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
+        // await axios.get(`${SERVER_YOLO} /delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
         return res.json({ message: "No se ha detectado nada en la imagen" });
       }
       return res.status(500).json({
@@ -142,9 +142,9 @@ export class AnalizeImageController {
               idBed
             );
             await unlink(detection.name_image); // eliminamos la imagen analizada
-            await axios.get(
-              `${SERVER_YOLO}/delete_image/${detection.name_image}`
-            ); //limpiamos el directorio del back de yolo
+            // await axios.get(
+            //   `${SERVER_YOLO}/delete_image/${detection.name_image}`
+            // ); //limpiamos el directorio del back de yolo
             return res
               .status(200)
               .json({ message: "Se ha analizado la imagen" });
@@ -153,7 +153,7 @@ export class AnalizeImageController {
             message: "Hubo un problema al obtener la imagen con lo detectado",
           });
         }
-        await axios.get(`${SERVER_YOLO}/delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
+        // await axios.get(`${SERVER_YOLO}/delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
         return res.json({ message: "No se ha detectado nada en la imagen" });
       }
       return res.status(500).json({
