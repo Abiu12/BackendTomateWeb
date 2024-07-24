@@ -29,4 +29,4 @@ app.use("/plague", PlagueRouter);
 app.use("/analyzeimage", upload.single("image"), AnalizeImageRouter);
 app.use("/dashboard", DashboardRouter);
 app.use("/login", LoginRouter);
-app.listen(port, () => console.log(`Servidor corriendo en el puerto ${port}!`));
+app.listen(port, () => console.log(`Server running in port ${port}!`));

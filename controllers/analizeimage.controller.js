@@ -75,8 +75,7 @@ export class AnalizeImageController {
                 );
               if (responseNotification) {
                 return res.json({
-                  message:
-                    "Imagen analizada correctamente, espere su notificación",
+                  message: "Imagen analizada correctamente",
                 });
               }
             }

@@ -27,9 +27,9 @@ export class LoginController {
         input: { email },
       });
       if (response.length > 0) {
-        return res.json({ exists: true });
+        return res.status(200).json({ exists: true });
       }
-      res.json({ exists: false });
+      res.status(200).json({ exists: false });
     } catch (error) {
       res.status(500).json({ error: error.message });
     }
