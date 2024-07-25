@@ -23,7 +23,6 @@ export class AnalizeImageController {
       const { idBed, idUser } = req.params;
       const formData = new FormData();
       formData.append("image", fs.createReadStream(imageFile.path));
-      //Se manda la imagen al servidor de yolo
       const responseDetection = await axios.post(
         `${SERVER_YOLO}/analyze`,
         formData,
@@ -33,58 +32,36 @@ export class AnalizeImageController {
           },
         }
       );
-      await unlink(imageFile.path); // eliminamos la imagen que subio el front
+      await unlink(imageFile.path);
       if (responseDetection.status === 200) {
         const detection = await responseDetection.data;
         if (detection.names.length > 0) {
-          //obtenemos la imagen que generó
-          const responseImageAnalized = await axios.get(
-            `${SERVER_YOLO}/get_image/${detection.name_image}`,
-            {
-              responseType: "arraybuffer", // Recibir la respuesta como array de bytes
-            }
-          );
-          if (responseImageAnalized.status === 200) {
-            // Guardar la imagen en un archivo
-            fs.writeFileSync(
-              `${detection.name_image}`,
-              Buffer.from(responseImageAnalized.data)
-            );
-            const resultDeteccion =
-              AnalizeImageController.filterDetection(detection);
-            const downloadURL =
-              await AnalizeImageController.uploadImageToFirebase(
-                resultDeteccion,
-                idBed
-              );
-            AnalizeImageController.registerDataImageAnalizedToBd(
+          const resultDeteccion =
+            AnalizeImageController.filterDetection(detection);
+          const downloadURL =
+            await AnalizeImageController.uploadImageToFirebase(
               resultDeteccion,
-              downloadURL,
               idBed
             );
-            await unlink(detection.name_image); // eliminamos la imagen analizada
-            // await axios.get(
-            //   `${SERVER_YOLO}/delete_image/${detection.name_image}`
-            // ); // limpiamos el directorio del back de yolo
-            //Generar la notificación.
-            const expoToken = await UserModel.getTokenByIdUser({ idUser });
-            if (expoToken[0]) {
-              const responseNotification =
-                await AnalizeImageController.sendNotification(
-                  expoToken[0].notificacion_token
-                );
-              if (responseNotification) {
-                return res.json({
-                  message: "Imagen analizada correctamente",
-                });
-              }
+          AnalizeImageController.registerDataImageAnalizedToBd(
+            resultDeteccion,
+            downloadURL,
+            idBed
+          );
+          //Generar la notificación.
+          const expoToken = await UserModel.getTokenByIdUser({ idUser });
+          if (expoToken[0]) {
+            const responseNotification =
+              await AnalizeImageController.sendNotification(
+                expoToken[0].notificacion_token
+              );
+            if (responseNotification) {
+              return res.json({
+                message: "Imagen analizada correctamente",
+              });
             }
           }
-          return res.status(500).json({
-            message: "Hubo un problema al obtener la imagen con lo detectado",
-          });
         }
-        // await axios.get(`${SERVER_YOLO} /delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
         return res.json({ message: "No se ha detectado nada en la imagen" });
       }
       return res.status(500).json({
@@ -116,44 +93,21 @@ export class AnalizeImageController {
       if (responseDetection.status === 200) {
         const detection = await responseDetection.data;
         if (detection.names.length > 0) {
-          //obtenemos la imagen que generó
-          const responseImageAnalized = await axios.get(
-            `${SERVER_YOLO}/get_image/${detection.name_image}`,
-            {
-              responseType: "arraybuffer", // Recibir la respuesta como array de bytes
-            }
-          );
-          if (responseImageAnalized.status === 200) {
-            // Guardar la imagen en un archivo
-            fs.writeFileSync(
-              `${detection.name_image}`,
-              Buffer.from(responseImageAnalized.data)
-            );
-            const resultDeteccion =
-              AnalizeImageController.filterDetection(detection);
-            const downloadURL =
-              await AnalizeImageController.uploadImageToFirebase(
-                resultDeteccion,
-                idBed
-              );
-            AnalizeImageController.registerDataImageAnalizedToBd(
+          // Guardar la imagen en un archivo
+          const resultDeteccion =
+            AnalizeImageController.filterDetection(detection);
+          const downloadURL =
+            await AnalizeImageController.uploadImageToFirebase(
               resultDeteccion,
-              downloadURL,
               idBed
             );
-            await unlink(detection.name_image); // eliminamos la imagen analizada
-            // await axios.get(
-            //   `${SERVER_YOLO}/delete_image/${detection.name_image}`
-            // ); //limpiamos el directorio del back de yolo
-            return res
-              .status(200)
-              .json({ message: "Se ha analizado la imagen" });
-          }
-          return res.status(500).json({
-            message: "Hubo un problema al obtener la imagen con lo detectado",
-          });
+          AnalizeImageController.registerDataImageAnalizedToBd(
+            resultDeteccion,
+            downloadURL,
+            idBed
+          );
+          return res.status(200).json({ message: "Se ha analizado la imagen" });
         }
-        // await axios.get(`${SERVER_YOLO}/delete_image/${detection.name_image}`); // limpiamos el directorio del back de yolo
         return res.json({ message: "No se ha detectado nada en la imagen" });
       }
       return res.status(500).json({
@@ -171,7 +125,6 @@ export class AnalizeImageController {
       const { tokenNotification } = req.params;
       const formData = new FormData();
       formData.append("image", fs.createReadStream(imageFile.path));
-      //Se manda la imagen al servidor de yolo
       const responseDetection = await axios.post(
         `${SERVER_YOLO}/analyze`,
         formData,
@@ -181,47 +134,27 @@ export class AnalizeImageController {
           },
         }
       );
-      await unlink(imageFile.path); // eliminamos la imagen que subio el front
+      await unlink(imageFile.path);
       if (responseDetection.status === 200) {
         const detection = await responseDetection.data;
         if (detection.names.length > 0) {
-          //obtenemos la imagen que generó
-          const responseImageAnalized = await axios.get(
-            `${SERVER_YOLO}/get_image/${detection.name_image}`,
-            {
-              responseType: "arraybuffer", // Recibir la respuesta como array de bytes
-            }
-          );
-          if (responseImageAnalized.status === 200) {
-            // Guardar la imagen en un archivo
-            fs.writeFileSync(
-              `${detection.name_image}`,
-              Buffer.from(responseImageAnalized.data)
-            );
-            const resultDeteccion =
-              AnalizeImageController.filterDetection(detection);
-            const storage = getStorage(firebaseConfig.appFirebase);
-            const imageRef = ref(
-              storage,
-              `guest/${resultDeteccion.name_image}`
-            );
-            const imagenBuffer = fs.readFileSync(resultDeteccion.full_path);
-            await uploadBytes(imageRef, imagenBuffer);
-            const downloadURL = await getDownloadURL(imageRef);
-
-            await AnalizeImageController.sendNotification(tokenNotification);
-
-            const body = {
-              urlImage: downloadURL,
-              detected: resultDeteccion,
-            };
-            return res.status(200).json({ body });
-          }
-          return res.status(500).json({
-            message: "Hubo un problema al obtener la imagen con lo detectado",
-          });
+          const resultDeteccion =
+            AnalizeImageController.filterDetection(detection);
+          const storage = getStorage(firebaseConfig.appFirebase);
+          const imageRef = ref(storage, `guest/${resultDeteccion.image_name}`);
+          const base64Image = resultDeteccion.image_base64
+            .split(";base64,")
+            .pop();
+          const imagenBuffer = Buffer.from(base64Image, "base64");
+          await uploadBytes(imageRef, imagenBuffer);
+          const downloadURL = await getDownloadURL(imageRef);
+          await AnalizeImageController.sendNotification(tokenNotification);
+          const body = {
+            urlImage: downloadURL,
+            detected: resultDeteccion,
+          };
+          return res.status(200).json({ body });
         }
-        await axios.get(`${SERVER_YOLO}/cleandirectory`); // limpiamos el directorio del back de yolo
         return res.json({ message: "No se ha detectado nada en la imagen" });
       }
       return res.status(500).json({
@@ -234,8 +167,14 @@ export class AnalizeImageController {
   }
   static async uploadImageToFirebase(resultDeteccion) {
     const storage = getStorage(firebaseConfig.appFirebase);
-    const imageRef = ref(storage, `images/${resultDeteccion.name_image}`);
-    const imagenBuffer = fs.readFileSync(resultDeteccion.name_image);
+    const imageRef = ref(storage, `images/${resultDeteccion.image_name}`);
+
+    // const imagenBuffer = fs.readFileSync(resultDeteccion.name_image);
+    // await uploadBytes(imageRef, imagenBuffer);
+    // const downloadURL = await getDownloadURL(imageRef);
+    // return downloadURL;
+    const base64Image = resultDeteccion.image_base64.split(";base64,").pop();
+    const imagenBuffer = Buffer.from(base64Image, "base64");
     await uploadBytes(imageRef, imagenBuffer);
     const downloadURL = await getDownloadURL(imageRef);
     return downloadURL;
