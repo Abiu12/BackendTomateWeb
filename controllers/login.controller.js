@@ -47,110 +47,109 @@ export class LoginController {
     }
   }
   static sendEmail(req, res) {
-    const { recipient_email, OTP } = req.body;
-    const response = new Promise((resolve, reject) => {
-      const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-          user: process.env.MY_EMAIL,
-          pass: process.env.MY_PASSWORD,
-        },
-      });
+    try {
+      const { recipient_email, OTP } = req.body;
+      const response = new Promise((resolve, reject) => {
+        const transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.MY_EMAIL,
+            pass: process.env.MY_PASSWORD,
+          },
+        });
 
-      const mailConfig = {
-        from: process.env.MY_EMAIL,
-        to: recipient_email,
-        subject: "Recuperación de Contraseña - Tomi-Plagas y Enfermedades",
-        html: `<!DOCTYPE html>
-          <html lang="es">
-          <head>
-            <meta charset="UTF-8">
-            <title>Correo de Recuperación de Contraseña - Tomi-Plagas y Enfermedades</title>
-            <style>
-              body {
-                font-family: Helvetica, Arial, sans-serif;
-                margin: 0;
-                padding: 0;
-                min-width: 1000px;
-                overflow: auto;
-                line-height: 2;
-              }
-              .container {
-                margin: 50px auto;
-                width: 70%;
-                padding: 20px 0;
-              }
-              .header {
-                border-bottom: 1px solid #eee;
-              }
-              .header a {
-                font-size: 1.4em;
-                color: #c62426;
-                text-decoration: none;
-                font-weight: 600;
-              }
-              .content {
-                font-size: 1.1em;
-              }
-              .code {
-                background: #c62426;
-                margin: 20px auto;
-                width: max-content;
-                padding: 10px;
-                color: #fff;
-                border-radius: 4px;
-                font-size: 1.5em;
-                font-weight: bold;
-              }
-              .footer {
-                font-size: 0.9em;
-              }
-              .disclaimer {
-                border-top: 1px solid #eee;
-                padding: 8px 0;
-                color: #aaa;
-                font-size: 0.8em;
-                line-height: 1;
-                font-weight: 300;
-                text-align: right;
-              }
-              .disclaimer p {
-                margin: 0;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="container">
-              <div class="header">
-                <a href="#">Recuperación de contraseña</a>
+        const mailConfig = {
+          from: process.env.MY_EMAIL,
+          to: recipient_email,
+          subject: "Recuperación de Contraseña - Tomi-Plagas y Enfermedades",
+          html: `<!DOCTYPE html>
+            <html lang="es">
+            <head>
+              <meta charset="UTF-8">
+              <title>Correo de Recuperación de Contraseña - Tomi-Plagas y Enfermedades</title>
+              <style>
+                body {
+                  font-family: Helvetica, Arial, sans-serif;
+                  margin: 0;
+                  padding: 0;
+                  min-width: 1000px;
+                  overflow: auto;
+                  line-height: 2;
+                }
+                .container {
+                  margin: 50px auto;
+                  width: 70%;
+                  padding: 20px 0;
+                }
+                .header {
+                  border-bottom: 1px solid #eee;
+                }
+                .header a {
+                  font-size: 1.4em;
+                  color: #c62426;
+                  text-decoration: none;
+                  font-weight: 600;
+                }
+                .content {
+                  font-size: 1.1em;
+                }
+                .code {
+                  background: #c62426;
+                  margin: 20px auto;
+                  width: max-content;
+                  padding: 10px;
+                  color: #fff;
+                  border-radius: 4px;
+                  font-size: 1.5em;
+                  font-weight: bold;
+                }
+                .footer {
+                  font-size: 0.9em;
+                }
+                .disclaimer {
+                  border-top: 1px solid #eee;
+                  padding: 8px 0;
+                  color: #aaa;
+                  font-size: 0.8em;
+                  line-height: 1;
+                  font-weight: 300;
+                  text-align: right;
+                }
+                .disclaimer p {
+                  margin: 0;
+                }
+              </style>
+            </head>
+            <body>
+              <div class="container">
+                <div class="header">
+                  <a href="#">Recuperación de contraseña</a>
+                </div>
+                <p class="content">Gracias por elegir Tomi-Plagas y Enfermedades              
+                . Utiliza el siguiente código para completar tu proceso de recuperación de contraseña. El código es válido por 2 minutos:</p>
+                <div class="code">${OTP}</div>
+                <p class="content">Por tu seguridad, no compartas este código con nadie.</p>
+                <p class="footer">Saludos,<br />El equipo de Tomi-Plagas y Enfermedades</p>
+                <hr class="disclaimer-border" />
+                <div class="disclaimer">
+                  <p>Tomi-Plagas y Enfermedades</p>
+                  <p>Avenida Ing. Víctor Bravo Ahuja No. 125 Esquina Calzada Tecnológico, C.P. 68030.</p>
+                  <p>Oaxaca de Juárez, México</p>
+                </div>
+                <div style="color: #fff; font-size: 0.1em;">
+                  &nbsp;<!-- Adding non-breaking space to avoid email clients hiding content -->
+                </div>
               </div>
-              <p class="content">Gracias por elegir Tomi-Plagas y Enfermedades              
-              . Utiliza el siguiente código para completar tu proceso de recuperación de contraseña. El código es válido por 2 minutos:</p>
-              <div class="code">${OTP}</div>
-              <p class="content">Por tu seguridad, no compartas este código con nadie.</p>
-              <p class="footer">Saludos,<br />El equipo de Tomi-Plagas y Enfermedades</p>
-              <hr class="disclaimer-border" />
-              <div class="disclaimer">
-                <p>Tomi-Plagas y Enfermedades</p>
-                <p>Avenida Ing. Víctor Bravo Ahuja No. 125 Esquina Calzada Tecnológico, C.P. 68030.</p>
-                <p>Oaxaca de Juárez, México</p>
-              </div>
-              <div style="color: #fff; font-size: 0.1em;">
-                &nbsp;<!-- Adding non-breaking space to avoid email clients hiding content -->
-              </div>
-            </div>
-          </body>
-          </html>`,
-      };
+            </body>
+            </html>`,
+        };
 
-      transporter.sendMail(mailConfig, function (error, info) {
-        if (error) {
-          return reject({ message: "A ocurrido un error" });
-        }
-        return resolve({ message: "Se ha enviado el email correctamente" });
+        transporter.sendMail(mailConfig, function (error, info) {});
       });
-    });
-    return res.json({ message: response.message });
+      return res.status(200).json({ message: "Email correctamente enviado" });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
   }
 
   static async changePassword(req, res) {
