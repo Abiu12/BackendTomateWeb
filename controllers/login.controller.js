@@ -145,9 +145,9 @@ export class LoginController {
 
       transporter.sendMail(mailConfig, function (error, info) {
         if (error) {
-          return reject({ message: "An error has occurred" });
+          return reject({ message: "A ocurrido un error" });
         }
-        return resolve({ message: "Email sent successfully" });
+        return resolve({ message: "Se ha enviado el email correctamente" });
       });
     });
     return res.json({ message: response.message });
