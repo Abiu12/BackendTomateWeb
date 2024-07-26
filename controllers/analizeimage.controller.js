@@ -155,7 +155,9 @@ export class AnalizeImageController {
           };
           return res.status(200).json({ body });
         }
-        return res.json({ message: "No se ha detectado nada en la imagen" });
+        return res
+          .status(204)
+          .json({ message: "No se ha detectado nada en la imagen" });
       }
       return res.status(500).json({
         message:
