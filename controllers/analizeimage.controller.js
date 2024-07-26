@@ -60,6 +60,9 @@ export class AnalizeImageController {
                 message: "Imagen analizada correctamente",
               });
             }
+            return res.json({
+              message: "Hubo un problema al enviar la notificación",
+            });
           }
         }
         return res.json({ message: "No se ha detectado nada en la imagen" });
@@ -148,12 +151,18 @@ export class AnalizeImageController {
           const imagenBuffer = Buffer.from(base64Image, "base64");
           await uploadBytes(imageRef, imagenBuffer);
           const downloadURL = await getDownloadURL(imageRef);
-          await AnalizeImageController.sendNotification(tokenNotification);
-          const body = {
-            urlImage: downloadURL,
-            detected: resultDeteccion,
-          };
-          return res.status(200).json({ body });
+          const responseNotification =
+            await AnalizeImageController.sendNotification(tokenNotification);
+          if (responseNotification) {
+            const body = {
+              urlImage: downloadURL,
+              detected: resultDeteccion,
+            };
+            return res.status(200).json({ body });
+          }
+          return res.json({
+            message: "Hubo un problema al enviar la notificación",
+          });
         }
         return res
           .status(204)
