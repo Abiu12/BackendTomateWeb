@@ -35,7 +35,7 @@ export class PersonModel {
   static async getByEmail({ email }) {
     try {
       const [result] = await connection.query(
-        "SELECT * FROM persona WHERE correo_electronico = ?;",
+        "SELECT * FROM persona WHERE correo_electronico = ? AND estado ='activo';",
         [email]
       );
       return result;

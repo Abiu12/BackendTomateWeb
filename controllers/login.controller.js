@@ -170,7 +170,7 @@ export class LoginController {
             message: "Se ha cambiado la contraseña correctamente",
           });
         } else {
-          return res.json({
+          return res.status(400).json({
             message: "Ah ocurrido un error al cambiar la contraseña",
           });
         }
