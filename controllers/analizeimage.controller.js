@@ -196,9 +196,12 @@ export class AnalizeImageController {
     idBed
   ) {
     const date = new Date();
-    const formattedDate = `${date.getDate()}-${
-      date.getMonth() + 1
-    }-${date.getFullYear()}`;
+    const formattedDate = date.toLocaleDateString("es-MX", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
     const idAnalizedImage = await AnalizedImageModel.create({
       input: {
         path: downloadURL,
