@@ -129,7 +129,8 @@ export class AnlizedImageController {
         } else if (
           detect === "Alternariosis" ||
           detect === "Botritis" ||
-          detect === "Mildiu del tomate"
+          detect === "Mildiu del tomate" ||
+          detect === "Oídio"
         ) {
           let recomendationsActions = await DiseaseModel.getByName({
             name: detect,
