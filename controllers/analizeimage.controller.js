@@ -196,7 +196,6 @@ export class AnalizeImageController {
     idBed
   ) {
     const date = new Date();
-    date.setDate(date.getDate() - 1); // Restar un día
 
     const formattedDate = `${date.getDate()}-${
       date.getMonth() + 1
